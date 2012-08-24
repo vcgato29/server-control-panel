@@ -197,7 +197,7 @@ void Tray::goToWebinterface()
 
 void Tray::goToReportIssue()
 {
-    QDesktopServices::openUrl(QUrl("https://github.com/jakoch/WPN-XM/issues/"));
+    QDesktopServices::openUrl(QUrl("https://github.com/WPN-XM/WPN-XM/issues/"));
 }
 
 void Tray::goToWebsiteHelp()
