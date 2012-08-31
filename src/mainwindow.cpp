@@ -593,7 +593,7 @@ void MainWindow::checkAlreadyActiveDaemons()
         }
     }
 
-    qDebug() << "Already running Processes found : " << processesFoundList;
+    //qDebug() << "Already running Processes found : " << processesFoundList;
 
     // only show the "process shutdown" dialog, when there are processes to shutdown
     if(false == processesFoundList.isEmpty())
@@ -619,13 +619,13 @@ void MainWindow::checkAlreadyActiveDaemons()
                                        "Click Shutdown to shut the selected processes down and continue using the server control panel.<br>"
                                        "To proceed without shuting processes down, click Continue.<br>"));
 
-        QPushButton *okShutdownButton = new QPushButton(tr("Shutdown"));
-        QPushButton *noShutdownButton = new QPushButton(tr("Continue"));
-        okShutdownButton->setDefault(true);
+        QPushButton *ShutdownButton = new QPushButton(tr("Shutdown"));
+        QPushButton *ContinueButton = new QPushButton(tr("Continue"));
+        ShutdownButton->setDefault(true);
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-        buttonBox->addButton(okShutdownButton, QDialogButtonBox::ActionRole);
-        buttonBox->addButton(noShutdownButton, QDialogButtonBox::ActionRole);
+        buttonBox->addButton(ShutdownButton, QDialogButtonBox::ActionRole);
+        buttonBox->addButton(ContinueButton, QDialogButtonBox::ActionRole);
 
         // e) build dialog to inform user about running processes
         QGridLayout *grid = new QGridLayout;
@@ -634,25 +634,26 @@ void MainWindow::checkAlreadyActiveDaemons()
         grid->addWidget(labelB);
         grid->addWidget(buttonBox);
 
+        QDialog *dlg = new QDialog(this);
+        dlg->setWindowModality(Qt::WindowModal);
+        dlg->setLayout(grid);
+        dlg->resize(250, 100);
+        dlg->setWindowTitle(tr(APP_NAME));
+
         // Set signal and slot for "Buttons"
-        connect(noShutdownButton, SIGNAL(clicked()), this, SLOT(noShutdownButtonClicked()));
-        connect(okShutdownButton, SIGNAL(clicked()), this, SLOT(okShutdownButtonClicked()));
+        connect(ShutdownButton, SIGNAL(clicked()), dlg, SLOT(accept()));
+        connect(ContinueButton, SIGNAL(clicked()), dlg, SLOT(reject()));
 
-        QDialog dlg;
-        dlg.setWindowModality(Qt::WindowModal);
-        dlg.setLayout(grid);
-        dlg.resize(250, 100);
-        dlg.setWindowTitle(tr(APP_NAME));
-        dlg.exec();
+        // fire modal window event loop and wait for button clicks
+        // if shutdown was clicked
+        if(dlg->exec() == QDialog::Accepted)
+        {
+            // fetch all checkboxes
+            QList<QCheckBox *> allCheckBox = dlg->findChildren<QCheckBox *>();
+            // iterate checkboxes and get values
+            qDebug() << allCheckBox;
+        }
+
+        delete dlg;
     }
-}
-
-void MainWindow::noShutdownButtonClicked()
-{
-
-}
-
-void MainWindow::okShutdownButtonClicked()
-{
-
 }
