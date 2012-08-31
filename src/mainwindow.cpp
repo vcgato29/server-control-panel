@@ -599,21 +599,25 @@ void MainWindow::checkAlreadyActiveDaemons()
     if(false == processesFoundList.isEmpty())
     {
         QLabel *labelA = new QLabel(tr("The following processes are already running:"));
-
         QGroupBox *groupBox = new QGroupBox(tr("Running Processes"));
-
-        QCheckBox *checkBox1 = new QCheckBox(tr("&Checkbox 1"));
-        QCheckBox *checkBox2 = new QCheckBox(tr("C&heckbox 2"));
-        checkBox2->setChecked(true);
-
         QVBoxLayout *vbox = new QVBoxLayout;
-        vbox->addWidget(checkBox1);
-        vbox->addWidget(checkBox2);
-        //vbox->addStretch(1);
+
+        // iterate over proccesFoundList and draw a process shutdown checkbox for each one
+        int c = processesFoundList.size();
+        for(int i = 0; i < c; ++i) {
+           // create checkbox
+           QCheckBox *checkbox = new QCheckBox(processesFoundList.at(i));
+           checkbox->setChecked(true);
+           checkbox->setCheckable(true);
+           // add checkbox to view
+           vbox->addWidget(checkbox);
+        }
+
         groupBox->setLayout(vbox);
 
-        QLabel *labelB = new QLabel(tr("Please select the processes you wish to shutdown.<br>"
-                                       "Click Yes to shut processes down and continue installation, or click No to proceed.<br>"));
+        QLabel *labelB = new QLabel(tr("Please select the processes you wish to shutdown.<br><br>"
+                                       "Click Shutdown to shut the selected processes down and continue using the server control panel.<br>"
+                                       "To proceed without shuting processes down, click Continue.<br>"));
 
         QPushButton *okShutdownButton = new QPushButton(tr("Shutdown"));
         QPushButton *noShutdownButton = new QPushButton(tr("Continue"));
