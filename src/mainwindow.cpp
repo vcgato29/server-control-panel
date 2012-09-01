@@ -565,6 +565,7 @@ void MainWindow::checkAlreadyActiveDaemons()
     process.setReadChannelMode(QProcess::MergedChannels);
     process.start("cmd", QStringList() << "/c tasklist.exe");
     process.waitForFinished();
+
     // processList contains the tasklist output
     QByteArray processList = process.readAll();
     //qDebug() << "Read" << processList.length() << "bytes";
@@ -593,7 +594,7 @@ void MainWindow::checkAlreadyActiveDaemons()
         }
     }
 
-    //qDebug() << "Already running Processes found : " << processesFoundList;
+    qDebug() << "Already running Processes found : " << processesFoundList;
 
     // only show the "process shutdown" dialog, when there are processes to shutdown
     if(false == processesFoundList.isEmpty())
@@ -645,15 +646,36 @@ void MainWindow::checkAlreadyActiveDaemons()
         connect(ContinueButton, SIGNAL(clicked()), dlg, SLOT(reject()));
 
         // fire modal window event loop and wait for button clicks
-        // if shutdown was clicked
+        // if shutdown was clicked (accept), execute shutdowns
+        // if continue was clicked (reject), do nothing and proceed to mainwindow
         if(dlg->exec() == QDialog::Accepted)
         {
             // fetch all checkboxes
-            QList<QCheckBox *> allCheckBox = dlg->findChildren<QCheckBox *>();
-            // iterate checkboxes and get values
-            qDebug() << allCheckBox;
-        }
+            QList<QCheckBox *> allCheckBoxes = dlg->findChildren<QCheckBox *>();
 
+            // iterate checkbox values
+            c = allCheckBoxes.size();
+            for(int i = 0; i < c; ++i) {
+               QCheckBox *cb = allCheckBoxes.at(i);
+               if(cb->isChecked())
+               {
+                   qDebug() << "Shutting down :" << cb->text();
+
+                   QProcess::startDetached("cmd.exe",
+                    QStringList() << "/c" << "taskkill /im " + cb->text() + ".exe"
+                   );
+               }
+               delete cb;
+            }
+        }
+        delete vbox;
+        delete labelA;
+        delete labelB;
+        delete ShutdownButton;
+        delete ContinueButton;
+        delete buttonBox;
+        delete groupBox;
+        delete grid;
         delete dlg;
     }
 }
