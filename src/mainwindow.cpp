@@ -594,7 +594,7 @@ void MainWindow::checkAlreadyActiveDaemons()
         }
     }
 
-    qDebug() << "Already running Processes found : " << processesFoundList;
+    //qDebug() << "Already running Processes found : " << processesFoundList;
 
     // only show the "process shutdown" dialog, when there are processes to shutdown
     if(false == processesFoundList.isEmpty())
@@ -659,10 +659,13 @@ void MainWindow::checkAlreadyActiveDaemons()
                QCheckBox *cb = allCheckBoxes.at(i);
                if(cb->isChecked())
                {
-                   qDebug() << "Shutting down :" << cb->text();
+                   //qDebug() << "Shutting down :" << cb->text();
 
                    QProcess::startDetached("cmd.exe",
-                    QStringList() << "/c" << "taskkill /im " + cb->text() + ".exe"
+                    // taskkill parameters:
+                    // /f = force shutdown, /t = structure shutdown, /im = the name of the process
+                    // nginx and mariadb need a forced shutdown !
+                    QStringList() << "/c" << "taskkill /f /t /im " + cb->text() + ".exe"
                    );
                }
                delete cb;
