@@ -58,13 +58,14 @@ release:TARGET = wpnxm-scp
 # change the name of the binary, if it is build in debug mode
 build_pass:CONFIG(debug, debug|release):TARGET = wpnxm-scp-debug
 
-CONFIG += qt console warn_on static staticlib
+CONFIG += qt static staticlib
+# console warn-on
 
 static {                                      # everything below takes effect with CONFIG += static
     message("~~~ static build ~~~")           # this is for information, that the static build is done
     CONFIG += static
     CONFIG += staticlib                       # this is needed if you create a static library, not a static executable
     DEFINES += STATIC
-    win32: TARGET = $$join(TARGET,,,_static)  # this adds an s in the end, so you can seperate static build from non static build
+    win32: TARGET = $$join(TARGET,,,_static)  # this appends _static to the exe, so you can seperate static build from non static build
     QMAKE_LFLAGS *= -static -static-libgcc -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
 }
