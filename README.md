@@ -67,8 +67,11 @@ The run environment should include paths to Qt libraries.
 
 ### 3 Build
 
+The easiest way to build the "WPN-XM SCP" is to build it from Qt Creator.
+
+Launch the following commands to build it from command line:
 * qmake wpnxm-servercontrolpanel.pro
-* mingw32-make
+* mingw32-make -j4
 
 ## Bugs
 
