@@ -20,6 +20,12 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 * Qt Creator 2.6.1 for Windows (52 MB)
 
   http://releases.qt-project.org/qtcreator/2.6.1/qt-creator-windows-opensource-2.6.1.exe
+  
+### Building the Qt Debug Libraries
+
+You have to build the libraries to be able to link successfully.
+
+* Start -> Programs -> Qt -> Qt Build Debug Libraries
 
 ## Bugs
 
