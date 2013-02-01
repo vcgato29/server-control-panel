@@ -541,7 +541,7 @@ void MainWindow::openAboutDialog()
         "<table>"
         "<tr><td><b>Website</b></td><td><a href=\"http://wpn-xm.org/\">http://wpn-xm.org/</a><br></td></tr>"
         "<tr><td><b>License</b></td><td>GNU/GPL version 3, or any later version.<br></td></tr>"
-        "<tr><td><b>Author(s)</b></td><td>Yann Le Moigne (C) 2010,<br>Jens-André Koch (C) 2011 - onwards.<br></td></tr>"
+        "<tr><td><b>Author(s)</b></td><td>Yann Le Moigne (C) 2010,<br>Jens-AndrÃ© Koch (C) 2011 - onwards.<br></td></tr>"
         "<tr><td><b>Github</b></td><td>WPN-XM is developed on Github.<br><a href=\"https://github.com/WPN-XM/WPN-XM/\">https://github.com/WPN-XM/WPN-XM/</a><br></td></tr>"
         "<tr><td><b>Icons</b></td><td>We are using Yusukue Kamiyamane's Fugue Icon Set.<br><a href=\"http://p.yusukekamiyamane.com/\">http://p.yusukekamiyamane.com/</a><br></td></tr>"
         "<tr><td><b>+1?</b></td><td>If you like using WPN-XM, consider supporting it:<br><a href=\"http://wpn-xm.org/donate.html\">http://wpn-xm.org/donate.html</a><br></td></tr>"

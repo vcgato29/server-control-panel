@@ -41,7 +41,7 @@ int main(int argc, char * argv[])
     // Application Meta Data
     app.setApplicationName(APP_NAME);
     app.setApplicationVersion(APP_VERSION);
-    app.setOrganizationName("Jens-André Koch");
+    app.setOrganizationName("Jens-AndrÃ© Koch");
     app.setOrganizationDomain("http://wpn-xm.org/");
     app.setWindowIcon(QIcon(":/wpnxm"));
 
