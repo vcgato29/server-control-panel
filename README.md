@@ -1,5 +1,5 @@
-server-control-panel
-====================
+WPN-XM Server Control Panel
+===========================
 
 The WPN-XM Server Control Panel is a Tray Application written in Qt.
 
@@ -50,4 +50,5 @@ You have to build the libraries to be able to link successfully.
 ## Bugs
 
 If you find a bug in the software, please let us know about it.
+
 Please post the issue to the main project via https://github.com/WPN-XM/WPN-XM/issues/new
