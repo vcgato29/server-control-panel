@@ -60,6 +60,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createActions();
 
+    // The tray icon is an instance of the QSystemTrayIcon class.
+    // To check whether a system tray is present on the user's desktop,
+    // we call the static QSystemTrayIcon::isSystemTrayAvailable() function.
+    if (false == QSystemTrayIcon::isSystemTrayAvailable())
+    {
+        QMessageBox::critical(0, APP_NAME, tr("You don't have a system tray."));
+        QApplication::exit(1);
+    }
+
     createTrayIcon();
 
     // fetch version numbers from the daemons and set label text accordingly
@@ -85,15 +94,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::createTrayIcon()
 {
-    // The tray icon is an instance of the QSystemTrayIcon class.
-    // To check whether a system tray is present on the user's desktop,
-    // we call the static QSystemTrayIcon::isSystemTrayAvailable() function.
-    if (false == QSystemTrayIcon::isSystemTrayAvailable())
-    {
-        QMessageBox::critical(0, APP_NAME, tr("You don't have a system tray."));
-        QCoreApplication::exit();
-    }
-
     // instantiate and attach the tray icon to the system tray
     trayIcon = new Tray(qApp);
 
