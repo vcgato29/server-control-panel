@@ -39,34 +39,6 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT  // Enables signals and slots
 
-protected:
-    void closeEvent(QCloseEvent *event);
-    void changeEvent(QEvent *event);
-
-private slots:
-
-     // when tray icon is activated
-     void iconActivated(QSystemTrayIcon::ActivationReason reason);
-
-private:
-    Ui::MainWindow *ui;
-
-    QAction *minimizeAction;
-    QAction *restoreAction;
-    QAction *quitAction;
-
-    void checkAlreadyActiveDaemons();
-
-    void createActions();
-    void createTrayIcon();
-    void startMonitoringDaemonProcesses();
-
-    /// Returns full path to project folder (appPath + www).
-    QString getProjectFolder() const;
-    void showPushButtonsOnlyForInstalledTools();
-
-    QSystemTrayIcon *trayIcon;
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -108,6 +80,35 @@ public slots:
 
     void setLabelStatusActive(QString label, bool enabled);
     void enableToolsPushButtons(bool enabled);
+
+private:
+    Ui::MainWindow *ui;
+
+    QAction *minimizeAction;
+    QAction *restoreAction;
+    QAction *quitAction;
+
+    void checkAlreadyActiveDaemons();
+
+    void createActions();
+    void createTrayIcon();
+    void startMonitoringDaemonProcesses();
+
+    /// Returns full path to project folder (appPath + www).
+    QString getProjectFolder() const;
+    void showPushButtonsOnlyForInstalledTools();
+
+    QSystemTrayIcon *trayIcon;
+
+private slots:
+
+     // when tray icon is activated
+     void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
+protected:
+    void closeEvent(QCloseEvent *event);
+    void changeEvent(QEvent *event);
+
 };
 
 #endif // MAINWINDOW_H

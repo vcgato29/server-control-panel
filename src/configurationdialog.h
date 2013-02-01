@@ -33,13 +33,13 @@ class QCheckBox;
 QT_END_NAMESPACE
 
 namespace Ui {
-class ConfigurationDialog;
+    class ConfigurationDialog;
 }
 
 class ConfigurationDialog : public QDialog
 {
     Q_OBJECT
-    
+
 public:
     explicit ConfigurationDialog(QWidget *parent = 0);
     ~ConfigurationDialog();
@@ -47,7 +47,7 @@ public:
     void setRunOnStartUp(bool run = true);
 
     bool runOnStartUp() const;
-    
+
 private:
     Ui::ConfigurationDialog *ui;
 
