@@ -28,9 +28,18 @@ http://qt-project.org/doc/qt-4.8/install-win.html
 #### Add Qt folder to PATH
 
 In order to build and use Qt, the PATH environment variable needs to be extended
-by adding the Qt installation folder, e.g. "c:\qt-4.8.0".
+by adding the Qt installation folder, e.g. "c:\Qt-4.8.0".
 
-* Control Panel -> System -> Advanced -> Environment variables  
+* Control Panel -> System -> Advanced -> Environment variables
+
+#### Build the Qt Library
+
+Go to the installation folder, e.g. "c:\Qt-4.8.0" and run "configure".
+
+Type configure -help to get a list of all available options.
+The Configuration Options for Qt page gives a brief overview of these.
+
+See http://qt-project.org/doc/qt-4.8/configure-options.html
   
 #### Build Qt Debug Libraries
 
