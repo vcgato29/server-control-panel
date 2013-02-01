@@ -91,47 +91,45 @@ void MainWindow::createTrayIcon()
     if (false == QSystemTrayIcon::isSystemTrayAvailable())
     {
         QMessageBox::critical(0, APP_NAME, tr("You don't have a system tray."));
-        //return 1;
+        QCoreApplication::exit();
     }
-    else
-    {
-        // instantiate and attach the tray icon to the system tray
-        trayIcon = new Tray(qApp);
 
-        // the following actions point to SLOTS in the trayIcon object
-        // therefore connections must be made, after constructing trayIcon
+    // instantiate and attach the tray icon to the system tray
+    trayIcon = new Tray(qApp);
 
-        // handle clicks on the icon
-        connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-                this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+    // the following actions point to SLOTS in the trayIcon object
+    // therefore connections must be made, after constructing trayIcon
 
-        // Connect Actions for Status Table - Column Status
-        // if process state of a daemon changes, then change the label status in UI::MainWindow too
-        connect(trayIcon, SIGNAL(signalSetLabelStatusActive(QString, bool)),
-                this, SLOT(setLabelStatusActive(QString, bool)));
+    // handle clicks on the icon
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
-        // Connect Action for, if process state of NGINX and PHP changes,
-        // then change the disabled/ enabled state of pushButtons too
-        connect(trayIcon, SIGNAL(signalEnableToolsPushButtons(bool)),
-                this, SLOT(enableToolsPushButtons(bool)));
+    // Connect Actions for Status Table - Column Status
+    // if process state of a daemon changes, then change the label status in UI::MainWindow too
+    connect(trayIcon, SIGNAL(signalSetLabelStatusActive(QString, bool)),
+            this, SLOT(setLabelStatusActive(QString, bool)));
 
-        // Connect Actions for Status Table - Column Action (Start)
-        connect(ui->pushButton_StartNginx, SIGNAL(clicked()), trayIcon, SLOT(startNginx()));
-        connect(ui->pushButton_StartPHP, SIGNAL(clicked()), trayIcon, SLOT(startPhp()));
-        connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), trayIcon, SLOT(startMariaDB()));
+    // Connect Action for, if process state of NGINX and PHP changes,
+    // then change the disabled/ enabled state of pushButtons too
+    connect(trayIcon, SIGNAL(signalEnableToolsPushButtons(bool)),
+            this, SLOT(enableToolsPushButtons(bool)));
 
-         // Connect Actions for Status Table - Column Action - Stop
-        connect(ui->pushButton_StopNginx, SIGNAL(clicked()), trayIcon, SLOT(stopNginx()));
-        connect(ui->pushButton_StopPHP, SIGNAL(clicked()), trayIcon, SLOT(stopPhp()));
-        connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), trayIcon, SLOT(stopMariaDB()));
+    // Connect Actions for Status Table - Column Action (Start)
+    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), trayIcon, SLOT(startNginx()));
+    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), trayIcon, SLOT(startPhp()));
+    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), trayIcon, SLOT(startMariaDB()));
 
-         // Connect Actions for Status Table - AllDaemons Start, Stop
-        connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), trayIcon, SLOT(startAllDaemons()));
-        connect(ui->pushButton_AllDaemons_Stop, SIGNAL(clicked()), trayIcon, SLOT(stopAllDaemons()));
+     // Connect Actions for Status Table - Column Action - Stop
+    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), trayIcon, SLOT(stopNginx()));
+    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), trayIcon, SLOT(stopPhp()));
+    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), trayIcon, SLOT(stopMariaDB()));
 
-        // finally: show the tray icon
-        trayIcon->show();
-    }
+     // Connect Actions for Status Table - AllDaemons Start, Stop
+    connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), trayIcon, SLOT(startAllDaemons()));
+    connect(ui->pushButton_AllDaemons_Stop, SIGNAL(clicked()), trayIcon, SLOT(stopAllDaemons()));
+
+    // finally: show the tray icon
+    trayIcon->show();
 }
 
 void MainWindow::createActions()
