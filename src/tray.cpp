@@ -45,7 +45,7 @@ Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
     // Tray Icon
     setIcon(QIcon(":/wpnxm"));
 
-    // @todo append status of the daemons to tooltip
+    // @todo append status of the daemons to tooltip, e.g. "Nginx up, PHP up, MariaDB up"
     // or create seperate popup?
     setToolTip("WPN-XM");
 

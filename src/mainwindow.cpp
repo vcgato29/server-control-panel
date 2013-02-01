@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_MariaDb_Version->setText( getMariaVersion() );
 
     // hardcode ports for v0.3.0
+    // @todo these ports need to be read from wpnxm.ini
     ui->label_Nginx_Port->setText("80");
     ui->label_PHP_Port->setText("9100");
     ui->label_MariaDb_Port->setText("3306");
@@ -553,8 +554,8 @@ void MainWindow::checkAlreadyActiveDaemons()
 {
     // Check list of active processes for
     // apache, nginx, mysql, php-cgi, memcached
-    // and report if processes are already running.
-    // We take a look for these processes to avoid collisions.
+    // and report, if processes are already running.
+    // We do this to avoid collisions.
 
     // Provide a modal dialog with checkboxes for all running processes
     // The user might then select the processes to Leave Running or Shutdown.
@@ -603,7 +604,7 @@ void MainWindow::checkAlreadyActiveDaemons()
         QGroupBox *groupBox = new QGroupBox(tr("Running Processes"));
         QVBoxLayout *vbox = new QVBoxLayout;
 
-        // iterate over proccesFoundList and draw a process shutdown checkbox for each one
+        // iterate over proccesFoundList and draw a "process shutdown" checkbox for each one
         int c = processesFoundList.size();
         for(int i = 0; i < c; ++i) {
            // create checkbox
