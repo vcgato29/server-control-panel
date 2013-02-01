@@ -1,4 +1,4 @@
 build/
-
+Makefile*
 *.*~
 *.pro.user
