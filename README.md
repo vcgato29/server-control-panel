@@ -34,13 +34,13 @@ by adding the Qt installation folder, e.g. "c:\Qt-4.8.0".
 
 #### Build the Qt Library
 
-Go to the installation folder, e.g. "c:\Qt-4.8.0" and run "configure".
+Go to the installation folder, e.g. "c:\Qt-4.8.0" and run "configure" followed by "mingw32-make".
 
 Type configure -help to get a list of all available options.
 The Configuration Options for Qt page gives a brief overview of these.
 
 See http://qt-project.org/doc/qt-4.8/configure-options.html
-  
+
 #### Build Qt Debug Libraries
 
 You have to build the libraries to be able to link successfully.
