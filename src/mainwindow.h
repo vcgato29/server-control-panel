@@ -84,21 +84,20 @@ public slots:
 private:
     Ui::MainWindow *ui;
 
+    QSystemTrayIcon *trayIcon;
+
     QAction *minimizeAction;
     QAction *restoreAction;
     QAction *quitAction;
 
     void checkAlreadyActiveDaemons();
-
     void createActions();
     void createTrayIcon();
     void startMonitoringDaemonProcesses();
 
-    /// Returns full path to project folder (appPath + www).
+    // Returns full path to project folder (appPath + www).
     QString getProjectFolder() const;
     void showPushButtonsOnlyForInstalledTools();
-
-    QSystemTrayIcon *trayIcon;
 
 private slots:
 
