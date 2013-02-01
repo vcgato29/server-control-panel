@@ -21,7 +21,18 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 
   http://releases.qt-project.org/qtcreator/2.6.1/qt-creator-windows-opensource-2.6.1.exe
   
-### Building the Qt Debug Libraries
+### Installation Steps
+  
+http://qt-project.org/doc/qt-4.8/install-win.html
+
+#### Add Qt folder to PATH
+
+In order to build and use Qt, the PATH environment variable needs to be extended
+by adding the Qt installation folder, e.g. "c:\qt-4.8.0".
+
+* Control Panel -> System -> Advanced -> Environment variables  
+  
+#### Build Qt Debug Libraries
 
 You have to build the libraries to be able to link successfully.
 
