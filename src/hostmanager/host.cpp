@@ -110,7 +110,7 @@ void Host::SetHosts(QList<Host*> listHosts){
 
     SHELLEXECUTEINFO shExecInfo;
     shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-    shExecInfo.fMask = NULL;
+    shExecInfo.fMask = 0; // NULL;
     shExecInfo.hwnd = NULL;
     shExecInfo.lpVerb = L"runas";
     shExecInfo.lpFile = L"cmd.exe";
