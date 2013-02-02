@@ -1,7 +1,7 @@
 #
 #    WPN-XM Server Control Panel
 #
-#    WPN-XM SCP is a tool to manage Nginx, PHP and MariaDb daemons under windows.
+#    WPN-XM SCP is a tool to manage Nginx, PHP and MariaDB daemons under Windows.
 #    It's a fork of Easy WEMP originally written by Yann Le Moigne and (c) 2010.
 #    WPN-XM SCP is written by Jens-Andre Koch and (c) 2011 - onwards.
 #
@@ -21,9 +21,13 @@
 #    along with WPN-XM SCP. If not, see <http://www.gnu.org/licenses/>.
 #
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
+
+CONFIG += qt static
+# console warn-on
+
 # this define disables qDebug() output to console
 #DEFINES += QT_NO_DEBUG_OUTPUT
-# Header files
+
 HEADERS += src/version.h \
            src/main.h \
            src/tray.h \
@@ -35,7 +39,7 @@ HEADERS += src/version.h \
            src/configurationdialog.h \
            src/settings.h \
            src/settingsTable.h
-# Source files
+
 SOURCES += src/main.cpp \
            src/tray.cpp \
            src/mainwindow.cpp \
@@ -46,26 +50,31 @@ SOURCES += src/main.cpp \
            src/configurationdialog.cpp \
            src/settings.cpp \
            src/settingsTable.cpp
-# Resource file(s)
+
 RESOURCES += src/resources/Resources.qrc
 RC_FILE = src/resources/appico.rc
-OTHER_FILES += appico.rc
+OTHER_FILES += src/resources/appico.rc
 FORMS += src/mainwindow.ui \
          src/configurationdialog.ui
 
-DESTDIR = bin
-release:TARGET = wpnxm-scp
-# change the name of the binary, if it is build in debug mode
-build_pass:CONFIG(debug, debug|release):TARGET = wpnxm-scp-debug
+# Build destination
+release: DESTDIR = build/release
+debug:   DESTDIR = build/debug
 
-CONFIG += qt static staticlib
-# console warn-on
+OBJECTS_DIR = $$DESTDIR/.obj
+MOC_DIR = $$DESTDIR/.moc
+RCC_DIR = $$DESTDIR/.qrc
+UI_DIR = $$DESTDIR/.ui
+
+# Binary name
+release:TARGET = wpnxm-scp
+debug:TARGET = wpnxm-scp-debug
 
 static {                                      # everything below takes effect with CONFIG += static
     message("~~~ static build ~~~")           # this is for information, that the static build is done
     CONFIG += static
     CONFIG += staticlib                       # this is needed if you create a static library, not a static executable
     DEFINES += STATIC
-    win32: TARGET = $$join(TARGET,,,_static)  # this appends _static to the exe, so you can seperate static build from non static build
+    win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
     QMAKE_LFLAGS *= -static -static-libgcc -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
 }
