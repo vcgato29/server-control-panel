@@ -202,7 +202,7 @@ void Tray::goToReportIssue()
 
 void Tray::goToWebsiteHelp()
 {
-    QDesktopServices::openUrl(QUrl("http://wpn-xm.org/"));
+    QDesktopServices::openUrl(QUrl("https://github.com/WPN-XM/WPN-XM/wiki/Using-the-Server-Control-Panel"));
 }
 
 //*
