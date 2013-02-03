@@ -20,6 +20,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with WPN-XM SCP. If not, see <http://www.gnu.org/licenses/>.
 #
+
+message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
+
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
 CONFIG += qt static
@@ -52,26 +55,25 @@ SOURCES += src/main.cpp \
            src/settingsTable.cpp
 
 RESOURCES += src/resources/Resources.qrc
-RC_FILE = src/resources/appico.rc
-OTHER_FILES += src/resources/appico.rc
 FORMS += src/mainwindow.ui \
          src/configurationdialog.ui
 
-# Build destination
-release: DESTDIR = build/release
-debug:   DESTDIR = build/debug
+# Build destination and binary name
+CONFIG(debug, debug|release) {
+     DESTDIR = build/debug
+     TARGET = wpnxm-scp-debug
+ } else {
+     DESTDIR = build/release
+     TARGET = wpnxm-scp
+ }
 
 OBJECTS_DIR = $$DESTDIR/.obj
 MOC_DIR = $$DESTDIR/.moc
 RCC_DIR = $$DESTDIR/.qrc
 UI_DIR = $$DESTDIR/.ui
 
-# Binary name
-release:TARGET = wpnxm-scp
-debug:TARGET = wpnxm-scp-debug
-
 static {                                      # everything below takes effect with CONFIG += static
-    message("~~~ static build ~~~")           # this is for information, that the static build is done
+    message("~~~ Static Build ~~~")           # this is for information, that the static build is done
     CONFIG += static
     CONFIG += staticlib                       # this is needed if you create a static library, not a static executable
     DEFINES += STATIC
