@@ -528,7 +528,7 @@ void MainWindow::openLogMariaDB()
 
 void MainWindow::openHelpDialog()
 {
-
+    QDesktopServices::openUrl(QUrl("https://github.com/WPN-XM/WPN-XM/wiki/Using-the-Server-Control-Panel"));
 }
 
 void MainWindow::openAboutDialog()
