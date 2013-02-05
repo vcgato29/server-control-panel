@@ -31,32 +31,39 @@ CONFIG += qt static
 # this define disables qDebug() output to console
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
-HEADERS += src/version.h \
-           src/main.h \
-           src/tray.h \
-           src/mainwindow.h \
-           src/hostmanager/host.h \
-           src/hostmanager/hosttablemodel.h \
-           src/hostmanager/adddialog.h \
-           src/hostmanager/hostmanagerdialog.h \
-           src/configurationdialog.h \
-           src/settings.h \
-           src/settingsTable.h
+HEADERS += \
+    src/version.h \
+    src/main.h \
+    src/tray.h \
+    src/mainwindow.h \
+    src/hostmanager/host.h \
+    src/hostmanager/hosttablemodel.h \
+    src/hostmanager/adddialog.h \
+    src/hostmanager/hostmanagerdialog.h \
+    src/configurationdialog.h \
+    src/settings.h \
+    src/settingsTable.h
 
-SOURCES += src/main.cpp \
-           src/tray.cpp \
-           src/mainwindow.cpp \
-           src/hostmanager/host.cpp \
-           src/hostmanager/hosttablemodel.cpp \
-           src/hostmanager/adddialog.cpp \
-           src/hostmanager/hostmanagerdialog.cpp \
-           src/configurationdialog.cpp \
-           src/settings.cpp \
-           src/settingsTable.cpp
+SOURCES += \
+    src/main.cpp \
+    src/tray.cpp \
+    src/mainwindow.cpp \
+    src/hostmanager/host.cpp \
+    src/hostmanager/hosttablemodel.cpp \
+    src/hostmanager/adddialog.cpp \
+    src/hostmanager/hostmanagerdialog.cpp \
+    src/configurationdialog.cpp \
+    src/settings.cpp \
+    src/settingsTable.cpp
 
-RESOURCES += src/resources/Resources.qrc
-FORMS += src/mainwindow.ui \
-         src/configurationdialog.ui
+RESOURCES += \
+    src/resources/resources.qrc
+
+#win32:RC_FILE = src/resources/apico.rc
+
+FORMS += \
+    src/mainwindow.ui \
+    src/configurationdialog.ui
 
 # Build destination and binary name
 CONFIG(debug, debug|release) {
