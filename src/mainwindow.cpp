@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // The tray icon is an instance of the QSystemTrayIcon class.
     // To check whether a system tray is present on the user's desktop,
     // we call the static QSystemTrayIcon::isSystemTrayAvailable() function.
-    if (false == QSystemTrayIcon::isSystemTrayAvailable())
+    if ( false == QSystemTrayIcon::isSystemTrayAvailable())
     {
         QMessageBox::critical(0, APP_NAME, tr("You don't have a system tray."));
         QApplication::exit(1);
@@ -437,7 +437,7 @@ void MainWindow::goToDonate()
 
 void MainWindow::openToolPHPInfo()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/phpinfo.php"));
+    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=phpinfo"));
 }
 
 void MainWindow::openToolPHPMyAdmin()
@@ -481,10 +481,9 @@ QString MainWindow::getProjectFolder() const
 
 void MainWindow::openConfigurationDialog()
 {
-    /*ConfigurationDialog cfgDlg;
-    cfgDlg.setWindowTitle("Server Control Panel - Configuration");
-
-    cfgDlg.exec();*/
+    ConfigurationDialog cfgDlg;
+    cfgDlg.setWindowTitle("WPN-XM Server Control Panel - Configuration");
+    cfgDlg.exec();
 }
 
 void MainWindow::openConfigurationDialogNginx()
