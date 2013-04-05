@@ -27,12 +27,22 @@
 
 // global QT includes
 #include <QtGui>
+#include <QtCore>
+#include <QCoreApplication>
 
 // main method
 int main(int argc, char * argv[])
 {
-    Q_INIT_RESOURCE(Resources);
+    Q_INIT_RESOURCE(resources);
 
+    // if CLI args are found, the application reacts as a non-GUI (console) application
+    if (argc > 1) { // the first arg would be the executable itself
+        QCoreApplication app(argc, argv, false);
+        handleCommandLineArguments(app.arguments());
+        return app.exec();
+    }
+
+    // non-CLI - run as a normal QtGUI application
     QApplication app(argc, argv);
 
     // Single Instance Check
@@ -78,4 +88,81 @@ void exitIfAlreadyRunning()
 
           exit(0);
       }
+}
+
+void handleCommandLineArguments(QStringList args)
+{
+    QString service;
+    QString command;
+
+    qDebug() << args;
+
+    /*if (QCoreApplication::arguments().count() < 2) {
+        printf("Error. Please provide valid parameters...\n");
+        printHelpText();
+    } else */
+    if ((QCoreApplication::arguments().at(1) == "-h") || (QCoreApplication::arguments().at(1) == "--help")) {
+        printHelpText();
+    } else if ((QCoreApplication::arguments().at(1) == "-s") || (QCoreApplication::arguments().at(1) == "--service")) {
+
+        // handle "scp.exe --service nginx start"
+        if (QCoreApplication::arguments().count() < 3) {
+            printf("Error. No service specfied...");
+            printHelpText();
+        } else if (QCoreApplication::arguments().count() == 3) {
+            service = QCoreApplication::arguments().at(3);
+
+        } else if (QCoreApplication::arguments().count() < 4) {
+            printf("Error. No command specfied...");
+            printHelpText();
+        } else if (QCoreApplication::arguments().count() == 4) {
+            command = QCoreApplication::arguments().at(4);
+
+        } else if (QCoreApplication::arguments().count() > 5) {
+            printf("Error. Too many arguments for -s (--service) <daemon> <command>.");
+            printHelpText();
+        }
+
+    } else {
+        printf("Error. Please provide valid argument...\n");
+        printHelpText();
+    }
+
+    // definition of known CLI arguments as regular expressions
+    QRegExp rxArgStart("--start\\s(\\S+)");
+    QRegExp rxArgStop("--stop\\s(\\S+)");
+
+    // loop over string list and check if we have some matches
+    for (int i = 1; i < args.size(); ++i) {
+
+        if (rxArgStart.indexIn(args.at(i)) != -1 ) {
+            qDebug() << i << ":" << args.at(i) << "Starting " << rxArgStart.capturedTexts();
+        }
+        else if (rxArgStop.indexIn(args.at(i)) != -1 ) {
+            qDebug() << i << ":" << args.at(i) << "Stopping " << rxArgStop.capturedTexts();
+        }
+        else {
+            qDebug() << "Uknown arg:" << args.at(i);
+        }
+
+    }
+}
+
+void printHelpText()
+{
+      QString usage = "\n"
+    "Usage: " + QCoreApplication::arguments().at(0) + " [option]\n"
+    "\n"
+    "Options:\n"
+      "-v or --version                      Prints the version \n"
+      "-h or --help                         Prints this help message \n"
+      "-s or --service <daemon> <command>   Executes <command> on <daemon> \n"
+         "    [<daemon>]: The name of a daemon, e.g. nginx, mariadb, memcached, mongodb \n"
+         "    [<command>]: The command to execute, e.g. start, stop, restart \n"
+         "    Ports specified in \"wpnxm.ini\" will be used. \n"
+    "\n";
+
+   qDebug() << "Unkown:" << usage;
+   //printf(usage);
+   exit(-1);
 }

@@ -27,8 +27,9 @@
 // global includes
 #include <QtGui>
 
-// declare interfaces
 void exitIfAlreadyRunning();
+void handleCommandLineArguments(QStringList args);
+void printHelpText();
 
 class Main : public QObject
 {
