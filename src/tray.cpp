@@ -242,14 +242,16 @@ void Tray::startNginx()
     }
 
     // start daemon
-    processNginx->start(cfgNginxDir+NGINX_EXEC);
+    //qDebug() << cfgNginxDir+NGINX_EXEC << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
+    processNginx->start(cfgNginxDir+NGINX_EXEC, QStringList() << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf");
 }
 
 void Tray::stopNginx()
 {
     QProcess processStopNginx;
     processStopNginx.setWorkingDirectory(cfgNginxDir);
-    processStopNginx.start(cfgNginxDir+NGINX_EXEC, QStringList() << "-s" << "stop");
+    //qDebug() << cfgNginxDir+NGINX_EXEC << "-s" << "stop";
+    processStopNginx.start(cfgNginxDir+NGINX_EXEC, QStringList() << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf" << "-s" << "stop"); // fast shutdown
     processStopNginx.waitForFinished();
 }
 
@@ -257,7 +259,7 @@ void Tray::reloadNginx()
 {
     QProcess processStopNginx;
     processStopNginx.setWorkingDirectory(cfgNginxDir);
-    processStopNginx.start(cfgNginxDir+NGINX_EXEC, QStringList() << "-s" << "reload");
+    processStopNginx.start(cfgNginxDir+NGINX_EXEC, QStringList() << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf" << "-s" << "reload");
     processStopNginx.waitForFinished();
 }
 
