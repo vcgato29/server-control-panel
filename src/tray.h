@@ -80,6 +80,16 @@ public slots:
         void stopMariaDB();
         void restartMariaDB();
 
+        // MongoDB Action Slots
+        void startMongoDB();
+        void stopMongoDB();
+        void restartMongoDB();
+
+        // Memcached Action Slots
+        void startMemcached();
+        void stopMemcached();
+        void restartMemcached();
+
         // Config Action Slots
         void openHostManagerDialog();
         void openConfigurationDialog();
@@ -99,10 +109,14 @@ public slots:
         void nginxStateChanged(QProcess::ProcessState state);
         void phpStateChanged(QProcess::ProcessState state);
         void mariaDBStateChanged(QProcess::ProcessState state);
+        void mongoDBStateChanged(QProcess::ProcessState state);
+        void memcachedStateChanged(QProcess::ProcessState state);
 
         void nginxProcessError(QProcess::ProcessError error);
         void phpProcessError(QProcess::ProcessError error);
         void mariaDBProcessError(QProcess::ProcessError error);
+        void mongoDBProcessError(QProcess::ProcessError error);
+        void memcachedProcessError(QProcess::ProcessError error);
 
 signals:
         // following signal is connected to MainWindow::setLabelStatusActive()
@@ -112,39 +126,6 @@ signals:
 private:
         QTimer* timer;
 
-        // The settings manager.
-        Settings m_settings;
-
-        bool bAutostartDaemons;
-
-        // Global
-        QString cfgLogsDir;
-
-        // PHP
-        QString cfgPhpDir;
-#define PHPCGI_EXEC "/php-cgi.exe"
-        QString cfgPhpConfig;
-        QString cfgPhpFastCgiHost;
-        QString cfgPhpFastCgiPort;
-
-        // NGINX
-        QString cfgNginxDir;
-#define NGINX_EXEC "/nginx.exe"
-        QString cfgNginxConfig;
-        QString cfgNginxSites;
-
-        // MySQL
-        QString cfgMariaDBDir;
-#define MARIADB_EXEC "/mysqld.exe"
-#define MARIADB_CLIENT_EXEC "/mysql.exe"
-        QString cfgMariaDBConfig;
-        QString cfgMariaDBClientExec;
-
-        // Process Monitoring
-        QProcess* processNginx;
-        QProcess* processPhp;
-        QProcess* processMariaDB;
-
         // The Tray Menu
         void createTrayMenu();
         QMenu* trayMenu;
@@ -152,6 +133,8 @@ private:
         QMenu* nginxStatusSubmenu;
         QMenu* phpStatusSubmenu;
         QMenu* mariaDBStatusSubmenu;
+        QMenu* mongoDBStatusSubmenu;
+        QMenu* memcachedStatusSubmenu;
 
         void initializeConfiguration();
         void startMonitoringDaemonProcesses();

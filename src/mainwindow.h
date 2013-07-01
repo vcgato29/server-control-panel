@@ -45,10 +45,56 @@ public:
 
     void setVisible(bool visible);
 
+    QString getPHPVersion();
     QString getNginxVersion();
     QString getMariaVersion();
-    QString getPHPVersion();
+    QString getMongoVersion();
+    QString getMemcachedVersion();
+
     QString parseVersionNumber(QString stringWithVersion);
+
+    // The settings manager.
+    Settings settings;
+
+    bool bAutostartDaemons;
+
+    // Global
+    QString cfgLogsDir;
+
+    // PHP
+    QString cfgPhpDir;
+#define PHPCGI_EXEC "/php-cgi.exe"
+    QString cfgPhpConfig;
+    QString cfgPhpFastCgiHost;
+    QString cfgPhpFastCgiPort;
+
+    // NGINX
+    QString cfgNginxDir;
+#define NGINX_EXEC "/nginx.exe"
+    QString cfgNginxConfig;
+    QString cfgNginxSites;
+
+    // MySQL
+    QString cfgMariaDBDir;
+#define MARIADB_EXEC "/mysqld.exe"
+#define MARIADB_CLIENT_EXEC "/mysql.exe"
+    QString cfgMariaDBConfig;
+    QString cfgMariaDBClientExec;
+
+    // MongoDB
+    QString cfgMongoDBDir;
+#define MONGODB_EXEC "/mongod.exe"
+
+    // Memcached
+    QString cfgMemcachedDir;
+#define MEMCACHED_EXEC "/memcached.exe"
+
+    // Process Monitoring
+    QProcess* processNginx;
+    QProcess* processPhp;
+    QProcess* processMariaDB;
+    QProcess* processMongoDB;
+    QProcess* processMemcached;
 
 public slots:
 

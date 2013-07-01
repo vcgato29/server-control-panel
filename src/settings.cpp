@@ -32,11 +32,12 @@ const QString appSettingsFileName("wpn-xm.ini");
 
 Settings::Settings(QObject *parent) :
     SettingsTable(parent)
-{}
+{
+}
 
-// destructor
 Settings::~Settings()
-{}
+{
+}
 
 void Settings::saveSettings() const
 {

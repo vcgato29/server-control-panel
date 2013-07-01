@@ -26,6 +26,7 @@
 #include "ui_mainwindow.h"
 #include "tray.h"
 #include "configurationdialog.h"
+#include "settings.h"
 
 // Global includes
 #include <QApplication>
@@ -46,10 +47,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // disable Maximize functionality
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
     setFixedWidth(620);
-    setFixedHeight(320);
+    setFixedHeight(370);
 
     // overrides the window title defined in mainwindow.ui
     setWindowTitle(APP_NAME_AND_VERSION);
+
+    settings = new Settings();
+    settings->readSettings();
 
     checkAlreadyActiveDaemons();
 
@@ -57,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_Nginx_Status->setEnabled(false);
     ui->label_PHP_Status->setEnabled(false);
     ui->label_MariaDb_Status->setEnabled(false);
+    ui->label_Memcached_Status->setEnabled(false);
+    ui->label_MongoDb_Status->setEnabled(false);
 
     createActions();
 
@@ -75,12 +81,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_Nginx_Version->setText( getNginxVersion() );
     ui->label_PHP_Version->setText( getPHPVersion() );
     ui->label_MariaDb_Version->setText( getMariaVersion() );
+    ui->label_MongoDB_Version->setText( getMongoVersion() );
+    ui->label_Memcached_Version->setText( getMemcachedVersion() );
 
     // hardcode ports for v0.3.0
     // @todo these ports need to be read from wpnxm.ini
     ui->label_Nginx_Port->setText("80");
     ui->label_PHP_Port->setText("9100");
     ui->label_MariaDb_Port->setText("3306");
+    ui->label_MongoDB_Port->setText("123");
+    ui->label_Memcached_Port->setText("123");
 
     showPushButtonsOnlyForInstalledTools();
     enableToolsPushButtons(false);
@@ -118,11 +128,15 @@ void MainWindow::createTrayIcon()
     connect(ui->pushButton_StartNginx, SIGNAL(clicked()), trayIcon, SLOT(startNginx()));
     connect(ui->pushButton_StartPHP, SIGNAL(clicked()), trayIcon, SLOT(startPhp()));
     connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), trayIcon, SLOT(startMariaDB()));
+    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), trayIcon, SLOT(startMongoDB()));
+    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), trayIcon, SLOT(startMemcached()));
 
-     // Connect Actions for Status Table - Column Action - Stop
+    // Connect Actions for Status Table - Column Action (Stop)
     connect(ui->pushButton_StopNginx, SIGNAL(clicked()), trayIcon, SLOT(stopNginx()));
     connect(ui->pushButton_StopPHP, SIGNAL(clicked()), trayIcon, SLOT(stopPhp()));
     connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), trayIcon, SLOT(stopMariaDB()));
+    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), trayIcon, SLOT(stopMongoDB()));
+    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), trayIcon, SLOT(stopMemcached()));
 
      // Connect Actions for Status Table - AllDaemons Start, Stop
     connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), trayIcon, SLOT(startAllDaemons()));
@@ -130,6 +144,42 @@ void MainWindow::createTrayIcon()
 
     // finally: show the tray icon
     trayIcon->show();
+}
+
+void Tray::initializeConfiguration()
+{
+    // if the cfg file doesn't already exist, it is created
+    QSettings globalSettings("wpnxm.ini", QSettings::IniFormat, this);
+
+    // check if reading settings was successful
+    if(globalSettings.status() != QSettings::NoError)
+    {
+        QMessageBox::critical(0, tr("Settings"), tr("Can't read settings."));
+        exit(1);
+    }
+
+    /*
+     * Declation of Default Settings for WPN-XM Server Control Panel
+     */
+    bAutostartDaemons       = globalSettings.value("global/autostartdaemons", true).toBool();
+    cfgLogsDir              = globalSettings.value("path/logs", "/logs").toString();
+
+    cfgPhpDir               = globalSettings.value("path/php", "./bin/php").toString();
+    cfgPhpConfig            = globalSettings.value("php/config", "./bin/php/php.ini").toString();
+    cfgPhpFastCgiHost       = globalSettings.value("php/fastcgi-host", "localhost").toString();
+    // use port 9100 for php-cgi to avoid collision with xdebug on port 9000
+    cfgPhpFastCgiPort       = globalSettings.value("php/fastcgi-port", "9100").toString();
+
+    cfgNginxDir             = globalSettings.value("path/nginx", "./bin/nginx").toString();
+    cfgNginxConfig          = globalSettings.value("nginx/config", "./bin/nginx/conf/nginx.conf").toString();
+    cfgNginxSites           = globalSettings.value("nginx/sites", "/www").toString();
+
+    cfgMariaDBDir           = globalSettings.value("path/mariadb", "./bin/mariadb/bin").toString();
+    cfgMariaDBConfig        = globalSettings.value("mariadb/config", "./bin/mariadb/my.ini").toString();
+
+    cfgMongoDBDir           = globalSettings.value("path/mongodb", "./bin/mongodb/bin").toString();
+
+    cfgMemcachedDir         = globalSettings.value("path/memcached", "./bin/memcached/bin").toString();
 }
 
 void MainWindow::createActions()
@@ -327,6 +377,15 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
     {
         ui->label_MariaDb_Status->setEnabled(enabled);
     }
+
+    if(label == "mongodb")
+    {
+        ui->label_MongoDb_Status->setEnabled(enabled);
+    }
+    if(label == "memcached")
+    {
+        ui->label_Memcached_Status->setEnabled(enabled);
+    }
 }
 
 QString MainWindow::getNginxVersion()
@@ -368,15 +427,41 @@ QString MainWindow::getMariaVersion()
     return parseVersionNumber(p_stdout.mid(15));
 }
 
+QString MainWindow::getMongoVersion()
+{
+    QProcess* processMongoDB;
+    processMongoDB = new QProcess(this);
+    processMongoDB->setWorkingDirectory(cfgMongoDBDir);
+    processMongoDB->start("./mongod", QStringList() << "--version");
+    processMongoDB->waitForFinished(-1);
+
+    QString p_stdout = processMongoDB->readAllStandardOutput();
+
+    return parseVersionNumber(p_stdout.mid(22));
+}
+
+QString MainWindow::getMemcachedVersion()
+{
+    QProcess* processMemcached;
+    processMemcached = new QProcess(this);
+    processMemcached->setWorkingDirectory(cfgMemcachedDir);
+    processMemcached->start("./memcached", QStringList() << "-h");
+    processMemcached->waitForFinished(-1);
+
+    QString p_stdout = processMemcached->readAllStandardOutput();
+
+    return parseVersionNumber(p_stdout.mid(10));
+}
+
 QString MainWindow::getPHPVersion()
 {
     /*QProcess* processPhp;
 
     processPhp = new QProcess(this);
     process.setProcessChannelMode(QProcess::MergedChannels);
-    //processPhp->setWorkingDirectory(cfgPHPDir);
-    //processPhp->start(cfgPHPDir+cfgPHPExec, QStringList() << "-v");
-    processPhp->waitForFinished(-1);
+    processPhp->setWorkingDirectory(cfgPHPDir);
+    processPhp->start(cfgPHPDir+cfgPHPExec, QStringList() << "-v");
+    processPhp->waitForFinished(-1);*/
 
     //QString p_stdout = processPhp->readAllStandardOutput();;*/
 
@@ -582,7 +667,8 @@ void MainWindow::checkAlreadyActiveDaemons()
                       << "apache"
                       << "memcached"
                       << "mysqld"
-                      << "php-cgi";
+                      << "php-cgi"
+                      << "mongod";
 
     // c) init a list for found processes
     QStringList processesFoundList;

@@ -26,7 +26,7 @@ message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
 CONFIG += qt static
-# console warn-on
+#console warn-on
 
 # this define disables qDebug() output to console
 #DEFINES += QT_NO_DEBUG_OUTPUT
@@ -63,7 +63,8 @@ RESOURCES += \
 
 FORMS += \
     src/mainwindow.ui \
-    src/configurationdialog.ui
+    src/configurationdialog.ui \
+    src/settingsDialog.ui
 
 # Build destination and binary name
 CONFIG(debug, debug|release) {

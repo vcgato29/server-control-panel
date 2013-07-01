@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>320</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <x>10</x>
       <y>70</y>
       <width>471</width>
-      <height>141</height>
+      <height>201</height>
      </rect>
     </property>
     <property name="title">
@@ -40,11 +40,11 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>461</width>
-       <height>123</height>
+       <width>451</width>
+       <height>181</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="Daemon_and_VersionNumber">
+     <layout class="QGridLayout" name="Daemon_and_VersionNumber" rowstretch="0,0,0,0,0,0" columnstretch="0,0,0,0,0,0,0,0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
@@ -54,46 +54,26 @@
       <property name="spacing">
        <number>10</number>
       </property>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label_Nginx_Port">
-        <property name="text">
-         <string>TextLabel</string>
+      <item row="1" column="5">
+       <widget class="QPushButton" name="pushButton_ShowLog_NginxAccess">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="toolTip">
+         <string>Opens Nginx Access Log</string>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="label_PHP_Port">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="label_MariaDb_Port">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_MariaDb_Status">
         <property name="text">
          <string/>
         </property>
-        <property name="pixmap">
-         <pixmap resource="resources/Resources.qrc">:/status_run</pixmap>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/report.png</normaloff>:/report.png</iconset>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -103,23 +83,40 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources/Resources.qrc">:/status_run</pixmap>
+         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_Nginx_Status">
-        <property name="enabled">
-         <bool>true</bool>
+      <item row="1" column="7">
+       <widget class="QPushButton" name="pushButton_StopNginx">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Stop Nginx</string>
         </property>
         <property name="text">
          <string/>
         </property>
-        <property name="pixmap">
-         <pixmap resource="resources/Resources.qrc">:/status_run</pixmap>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_stop</normaloff>:/action_stop</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_PHP_Port">
+        <property name="text">
+         <string>TextLabel</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -168,81 +165,10 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="1" column="5">
-       <widget class="QPushButton" name="pushButton_ShowLog_NginxAccess">
-        <property name="maximumSize">
-         <size>
-          <width>32</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Opens Nginx Access Log</string>
-        </property>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_MariaDb_Port">
         <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/report.png</normaloff>:/report.png</iconset>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QLabel" name="label_Nginx_Version">
-        <property name="text">
-         <string>vNginx</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureNginx</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="3">
-       <widget class="QLabel" name="label_MariaDb_Version">
-        <property name="text">
-         <string>vMariaDb</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureMariaDB</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_Status">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Status</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_Port">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Port</string>
+         <string>TextLabel</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -265,6 +191,117 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_Status">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Status</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="6">
+       <widget class="QPushButton" name="pushButton_ShowLog_PHP">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Opens PHP Error Log</string>
+        </property>
+        <property name="text">
+         <string notr="true"/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/report--exclamation.png</normaloff>:/report--exclamation.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="6">
+       <widget class="QPushButton" name="pushButton_ShowLog_NginxError">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Opens Nginx Error Log</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/report--exclamation.png</normaloff>:/report--exclamation.png</iconset>
+        </property>
+        <property name="shortcut">
+         <string notr="true"/>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QPushButton" name="pushButton_ConfigureNginx">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLabel" name="label_PHP_Version">
+        <property name="text">
+         <string>vPHP</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>pushButton_ConfigureNginx</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QLabel" name="label_MariaDb_Version">
+        <property name="text">
+         <string>vMariaDb</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>pushButton_ConfigureMariaDB</cstring>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_Daemon">
         <property name="font">
@@ -275,6 +312,22 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="text">
          <string>Daemon</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_Port">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Port</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -297,31 +350,60 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="1" column="8">
-       <widget class="QPushButton" name="pushButton_StartNginx">
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_Config">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Config</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_Nginx_Status">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="QPushButton" name="pushButton_ConfigurePHP">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="maximumSize">
          <size>
           <width>32</width>
           <height>16777215</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>Start Nginx</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
         <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/action_run</normaloff>:/action_run</iconset>
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
         </property>
         <property name="flat">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="1" column="7">
-       <widget class="QPushButton" name="pushButton_StopNginx">
+      <item row="2" column="7">
+       <widget class="QPushButton" name="pushButton_StopPHP">
         <property name="maximumSize">
          <size>
           <width>32</width>
@@ -329,13 +411,13 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop Nginx</string>
+         <string>Stop PHP</string>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="resources/Resources.qrc">
+         <iconset resource="resources/resources.qrc">
           <normaloff>:/action_stop</normaloff>:/action_stop</iconset>
         </property>
         <property name="flat">
@@ -359,29 +441,6 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="2" column="8">
-       <widget class="QPushButton" name="pushButton_StartPHP">
-        <property name="maximumSize">
-         <size>
-          <width>32</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Start PHP</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/action_run</normaloff>:/action_run</iconset>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="8">
        <widget class="QPushButton" name="pushButton_StartMariaDb">
         <property name="maximumSize">
@@ -397,7 +456,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="resources/Resources.qrc">
+         <iconset resource="resources/resources.qrc">
           <normaloff>:/action_run</normaloff>:/action_run</iconset>
         </property>
         <property name="flat">
@@ -405,8 +464,8 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="2" column="7">
-       <widget class="QPushButton" name="pushButton_StopPHP">
+      <item row="2" column="8">
+       <widget class="QPushButton" name="pushButton_StartPHP">
         <property name="maximumSize">
          <size>
           <width>32</width>
@@ -414,40 +473,43 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop PHP</string>
+         <string>Start PHP</string>
         </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/action_stop</normaloff>:/action_stop</iconset>
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_run</normaloff>:/action_run</iconset>
         </property>
         <property name="flat">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="3" column="7">
-       <widget class="QPushButton" name="pushButton_StopMariaDb">
-        <property name="maximumSize">
-         <size>
-          <width>32</width>
-          <height>16777215</height>
-         </size>
+      <item row="1" column="3">
+       <widget class="QLabel" name="label_Nginx_Version">
+        <property name="text">
+         <string>vNginx</string>
         </property>
-        <property name="toolTip">
-         <string>Stop MariaDb</string>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
+        <property name="buddy">
+         <cstring>pushButton_ConfigureNginx</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_MariaDb_Status">
         <property name="text">
          <string/>
         </property>
-        <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/action_stop</normaloff>:/action_stop</iconset>
+        <property name="pixmap">
+         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
         </property>
-        <property name="flat">
-         <bool>true</bool>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -463,106 +525,11 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="icon">
-         <iconset resource="resources/Resources.qrc">
+         <iconset resource="resources/resources.qrc">
           <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
         </property>
         <property name="flat">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="4">
-       <widget class="QPushButton" name="pushButton_ConfigurePHP">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>32</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
-       <widget class="QPushButton" name="pushButton_ConfigureNginx">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>32</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QLabel" name="label_Config">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Config</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="6">
-       <widget class="QPushButton" name="pushButton_ShowLog_NginxError">
-        <property name="maximumSize">
-         <size>
-          <width>32</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Opens Nginx Error Log</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/report--exclamation.png</normaloff>:/report--exclamation.png</iconset>
-        </property>
-        <property name="shortcut">
-         <string notr="true"/>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QLabel" name="label_PHP_Version">
-        <property name="text">
-         <string>vPHP</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureNginx</cstring>
         </property>
        </widget>
       </item>
@@ -584,7 +551,7 @@ p, li { white-space: pre-wrap; }
          <string notr="true"/>
         </property>
         <property name="icon">
-         <iconset resource="resources/Resources.qrc">
+         <iconset resource="resources/resources.qrc">
           <normaloff>:/report--exclamation.png</normaloff>:/report--exclamation.png</iconset>
         </property>
         <property name="flat">
@@ -592,8 +559,18 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="2" column="6">
-       <widget class="QPushButton" name="pushButton_ShowLog_PHP">
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_Nginx_Port">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="8">
+       <widget class="QPushButton" name="pushButton_StartNginx">
         <property name="maximumSize">
          <size>
           <width>32</width>
@@ -601,17 +578,232 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Opens PHP Error Log</string>
+         <string>Start Nginx</string>
         </property>
         <property name="text">
-         <string notr="true"/>
+         <string/>
         </property>
         <property name="icon">
-         <iconset resource="resources/Resources.qrc">
-          <normaloff>:/report--exclamation.png</normaloff>:/report--exclamation.png</iconset>
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_run</normaloff>:/action_run</iconset>
         </property>
         <property name="flat">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="7">
+       <widget class="QPushButton" name="pushButton_StopMariaDb">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Stop MariaDb</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_stop</normaloff>:/action_stop</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="8">
+       <widget class="QPushButton" name="pushButton_StartMongoDb">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Start MariaDb</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_run</normaloff>:/action_run</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="8">
+       <widget class="QPushButton" name="pushButton_StartMemcached">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Start MariaDb</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_run</normaloff>:/action_run</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="7">
+       <widget class="QPushButton" name="pushButton_StopMongoDb">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Stop MariaDb</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_stop</normaloff>:/action_stop</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="7">
+       <widget class="QPushButton" name="pushButton_StopMemcached">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Stop MariaDb</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/action_stop</normaloff>:/action_stop</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLabel" name="label_mongoDB">
+        <property name="text">
+         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;MongoDB&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLabel" name="label_memcached">
+        <property name="text">
+         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Memcached&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QLabel" name="label_MongoDB_Version">
+        <property name="text">
+         <string>vMongoDb</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>pushButton_ConfigureMariaDB</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QLabel" name="label_Memcached_Version">
+        <property name="text">
+         <string>vMemcached</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>pushButton_ConfigureMariaDB</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_MongoDB_Port">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="label_Memcached_Port">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_MongoDb_Status">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_Memcached_Status">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -622,7 +814,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>230</y>
+      <y>280</y>
       <width>121</width>
       <height>81</height>
      </rect>
@@ -664,7 +856,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>230</y>
+      <y>280</y>
       <width>341</width>
       <height>81</height>
      </rect>
@@ -780,7 +972,7 @@ p, li { white-space: pre-wrap; }
      <string notr="true"/>
     </property>
     <property name="pixmap">
-     <pixmap resource="resources/Resources.qrc">:/wpnxm-logo-dark-transparent.png</pixmap>
+     <pixmap resource="resources/resources.qrc">:/wpnxm-logo-dark-transparent.png</pixmap>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -823,7 +1015,7 @@ p, li { white-space: pre-wrap; }
         <string>Configuration</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
        </property>
        <property name="iconSize">
@@ -852,7 +1044,7 @@ p, li { white-space: pre-wrap; }
         <string>Help</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/question</normaloff>:/question</iconset>
        </property>
       </widget>
@@ -863,7 +1055,7 @@ p, li { white-space: pre-wrap; }
         <string>About</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/cup.png</normaloff>:/cup.png</iconset>
        </property>
       </widget>
@@ -880,7 +1072,7 @@ p, li { white-space: pre-wrap; }
         <string>Close</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/quit.png</normaloff>:/quit.png</iconset>
        </property>
       </widget>
@@ -891,7 +1083,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>500</x>
-      <y>210</y>
+      <y>260</y>
       <width>111</width>
       <height>101</height>
      </rect>
@@ -1793,7 +1985,7 @@ p, li { white-space: pre-wrap; }
         <string notr="true"/>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/home.png</normaloff>:/home.png</iconset>
        </property>
        <property name="iconSize">
@@ -1828,7 +2020,7 @@ p, li { white-space: pre-wrap; }
         <string notr="true"/>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/mail.png</normaloff>:/mail.png</iconset>
        </property>
        <property name="iconSize">
@@ -1863,7 +2055,7 @@ p, li { white-space: pre-wrap; }
         <string notr="true"/>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/report_bug</normaloff>:/report_bug</iconset>
        </property>
        <property name="iconSize">
@@ -1907,7 +2099,7 @@ p, li { white-space: pre-wrap; }
         <string>Donate</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/Resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/money</normaloff>:/money</iconset>
        </property>
        <property name="iconSize">
@@ -1948,7 +2140,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButton_ConfigureMariaDB</tabstop>
  </tabstops>
  <resources>
-  <include location="resources/Resources.qrc"/>
+  <include location="resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>
