@@ -39,6 +39,10 @@
 #include <QUrl>
 #include <QDebug>
 
+#include <QtNetwork/QNetworkInterface>
+#include <QtNetwork/QNetworkAddressEntry>
+#include <QtNetwork/QHostAddress>
+
 // Constructor
 Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
 {
@@ -138,6 +142,26 @@ void Tray::createTrayMenu()
     mariaDBStatusSubmenu->addSeparator();
     mariaDBStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startMariaDB()), QKeySequence());
     mariaDBStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopMariaDB()), QKeySequence());
+
+    // Add local IPs to the tray menu
+    // important note: this section needs "QT += network" in the .pro file
+    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+    foreach(const QNetworkInterface &interface, interfaces) {
+
+            if(interface.flags().testFlag(QNetworkInterface::IsUp) &&
+               interface.flags().testFlag(QNetworkInterface::IsRunning) &&
+              !interface.flags().testFlag(QNetworkInterface::IsLoopBack))
+            {
+                foreach(const QNetworkAddressEntry &entry, interface.addressEntries()) {
+                        QHostAddress address = entry.ip();
+                        if(address.protocol() == QAbstractSocket::IPv4Protocol) {
+                            QAction *ipAction = trayMenu->addAction("IP: " + address.toString());
+                            ipAction->setFont(QFont("Arial", 9, QFont::Bold));
+                        }
+                }
+            }
+    }
+    trayMenu->addSeparator();
 
     // Build Tray Menu
 
