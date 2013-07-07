@@ -15,7 +15,6 @@
         <file alias="load2">loading2.png</file>
         <file alias="load3">loading3.png</file>
         <file alias="load4">loading4.png</file>
-        <file alias="wpnxm">wpnxm.png</file>
         <file alias="cmd">cmd.png</file>
         <file alias="mysqlworkbench">mysqlworkbench.png</file>
         <file alias="report_bug">bug.png</file>
@@ -30,5 +29,6 @@
         <file alias="cappuccino64">cappuccino-64px.png</file>
         <file alias="money">money-coin.png</file>
         <file alias="question">question.png</file>
+        <file alias="wpnxm">wpnxm.ico</file>
     </qresource>
 </RCC>

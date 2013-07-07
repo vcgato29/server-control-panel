@@ -446,6 +446,7 @@ void Tray::globalStateChanged()
     stateMongoDB = processMongoDB->state();
     stateMemcached = processMemcached->state();
 
+
     if(stateNginx==QProcess::Starting || statePhp==QProcess::Starting || stateMariaDB==QProcess::Starting
             || stateMongoDB ==QProcess::Starting || stateMemcached ==QProcess::Starting)
     {

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>370</height>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <x>10</x>
       <y>70</y>
       <width>471</width>
-      <height>201</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="title">
@@ -35,13 +35,13 @@
     <property name="flat">
      <bool>false</bool>
     </property>
-    <widget class="QWidget" name="formLayoutWidget">
+    <widget class="QWidget" name="formLayoutWidget_2">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>451</width>
-       <height>181</height>
+       <width>458</width>
+       <height>195</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="Daemon_and_VersionNumber" rowstretch="0,0,0,0,0,0" columnstretch="0,0,0,0,0,0,0,0,0">
@@ -284,9 +284,6 @@ p, li { white-space: pre-wrap; }
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureNginx</cstring>
-        </property>
        </widget>
       </item>
       <item row="3" column="3">
@@ -296,9 +293,6 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureMariaDB</cstring>
         </property>
        </widget>
       </item>
@@ -494,9 +488,6 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureNginx</cstring>
         </property>
        </widget>
       </item>
@@ -743,9 +734,6 @@ p, li { white-space: pre-wrap; }
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureMariaDB</cstring>
-        </property>
        </widget>
       </item>
       <item row="5" column="3">
@@ -755,9 +743,6 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>pushButton_ConfigureMariaDB</cstring>
         </property>
        </widget>
       </item>
@@ -814,7 +799,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>280</y>
+      <y>290</y>
       <width>121</width>
       <height>81</height>
      </rect>
@@ -856,7 +841,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>280</y>
+      <y>290</y>
       <width>341</width>
       <height>81</height>
      </rect>
@@ -1083,7 +1068,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>500</x>
-      <y>260</y>
+      <y>270</y>
       <width>111</width>
       <height>101</height>
      </rect>
@@ -2133,11 +2118,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButton_tools_webgrind</tabstop>
   <tabstop>pushButton_OpenProjects_browser</tabstop>
   <tabstop>pushButton_OpenProjects_Explorer</tabstop>
-  <tabstop>pushButton_ConfigureNginx</tabstop>
-  <tabstop>pushButton_ShowLog_NginxAccess</tabstop>
-  <tabstop>pushButton_ShowLog_NginxError</tabstop>
-  <tabstop>pushButton_ConfigurePHP</tabstop>
-  <tabstop>pushButton_ConfigureMariaDB</tabstop>
  </tabstops>
  <resources>
   <include location="resources/resources.qrc"/>

@@ -46,7 +46,7 @@ public:
     SettingsTable(QObject *parent = 0);
 
     /// Copy constructor
-    SettingsTable(const SettingsTable &other);
+    SettingsTable(const SettingsTable &other, QObject *parent);
 
     /// Destructor performs clean up
     virtual ~SettingsTable();

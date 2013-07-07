@@ -24,12 +24,10 @@
 // local includes
 #include "settingsTable.h"
 
-SettingsTable::SettingsTable(QObject *parent)
-    :
-        QObject(parent)
+SettingsTable::SettingsTable(QObject *parent) : QObject(parent)
 {}
 
-SettingsTable::SettingsTable(const SettingsTable &other)
+SettingsTable::SettingsTable(const SettingsTable &other, QObject *parent) : QObject(parent)
 {
     // reparent
     setParent(other.parent());

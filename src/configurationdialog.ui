@@ -55,35 +55,18 @@
     <string>Start All Daemons, when starting WPN-XM SCP?</string>
    </property>
   </widget>
-  <widget class="QTabWidget" name="tabWidget">
+  <widget class="QCheckBox" name="clearLogsOnStartCheckBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>60</x>
      <y>90</y>
-     <width>361</width>
-     <height>231</height>
+     <width>251</width>
+     <height>18</height>
     </rect>
    </property>
-   <widget class="QWidget" name="tab">
-    <attribute name="title">
-     <string>Tab 1</string>
-    </attribute>
-    <widget class="QTableWidget" name="tableWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>331</width>
-       <height>181</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab_2">
-    <attribute name="title">
-     <string>Tab 2</string>
-    </attribute>
-   </widget>
+   <property name="text">
+    <string>Reset daemon log, everytime daemon starts</string>
+   </property>
   </widget>
  </widget>
  <resources/>

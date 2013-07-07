@@ -47,13 +47,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // disable Maximize functionality
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
     setFixedWidth(620);
-    setFixedHeight(370);
+    setFixedHeight(380);
 
     // overrides the window title defined in mainwindow.ui
     setWindowTitle(APP_NAME_AND_VERSION);
 
-    settings = new Settings();
-    settings->readSettings();
+    /*settings = new Settings();
+    settings->readSettings();*/
 
     checkAlreadyActiveDaemons();
 
@@ -427,32 +427,6 @@ QString MainWindow::getMariaVersion()
     return parseVersionNumber(p_stdout.mid(15));
 }
 
-QString MainWindow::getMongoVersion()
-{
-    QProcess* processMongoDB;
-    processMongoDB = new QProcess(this);
-    processMongoDB->setWorkingDirectory(cfgMongoDBDir);
-    processMongoDB->start("./mongod", QStringList() << "--version");
-    processMongoDB->waitForFinished(-1);
-
-    QString p_stdout = processMongoDB->readAllStandardOutput();
-
-    return parseVersionNumber(p_stdout.mid(22));
-}
-
-QString MainWindow::getMemcachedVersion()
-{
-    QProcess* processMemcached;
-    processMemcached = new QProcess(this);
-    processMemcached->setWorkingDirectory(cfgMemcachedDir);
-    processMemcached->start("./memcached", QStringList() << "-h");
-    processMemcached->waitForFinished(-1);
-
-    QString p_stdout = processMemcached->readAllStandardOutput();
-
-    return parseVersionNumber(p_stdout.mid(10));
-}
-
 QString MainWindow::getPHPVersion()
 {
     /*QProcess* processPhp;
@@ -471,6 +445,34 @@ QString MainWindow::getPHPVersion()
     //qDebug() << p_stdout;
 
     return parseVersionNumber(p_stdout);
+}
+
+QString MainWindow::getMongoVersion()
+{
+    /*QProcess* processMongoDB;
+    processMongoDB = new QProcess(this);
+    processMongoDB->setWorkingDirectory(cfgMongoDBDir);
+    processMongoDB->start("./mongod", QStringList() << "--version");
+    processMongoDB->waitForFinished(-1);*/
+
+   /* QString p_stdout = processMongoDB->readAllStandardOutput();*/
+    QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+
+    return parseVersionNumber(p_stdout.mid(3)); //21
+}
+
+QString MainWindow::getMemcachedVersion()
+{
+    /*QProcess* processMemcached;
+    processMemcached = new QProcess(this);
+    processMemcached->setWorkingDirectory(cfgMemcachedDir);
+    processMemcached->start("./memcached", QStringList() << "-h");
+    processMemcached->waitForFinished(-1);*/
+
+    /*QString p_stdout = processMemcached->readAllStandardOutput();*/
+    QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+
+    return parseVersionNumber(p_stdout.mid(2)); //10
 }
 
 QString MainWindow::parseVersionNumber(QString stringWithVersion)

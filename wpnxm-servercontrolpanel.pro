@@ -63,8 +63,7 @@ RESOURCES += \
 
 FORMS += \
     src/mainwindow.ui \
-    src/configurationdialog.ui \
-    src/settingsDialog.ui
+    src/configurationdialog.ui
 
 # Build destination and binary name
 CONFIG(debug, debug|release) {
