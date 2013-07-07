@@ -17,9 +17,9 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 
   http://releases.qt-project.org/qt4/source/qt-win-opensource-4.8.4-mingw.exe
 
-* Qt Creator 2.6.1 for Windows (52 MB)
+* Qt Creator 2.7.0 for Windows (52 MB)
 
-  http://releases.qt-project.org/qtcreator/2.6.1/qt-creator-windows-opensource-2.6.1.exe
+  http://releases.qt-project.org/qtcreator/2.7.0/qt-creator-windows-opensource-2.7.0.exe
 
 * MinGW Extension "make" for w32 (mingw32-make.exe, 1 MB)
 
