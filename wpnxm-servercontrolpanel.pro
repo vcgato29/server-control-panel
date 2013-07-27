@@ -25,8 +25,7 @@ message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
-CONFIG += qt static
-#console warn-on
+CONFIG += qt static console warn-on
 
 QT += network
 
@@ -44,7 +43,8 @@ HEADERS += \
     src/hostmanager/hostmanagerdialog.h \
     src/configurationdialog.h \
     src/settings.h \
-    src/settingsTable.h
+    src/settingsTable.h \
+    src/strings.h
 
 SOURCES += \
     src/main.cpp \
@@ -61,7 +61,12 @@ SOURCES += \
 RESOURCES += \
     src/resources/resources.qrc
 
-#win32:RC_FILE = src/resources/apico.rc
+TRANSLATIONS = languages/en.ts \
+               languages/de.ts
+
+# WINDOWS RC-FILE (sets the executable attributes)
+win32:CONFIG += embed_manifest_exe
+win32:RC_FILE += application_win.rc
 
 FORMS += \
     src/mainwindow.ui \
