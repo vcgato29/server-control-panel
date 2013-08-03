@@ -58,15 +58,13 @@ SOURCES += \
     src/settings.cpp \
     src/settingsTable.cpp
 
+# WINDOWS RC-FILE (sets the executable attributes)
+win32:CONFIG += embed_manifest_exe
+#win32:RC_FILE += src/resources/application_res.rc
+
 RESOURCES += \
     src/resources/resources.qrc
 
-TRANSLATIONS = languages/en.ts \
-               languages/de.ts
-
-# WINDOWS RC-FILE (sets the executable attributes)
-win32:CONFIG += embed_manifest_exe
-win32:RC_FILE += application_win.rc
 
 FORMS += \
     src/mainwindow.ui \
@@ -81,11 +79,6 @@ CONFIG(debug, debug|release) {
      TARGET = wpnxm-scp
  }
 
-OBJECTS_DIR = $$DESTDIR/.obj
-MOC_DIR = $$DESTDIR/.moc
-RCC_DIR = $$DESTDIR/.qrc
-UI_DIR = $$DESTDIR/.ui
-
 static {                                      # everything below takes effect with CONFIG += static
     message("~~~ Static Build ~~~")           # this is for information, that the static build is done
     CONFIG += static
@@ -93,5 +86,5 @@ static {                                      # everything below takes effect wi
     DEFINES += STATIC
     win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
     QMAKE_LFLAGS *= -static -static-libgcc -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
-    #QMAKE_CXXFLAGS	+= -std=c++11
+    #QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
 }

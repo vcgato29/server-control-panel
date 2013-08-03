@@ -35,14 +35,14 @@ int main(int argc, char * argv[])
 {
     Q_INIT_RESOURCE(resources);
 
-    // if CLI args are found, the application reacts as a non-GUI (console) application
-    if (argc > 1) { // the first arg would be the executable itself
+    // if CLI args are found, the application reacts as a console application
+    if (argc > 1) { // first arg is the executable itself
         QCoreApplication app(argc, argv, false);
         handleCommandLineArguments(app.arguments());
         return app.exec();
     }
 
-    // non-CLI - run as a normal QtGUI application
+    // else run as a normal QtGUI application
     QApplication app(argc, argv);
 
     // Single Instance Check

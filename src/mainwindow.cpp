@@ -52,9 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // overrides the window title defined in mainwindow.ui
     setWindowTitle(APP_NAME_AND_VERSION);
 
-    /*settings = new Settings();
-    settings->readSettings();*/
-
+    settings.readSettings();
     checkAlreadyActiveDaemons();
 
     // inital state of status leds is disabled
@@ -146,105 +144,68 @@ void MainWindow::createTrayIcon()
     trayIcon->show();
 }
 
-void Tray::initializeConfiguration()
-{
-    // if the cfg file doesn't already exist, it is created
-    QSettings globalSettings("wpnxm.ini", QSettings::IniFormat, this);
-
-    // check if reading settings was successful
-    if(globalSettings.status() != QSettings::NoError)
-    {
-        QMessageBox::critical(0, tr("Settings"), tr("Can't read settings."));
-        exit(1);
-    }
-
-    /*
-     * Declation of Default Settings for WPN-XM Server Control Panel
-     */
-    bAutostartDaemons       = globalSettings.value("global/autostartdaemons", true).toBool();
-    cfgLogsDir              = globalSettings.value("path/logs", "/logs").toString();
-
-    cfgPhpDir               = globalSettings.value("path/php", "./bin/php").toString();
-    cfgPhpConfig            = globalSettings.value("php/config", "./bin/php/php.ini").toString();
-    cfgPhpFastCgiHost       = globalSettings.value("php/fastcgi-host", "localhost").toString();
-    // use port 9100 for php-cgi to avoid collision with xdebug on port 9000
-    cfgPhpFastCgiPort       = globalSettings.value("php/fastcgi-port", "9100").toString();
-
-    cfgNginxDir             = globalSettings.value("path/nginx", "./bin/nginx").toString();
-    cfgNginxConfig          = globalSettings.value("nginx/config", "./bin/nginx/conf/nginx.conf").toString();
-    cfgNginxSites           = globalSettings.value("nginx/sites", "/www").toString();
-
-    cfgMariaDBDir           = globalSettings.value("path/mariadb", "./bin/mariadb/bin").toString();
-    cfgMariaDBConfig        = globalSettings.value("mariadb/config", "./bin/mariadb/my.ini").toString();
-
-    cfgMongoDBDir           = globalSettings.value("path/mongodb", "./bin/mongodb/bin").toString();
-
-    cfgMemcachedDir         = globalSettings.value("path/memcached", "./bin/memcached/bin").toString();
-}
-
 void MainWindow::createActions()
- {
-     // title bar - minimize
-     minimizeAction = new QAction(tr("Mi&nimize"), this);
-     connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+{
+    // title bar - minimize
+    minimizeAction = new QAction(tr("Mi&nimize"), this);
+    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
 
-     // title bar - restore
-     restoreAction = new QAction(tr("&Restore"), this);
-     connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    // title bar - restore
+    restoreAction = new QAction(tr("&Restore"), this);
+    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
 
-     // title bar - close
-     // Note that this action is intercepted by MainWindow::closeEvent()
-     // Its modified from "quit" to "close to tray" with a msgbox
-     // qApp is global pointer to QApplication
-     quitAction = new QAction(tr("&Quit"), this);
-     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    // title bar - close
+    // Note that this action is intercepted by MainWindow::closeEvent()
+    // Its modified from "quit" to "close to tray" with a msgbox
+    // qApp is global pointer to QApplication
+    quitAction = new QAction(tr("&Quit"), this);
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-     // PushButtons:: Website, Mailinglist, ReportBug, Donate
-     connect(ui->pushButton_Website, SIGNAL(clicked()), this, SLOT(goToWebsite()));
-     connect(ui->pushButton_GoogleGroup, SIGNAL(clicked()), this, SLOT(goToGoogleGroup()));
-     connect(ui->pushButton_ReportBug, SIGNAL(clicked()), this, SLOT(goToReportIssue()));
-     connect(ui->pushButton_Donate, SIGNAL(clicked()), this, SLOT(goToDonate()));
+    // PushButtons:: Website, Mailinglist, ReportBug, Donate
+    connect(ui->pushButton_Website, SIGNAL(clicked()), this, SLOT(goToWebsite()));
+    connect(ui->pushButton_GoogleGroup, SIGNAL(clicked()), this, SLOT(goToGoogleGroup()));
+    connect(ui->pushButton_ReportBug, SIGNAL(clicked()), this, SLOT(goToReportIssue()));
+    connect(ui->pushButton_Donate, SIGNAL(clicked()), this, SLOT(goToDonate()));
 
-     // PushButtons: Configuration, Help, About, Close
-     connect(ui->pushButton_Configuration, SIGNAL(clicked()), this, SLOT(openConfigurationDialog()));
-     connect(ui->pushButton_Help, SIGNAL(clicked()), this, SLOT(openHelpDialog()));
-     connect(ui->pushButton_About, SIGNAL(clicked()), this, SLOT(openAboutDialog()));
+    // PushButtons: Configuration, Help, About, Close
+    connect(ui->pushButton_Configuration, SIGNAL(clicked()), this, SLOT(openConfigurationDialog()));
+    connect(ui->pushButton_Help, SIGNAL(clicked()), this, SLOT(openHelpDialog()));
+    connect(ui->pushButton_About, SIGNAL(clicked()), this, SLOT(openAboutDialog()));
 
-     // @todo the following action is not intercepted by the closeEvent()
-     // connect(ui->pushButton_Close, SIGNAL(clicked()), qApp, SLOT(quit()));
-     // workaround is to not quit, but hide the window
-     connect(ui->pushButton_Close, SIGNAL(clicked()), this, SLOT(hide()));
+    // @todo the following action is not intercepted by the closeEvent()
+    // connect(ui->pushButton_Close, SIGNAL(clicked()), qApp, SLOT(quit()));
+    // workaround is to not quit, but hide the window
+    connect(ui->pushButton_Close, SIGNAL(clicked()), this, SLOT(hide()));
 
-     // Actions - Tools
-     connect(ui->pushButton_tools_phpinfo, SIGNAL(clicked()), this, SLOT(openToolPHPInfo()));
-     connect(ui->pushButton_tools_phpmyadmin, SIGNAL(clicked()), this, SLOT(openToolPHPMyAdmin()));
-     connect(ui->pushButton_tools_webgrind, SIGNAL(clicked()), this, SLOT(openToolWebgrind()));
-     connect(ui->pushButton_tools_adminer, SIGNAL(clicked()), this, SLOT(openToolAdminer()));
+    // Actions - Tools
+    connect(ui->pushButton_tools_phpinfo, SIGNAL(clicked()), this, SLOT(openToolPHPInfo()));
+    connect(ui->pushButton_tools_phpmyadmin, SIGNAL(clicked()), this, SLOT(openToolPHPMyAdmin()));
+    connect(ui->pushButton_tools_webgrind, SIGNAL(clicked()), this, SLOT(openToolWebgrind()));
+    connect(ui->pushButton_tools_adminer, SIGNAL(clicked()), this, SLOT(openToolAdminer()));
 
-     // Actions - Open Projects Folder
-     connect(ui->pushButton_OpenProjects_browser, SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
-     connect(ui->pushButton_OpenProjects_Explorer, SIGNAL(clicked()), this, SLOT(openProjectFolderInExplorer()));
+    // Actions - Open Projects Folder
+    connect(ui->pushButton_OpenProjects_browser, SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
+    connect(ui->pushButton_OpenProjects_Explorer, SIGNAL(clicked()), this, SLOT(openProjectFolderInExplorer()));
 
-     // Actions - Status Table (Config)
-     connect(ui->pushButton_ConfigureNginx, SIGNAL(clicked()), this, SLOT(openConfigurationDialogNginx()));
-     connect(ui->pushButton_ConfigurePHP, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
-     connect(ui->pushButton_ConfigureMariaDB, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDB()));
+    // Actions - Status Table (Config)
+    connect(ui->pushButton_ConfigureNginx, SIGNAL(clicked()), this, SLOT(openConfigurationDialogNginx()));
+    connect(ui->pushButton_ConfigurePHP, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
+    connect(ui->pushButton_ConfigureMariaDB, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDB()));
 
-     // Actions - Status Table (Logs)
-     connect(ui->pushButton_ShowLog_NginxAccess, SIGNAL(clicked()), this, SLOT(openLogNginxAccess()));
-     connect(ui->pushButton_ShowLog_NginxError, SIGNAL(clicked()), this, SLOT(openLogNginxError()));
-     connect(ui->pushButton_ShowLog_PHP, SIGNAL(clicked()), this, SLOT(openLogPHP()));
-     connect(ui->pushButton_ShowLog_MariaDB, SIGNAL(clicked()), this, SLOT(openLogMariaDB()));
- }
+    // Actions - Status Table (Logs)
+    connect(ui->pushButton_ShowLog_NginxAccess, SIGNAL(clicked()), this, SLOT(openLogNginxAccess()));
+    connect(ui->pushButton_ShowLog_NginxError, SIGNAL(clicked()), this, SLOT(openLogNginxError()));
+    connect(ui->pushButton_ShowLog_PHP, SIGNAL(clicked()), this, SLOT(openLogPHP()));
+    connect(ui->pushButton_ShowLog_MariaDB, SIGNAL(clicked()), this, SLOT(openLogMariaDB()));
+}
 
 void MainWindow::changeEvent(QEvent *event)
 {
-    switch (event->type())
+    if(0 != event)
     {
-        //case QEvent::LanguageChange:
-        //    this->ui->retranslateUi(this);
-        //    break;
-        case QEvent::WindowStateChange:
+        switch (event->type())
+        {
+            case QEvent::WindowStateChange:
             {
                 // minimize to tray (do not minimize to taskbar)
                 if (this->windowState() & Qt::WindowMinimized)
@@ -258,8 +219,9 @@ void MainWindow::changeEvent(QEvent *event)
 
                 break;
             }
-        default:
-            break;
+            default:
+                break;
+        }
     }
 
     QMainWindow::changeEvent(event);
@@ -670,7 +632,8 @@ void MainWindow::checkAlreadyActiveDaemons()
                       << "memcached"
                       << "mysqld"
                       << "php-cgi"
-                      << "mongod";
+                      << "mongod"
+                      << "pg_ctl"; // postgresql
 
     // c) init a list for found processes
     QStringList processesFoundList;

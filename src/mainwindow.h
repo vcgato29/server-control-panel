@@ -30,6 +30,7 @@
 
 // global includes
 #include <QMainWindow>
+#include <QAction>
 
 namespace Ui {
     class MainWindow;
@@ -52,9 +53,6 @@ public:
     QString getMemcachedVersion();
 
     QString parseVersionNumber(QString stringWithVersion);
-
-    // The settings manager.
-    Settings settings;
 
     bool bAutostartDaemons;
 
@@ -144,6 +142,9 @@ private:
     // Returns full path to project folder (appPath + www).
     QString getProjectFolder() const;
     void showPushButtonsOnlyForInstalledTools();
+
+    // The settings manager.
+    Settings settings;
 
 private slots:
 

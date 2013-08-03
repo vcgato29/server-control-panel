@@ -60,18 +60,9 @@ Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
     createTrayMenu();
 
     // @todo make this a configuration option in user preferences dialog
-    /*if(bAutostartDaemons)
-    {
+    /*if(m_settings->value(Settings::bAutostartDaemons).toBool()) {
         startAllDaemons();
-    }*/
-
-    /* Auto-connect Slots
-       The following definition isneeded:
-                void on_<object name>_<signal name>(<signal parameters>);
-       like:    private slots: void on_okButton_clicked();
-                or  void on_xy_triggered();
-    */
-    // QMetaObject::connectSlotsByName(this);
+    }*/;
 }
 
 // Destructor
@@ -180,6 +171,42 @@ void Tray::createTrayMenu()
     trayMenu->addAction(QIcon(":/report_bug"), tr("&Report Bug"), this, SLOT(goToReportIssue()), QKeySequence());
     trayMenu->addAction(QIcon(":/question"),tr("&Help"), this, SLOT(goToWebsiteHelp()), QKeySequence());
     trayMenu->addAction(QIcon(":/quit"),tr("&Quit"), parent(), SLOT(quit()), QKeySequence());
+}
+
+void Tray::initializeConfiguration()
+{
+    // if the cfg file doesn't already exist, it is created
+    QSettings globalSettings("wpnxm.ini", QSettings::IniFormat, this);
+
+    // check if reading settings was successful
+    if(globalSettings.status() != QSettings::NoError)
+    {
+        QMessageBox::critical(0, tr("Settings"), tr("Can't read settings."));
+        exit(1);
+    }
+
+    /*
+     * Declation of Default Settings for WPN-XM Server Control Panel
+     */
+    bAutostartDaemons       = globalSettings.value("global/autostartdaemons", true).toBool();
+    cfgLogsDir              = globalSettings.value("path/logs", "/logs").toString();
+
+    cfgPhpDir               = globalSettings.value("path/php", "./bin/php").toString();
+    cfgPhpConfig            = globalSettings.value("php/config", "./bin/php/php.ini").toString();
+    cfgPhpFastCgiHost       = globalSettings.value("php/fastcgi-host", "localhost").toString();
+    // use port 9100 for php-cgi to avoid collision with xdebug on port 9000
+    cfgPhpFastCgiPort       = globalSettings.value("php/fastcgi-port", "9100").toString();
+
+    cfgNginxDir             = globalSettings.value("path/nginx", "./bin/nginx").toString();
+    cfgNginxConfig          = globalSettings.value("nginx/config", "./bin/nginx/conf/nginx.conf").toString();
+    cfgNginxSites           = globalSettings.value("nginx/sites", "/www").toString();
+
+    cfgMariaDBDir           = globalSettings.value("path/mariadb", "./bin/mariadb/bin").toString();
+    cfgMariaDBConfig        = globalSettings.value("mariadb/config", "./bin/mariadb/my.ini").toString();
+
+    cfgMongoDBDir           = globalSettings.value("path/mongodb", "./bin/mongodb/bin").toString();
+
+    cfgMemcachedDir         = globalSettings.value("path/memcached", "./bin/memcached/bin").toString();
 }
 
 void Tray::goToWebinterface()

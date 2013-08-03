@@ -27,6 +27,7 @@
 // global includes
 #include <QSettings>
 #include <QApplication>
+#include <QDebug>
 
 const QString appSettingsFileName("wpn-xm.ini");
 
@@ -37,6 +38,14 @@ Settings::Settings(QObject *parent) :
 
 Settings::~Settings()
 {
+}
+
+
+QString Settings::file() const
+{
+    qDebug() << "Using settings file : " << QCoreApplication::applicationDirPath() << '/' << appSettingsFileName;
+
+    return QCoreApplication::applicationDirPath() + '/' + appSettingsFileName;
 }
 
 void Settings::saveSettings() const
@@ -70,9 +79,4 @@ void Settings::readSettings()
 
         ++i;
     }
-}
-
-QString Settings::file() const
-{
-    return QCoreApplication::applicationDirPath() + '/' + appSettingsFileName;
 }
