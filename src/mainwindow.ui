@@ -63,7 +63,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Opens Nginx Access Log</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open Nginx Access Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string/>
@@ -123,7 +123,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="1" column="2" alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="label_nginx">
         <property name="text">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -137,7 +137,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="2" column="2" alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="label_php">
         <property name="text">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -151,7 +151,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
+      <item row="3" column="2" alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="label_mariaDb">
         <property name="text">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -216,7 +216,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Opens PHP Error Log</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open PHP Error Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string notr="true"/>
@@ -239,7 +239,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Opens Nginx Error Log</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open Nginx Error Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string/>
@@ -505,7 +505,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="3" column="4">
-       <widget class="QPushButton" name="pushButton_ConfigureMariaDB">
+       <widget class="QPushButton" name="pushButton_ConfigureMariaDb">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -525,7 +525,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="3" column="6">
-       <widget class="QPushButton" name="pushButton_ShowLog_MariaDB">
+       <widget class="QPushButton" name="pushButton_ShowLog_MariaDb">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -536,7 +536,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Opens MariaDB Error Log</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open MariaDB Error Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string notr="true"/>
@@ -698,7 +698,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
+      <item row="4" column="2" alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="label_mongoDB">
         <property name="text">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -712,7 +712,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
+      <item row="5" column="2" alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="label_memcached">
         <property name="text">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -789,6 +789,29 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="5">
+       <widget class="QPushButton" name="pushButton_ShowLog_MongoDb">
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open MongoDb Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/report.png</normaloff>:/report.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -969,10 +992,10 @@ p, li { white-space: pre-wrap; }
       <x>500</x>
       <y>80</y>
       <width>111</width>
-      <height>121</height>
+      <height>152</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="ConfigureCloseVerticalLayout" stretch="0,0,0,0">
+    <layout class="QVBoxLayout" name="ConfigureCloseVerticalLayout" stretch="0,0,0,0,0">
      <property name="spacing">
       <number>5</number>
      </property>
@@ -982,6 +1005,23 @@ p, li { white-space: pre-wrap; }
      <property name="leftMargin">
       <number>0</number>
      </property>
+     <item>
+      <widget class="QPushButton" name="pushButton_Webinterface">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="toolTip">
+        <string>Close to tray.</string>
+       </property>
+       <property name="text">
+        <string>Webinterface</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/resources.qrc">
+         <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="pushButton_Configuration">
        <property name="enabled">
@@ -2112,7 +2152,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButton_Close</tabstop>
   <tabstop>pushButton_About</tabstop>
   <tabstop>pushButton_Help</tabstop>
-  <tabstop>pushButton_Configuration</tabstop>
   <tabstop>pushButton_tools_phpinfo</tabstop>
   <tabstop>pushButton_tools_phpmyadmin</tabstop>
   <tabstop>pushButton_tools_webgrind</tabstop>

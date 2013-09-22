@@ -109,18 +109,21 @@ public slots:
     void openProjectFolderInBrowser();
     void openProjectFolderInExplorer();
 
+    void openWebinterface();
     void openConfigurationDialog();
     void openHelpDialog();
     void openAboutDialog();
 
     void openConfigurationDialogNginx();
     void openConfigurationDialogPHP();
-    void openConfigurationDialogMariaDB();
+    void openConfigurationDialogMariaDb();
+    void openConfigurationDialogMongoDb();
 
     void openLogNginxAccess();
     void openLogNginxError();
     void openLogPHP();
-    void openLogMariaDB();
+    void openLogMariaDb();
+    void openLogMongoDb();
 
     void setLabelStatusActive(QString label, bool enabled);
     void enableToolsPushButtons(bool enabled);

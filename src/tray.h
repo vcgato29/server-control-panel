@@ -60,6 +60,7 @@ public slots:
         void startAllDaemons();
         void stopAllDaemons();
         void restartAll();
+
         void goToWebsiteHelp();
         void goToReportIssue();
         void goToWebinterface();
@@ -76,14 +77,14 @@ public slots:
         void restartPhp();
 
         // MySQL Action Slots
-        void startMariaDB();
-        void stopMariaDB();
-        void restartMariaDB();
+        void startMariaDb();
+        void stopMariaDb();
+        void restartMariaDb();
 
         // MongoDB Action Slots
-        void startMongoDB();
-        void stopMongoDB();
-        void restartMongoDB();
+        void startMongoDb();
+        void stopMongoDb();
+        void restartMongoDb();
 
         // Memcached Action Slots
         void startMemcached();
@@ -131,6 +132,7 @@ private:
         Settings m_settings;
 
         bool bAutostartDaemons;
+        bool bStopDaemonsOnQuit;
 
         // Global
         QString cfgLogsDir;
@@ -149,14 +151,14 @@ private:
         QString cfgNginxSites;
 
         // MySQL
-        QString cfgMariaDBDir;
+        QString cfgMariaDbDir;
 #define MARIADB_EXEC "/mysqld.exe"
 #define MARIADB_CLIENT_EXEC "/mysql.exe"
-        QString cfgMariaDBConfig;
+        QString cfgMariaDbConfig;
         QString cfgMariaDBClientExec;
 
         // MongoDB
-        QString cfgMongoDBDir;
+        QString cfgMongoDbDir;
 #define MONGODB_EXEC "/mongod.exe"
 
         // Memcached

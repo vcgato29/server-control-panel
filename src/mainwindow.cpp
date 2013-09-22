@@ -125,15 +125,15 @@ void MainWindow::createTrayIcon()
     // Connect Actions for Status Table - Column Action (Start)
     connect(ui->pushButton_StartNginx, SIGNAL(clicked()), trayIcon, SLOT(startNginx()));
     connect(ui->pushButton_StartPHP, SIGNAL(clicked()), trayIcon, SLOT(startPhp()));
-    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), trayIcon, SLOT(startMariaDB()));
-    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), trayIcon, SLOT(startMongoDB()));
+    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), trayIcon, SLOT(startMariaDb()));
+    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), trayIcon, SLOT(startMongoDb()));
     connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), trayIcon, SLOT(startMemcached()));
 
     // Connect Actions for Status Table - Column Action (Stop)
     connect(ui->pushButton_StopNginx, SIGNAL(clicked()), trayIcon, SLOT(stopNginx()));
     connect(ui->pushButton_StopPHP, SIGNAL(clicked()), trayIcon, SLOT(stopPhp()));
-    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), trayIcon, SLOT(stopMariaDB()));
-    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), trayIcon, SLOT(stopMongoDB()));
+    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), trayIcon, SLOT(stopMariaDb()));
+    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), trayIcon, SLOT(stopMongoDb()));
     connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), trayIcon, SLOT(stopMemcached()));
 
      // Connect Actions for Status Table - AllDaemons Start, Stop
@@ -190,13 +190,15 @@ void MainWindow::createActions()
     // Actions - Status Table (Config)
     connect(ui->pushButton_ConfigureNginx, SIGNAL(clicked()), this, SLOT(openConfigurationDialogNginx()));
     connect(ui->pushButton_ConfigurePHP, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
-    connect(ui->pushButton_ConfigureMariaDB, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDB()));
+    connect(ui->pushButton_ConfigureMariaDb, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
 
     // Actions - Status Table (Logs)
     connect(ui->pushButton_ShowLog_NginxAccess, SIGNAL(clicked()), this, SLOT(openLogNginxAccess()));
     connect(ui->pushButton_ShowLog_NginxError, SIGNAL(clicked()), this, SLOT(openLogNginxError()));
     connect(ui->pushButton_ShowLog_PHP, SIGNAL(clicked()), this, SLOT(openLogPHP()));
-    connect(ui->pushButton_ShowLog_MariaDB, SIGNAL(clicked()), this, SLOT(openLogMariaDB()));
+    connect(ui->pushButton_ShowLog_MongoDb, SIGNAL(clicked()), this, SLOT(openLogMongoDb()));
+    connect(ui->pushButton_ShowLog_MariaDb, SIGNAL(clicked()), this, SLOT(openLogMariaDb()));
+
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -325,29 +327,11 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
 
 void MainWindow::setLabelStatusActive(QString label, bool enabled)
 {
-    if(label == "nginx")
-    {
-        ui->label_Nginx_Status->setEnabled(enabled);
-    }
-
-    if(label == "php")
-    {
-        ui->label_PHP_Status->setEnabled(enabled);
-    }
-
-    if(label == "mariadb")
-    {
-        ui->label_MariaDb_Status->setEnabled(enabled);
-    }
-
-    if(label == "mongodb")
-    {
-        ui->label_MongoDb_Status->setEnabled(enabled);
-    }
-    if(label == "memcached")
-    {
-        ui->label_Memcached_Status->setEnabled(enabled);
-    }
+    if(label == "nginx") { ui->label_Nginx_Status->setEnabled(enabled); }
+    if(label == "php") { ui->label_PHP_Status->setEnabled(enabled); }
+    if(label == "mariadb"){ ui->label_MariaDb_Status->setEnabled(enabled); }
+    if(label == "mongodb") { ui->label_MongoDb_Status->setEnabled(enabled); }
+    if(label == "memcached") { ui->label_Memcached_Status->setEnabled(enabled); }
 }
 
 QString MainWindow::getNginxVersion()
@@ -504,6 +488,11 @@ void MainWindow::openToolAdminer()
     QDesktopServices::openUrl(QUrl("http://localhost/adminer/"));
 }
 
+void MainWindow::openWebinterface()
+{
+    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/"));
+}
+
 void MainWindow::openProjectFolderInBrowser()
 {
     // @todo open only, when Nginx and PHP are running...
@@ -545,9 +534,14 @@ void MainWindow::openConfigurationDialogPHP()
     // Open Configuration Dialog - Tab for PHP
 }
 
-void MainWindow::openConfigurationDialogMariaDB()
+void MainWindow::openConfigurationDialogMariaDb()
 {
-    // Open Configuration Dialog - Tab for MariaDB
+    // Open Configuration Dialog - Tab for MariaDb
+}
+
+void MainWindow::openConfigurationDialogMongoDb()
+{
+    // Open Configuration Dialog - Tab for MongoDb
 }
 
 void MainWindow::openLogNginxAccess()
@@ -568,10 +562,16 @@ void MainWindow::openLogPHP()
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/php_error.log", QUrl::TolerantMode));
 }
 
-void MainWindow::openLogMariaDB()
+void MainWindow::openLogMariaDb()
 {
     //qDebug() << qApp->applicationDirPath() + "/logs/mariadb_error.log";
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/mariadb_error.log", QUrl::TolerantMode));
+}
+
+void MainWindow::openLogMongoDb()
+{
+    //qDebug() << qApp->applicationDirPath() + "/logs/mongodb.log";
+    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/mongodb.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openHelpDialog()

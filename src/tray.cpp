@@ -68,9 +68,10 @@ Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
 // Destructor
 Tray::~Tray()
 {
-    // @todo stop all daemons, when you quit the tray application?
-    // add option to configure dialog
-    stopAllDaemons();
+    // stop all daemons, when quitting the tray application
+    if(bStopDaemonsOnQuit == true) {
+        stopAllDaemons();
+    }
 
     delete trayMenu;
 }
@@ -81,18 +82,18 @@ void Tray::startMonitoringDaemonProcesses()
     timer = new QTimer(this);
     timer->setInterval(1000); // msec = 1sec
 
-    processNginx = new QProcess(this);
+    processNginx = new QProcess();
     processNginx->setWorkingDirectory(cfgNginxDir);
     connect(processNginx, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(nginxStateChanged(QProcess::ProcessState)));
     connect(processNginx, SIGNAL(error(QProcess::ProcessError)), this, SLOT(nginxProcessError(QProcess::ProcessError)));
 
-    processPhp = new QProcess(this);
+    processPhp = new QProcess();
     processPhp->setWorkingDirectory(cfgPhpDir);
     connect(processPhp, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(phpStateChanged(QProcess::ProcessState)));
     connect(processPhp, SIGNAL(error(QProcess::ProcessError)), this, SLOT(phpProcessError(QProcess::ProcessError)));
 
-    processMariaDB = new QProcess(this);
-    processMariaDB->setWorkingDirectory(cfgMariaDBDir);
+    processMariaDB = new QProcess();
+    processMariaDB->setWorkingDirectory(cfgMariaDbDir);
     connect(processMariaDB, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(mariaDBStateChanged(QProcess::ProcessState)));
     connect(processMariaDB, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mariaDBProcessError(QProcess::ProcessError)));
 }
@@ -129,10 +130,10 @@ void Tray::createTrayMenu()
     // MariaDB
     mariaDBStatusSubmenu = new QMenu("MariaDB", trayMenu);
     mariaDBStatusSubmenu->setIcon(QIcon(":/status_stop"));
-    mariaDBStatusSubmenu->addAction(QIcon(":/action_restart"), tr("Restart"), this, SLOT(restartMariaDB()), QKeySequence());
+    mariaDBStatusSubmenu->addAction(QIcon(":/action_restart"), tr("Restart"), this, SLOT(restartMariaDb()), QKeySequence());
     mariaDBStatusSubmenu->addSeparator();
-    mariaDBStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startMariaDB()), QKeySequence());
-    mariaDBStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopMariaDB()), QKeySequence());
+    mariaDBStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startMariaDb()), QKeySequence());
+    mariaDBStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopMariaDb()), QKeySequence());
 
     // Add local IPs to the tray menu
     // important note: this section needs "QT += network" in the .pro file
@@ -176,7 +177,7 @@ void Tray::createTrayMenu()
 void Tray::initializeConfiguration()
 {
     // if the cfg file doesn't already exist, it is created
-    QSettings globalSettings("wpnxm.ini", QSettings::IniFormat, this);
+    QSettings globalSettings("wpn-xm.ini", QSettings::IniFormat, this);
 
     // check if reading settings was successful
     if(globalSettings.status() != QSettings::NoError)
@@ -185,28 +186,34 @@ void Tray::initializeConfiguration()
         exit(1);
     }
 
+    qDebug() << "Settings: " << globalSettings.allKeys();
+
     /*
-     * Declation of Default Settings for WPN-XM Server Control Panel
+     * Declation of Fallback Settings for WPN-XM Server Control Panel
      */
     bAutostartDaemons       = globalSettings.value("global/autostartdaemons", true).toBool();
-    cfgLogsDir              = globalSettings.value("path/logs", "/logs").toString();
+    bStopDaemonsOnQuit      = globalSettings.value("global/stopdaemonsonquit", false).toBool();
 
-    cfgPhpDir               = globalSettings.value("path/php", "./bin/php").toString();
+    cfgLogsDir              = globalSettings.value("paths/logs", "/logs").toString();
+
+    cfgPhpDir               = globalSettings.value("paths/php", "./bin/php").toString();
     cfgPhpConfig            = globalSettings.value("php/config", "./bin/php/php.ini").toString();
     cfgPhpFastCgiHost       = globalSettings.value("php/fastcgi-host", "localhost").toString();
     // use port 9100 for php-cgi to avoid collision with xdebug on port 9000
     cfgPhpFastCgiPort       = globalSettings.value("php/fastcgi-port", "9100").toString();
 
-    cfgNginxDir             = globalSettings.value("path/nginx", "./bin/nginx").toString();
+    cfgNginxDir             = globalSettings.value("paths/nginx", "./bin/nginx").toString();
     cfgNginxConfig          = globalSettings.value("nginx/config", "./bin/nginx/conf/nginx.conf").toString();
     cfgNginxSites           = globalSettings.value("nginx/sites", "/www").toString();
 
-    cfgMariaDBDir           = globalSettings.value("path/mariadb", "./bin/mariadb/bin").toString();
-    cfgMariaDBConfig        = globalSettings.value("mariadb/config", "./bin/mariadb/my.ini").toString();
+    cfgMariaDbDir           = globalSettings.value("paths/mariadb", "./bin/mariadb/bin").toString();
+    cfgMariaDbConfig        = globalSettings.value("mariadb/config", "./bin/mariadb/my.ini").toString();
 
-    cfgMongoDBDir           = globalSettings.value("path/mongodb", "./bin/mongodb/bin").toString();
+    cfgMongoDbDir           = globalSettings.value("paths/mongodb", "./bin/mongodb/bin").toString();
 
-    cfgMemcachedDir         = globalSettings.value("path/memcached", "./bin/memcached/bin").toString();
+    cfgMemcachedDir         = globalSettings.value("paths/memcached", "./bin/memcached/bin").toString();
+
+    globalSettings.sync();
 }
 
 void Tray::goToWebinterface()
@@ -230,22 +237,28 @@ void Tray::goToWebsiteHelp()
 void Tray::startAllDaemons()
 {
     startNginx();
-    startPhp();
-    startMariaDB();
+//startPhp();
+    //startMariaDb();
+    //startMongoDb();
+    //startMemcached();
 }
 
 void Tray::stopAllDaemons()
 {
-    stopMariaDB();
+    stopMariaDb();
     stopPhp();
     stopNginx();
+    stopMongoDb();
+    stopMemcached();
 }
 
 void Tray::restartAll()
 {
     restartNginx();
     restartPhp();
-    restartMariaDB();
+    restartMariaDb();
+    restartMongoDb();
+    restartMemcached();
 }
 
 /*
@@ -261,16 +274,22 @@ void Tray::startNginx()
     }
 
     // start daemon
-    //qDebug() << cfgNginxDir+NGINX_EXEC << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
-    processNginx->start(cfgNginxDir+NGINX_EXEC, QStringList() << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf");
+    QString nginx = cfgNginxDir + NGINX_EXEC;// + " -p " + QDir::currentPath() + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
+
+    //qDebug() << nginx;
+    processNginx->startDetached(cfgNginxDir + NGINX_EXEC);
 }
 
 void Tray::stopNginx()
 {
     QProcess processStopNginx;
     processStopNginx.setWorkingDirectory(cfgNginxDir);
-    //qDebug() << cfgNginxDir+NGINX_EXEC << "-s" << "stop";
-    processStopNginx.start(cfgNginxDir+NGINX_EXEC, QStringList() << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf" << "-s" << "stop"); // fast shutdown
+
+    // fast shutdown
+    QString stopNginx = cfgNginxDir + NGINX_EXEC + " -p " + QDir::currentPath() + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf" + " -s stop";
+
+    qDebug() << stopNginx;
+    processStopNginx.start(stopNginx);
     processStopNginx.waitForFinished();
 }
 
@@ -278,7 +297,12 @@ void Tray::reloadNginx()
 {
     QProcess processStopNginx;
     processStopNginx.setWorkingDirectory(cfgNginxDir);
-    processStopNginx.start(cfgNginxDir+NGINX_EXEC, QStringList() << "-p" << QDir::currentPath() << "-c" << QDir::currentPath() + "/bin/nginx/conf/nginx.conf" << "-s" << "reload");
+
+    QString reloadNginx = cfgNginxDir + NGINX_EXEC + " -p " + QDir::currentPath() + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf" + "-s reload";
+
+    qDebug() << reloadNginx;
+
+    processStopNginx.start(reloadNginx);
     processStopNginx.waitForFinished();
 }
 
@@ -327,7 +351,7 @@ void Tray::restartPhp()
 /*
  * MariaDB Actions - run, stop, restart
  */
-void Tray::startMariaDB()
+void Tray::startMariaDb()
 {
     // already running
     if(processMariaDB->state() != QProcess::NotRunning){
@@ -336,11 +360,11 @@ void Tray::startMariaDB()
     }
 
     // start
-    qDebug() << cfgMariaDBDir+MARIADB_EXEC;
-    processMariaDB->start(cfgMariaDBDir+MARIADB_EXEC);
+    qDebug() << cfgMariaDbDir+MARIADB_EXEC;
+    processMariaDB->start(cfgMariaDbDir+MARIADB_EXEC);
 }
 
-void Tray::stopMariaDB()
+void Tray::stopMariaDb()
 {
     // disconnect process monitoring, before crashing the process
     disconnect(processMariaDB, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mariaDBProcessError(QProcess::ProcessError)));
@@ -349,16 +373,16 @@ void Tray::stopMariaDB()
     processMariaDB->waitForFinished();
 }
 
-void Tray::restartMariaDB()
+void Tray::restartMariaDb()
 {
-    stopMariaDB();
-    startMariaDB();
+    stopMariaDb();
+    startMariaDb();
 }
 
 /*
  * MongoDB Actions - run, stop, restart
  */
-void Tray::startMongoDB()
+void Tray::startMongoDb()
 {
     // already running
     if(processMongoDB->state() != QProcess::NotRunning){
@@ -367,11 +391,11 @@ void Tray::startMongoDB()
     }
 
     // start
-    qDebug() << cfgMongoDBDir+MARIADB_EXEC;
-    processMongoDB->start(cfgMongoDBDir+MARIADB_EXEC);
+    qDebug() << cfgMongoDbDir+MARIADB_EXEC;
+    processMongoDB->start(cfgMongoDbDir+MARIADB_EXEC);
 }
 
-void Tray::stopMongoDB()
+void Tray::stopMongoDb()
 {
     // disconnect process monitoring, before crashing the process
     disconnect(processMongoDB, SIGNAL(error(QProcess::ProcessError)), this, SLOT(MongoDBProcessError(QProcess::ProcessError)));
@@ -380,10 +404,10 @@ void Tray::stopMongoDB()
     processMongoDB->waitForFinished();
 }
 
-void Tray::restartMongoDB()
+void Tray::restartMongoDb()
 {
-    stopMongoDB();
-    startMongoDB();
+    stopMongoDb();
+    startMongoDb();
 }
 
 /*
@@ -463,13 +487,13 @@ void Tray::openNginxLogs()
 
 void Tray::openMariaDBClient()
 {
-    QProcess::startDetached(cfgMariaDBDir+MARIADB_CLIENT_EXEC, QStringList(), cfgMariaDBDir);
+    QProcess::startDetached(cfgMariaDbDir+MARIADB_CLIENT_EXEC, QStringList(), cfgMariaDbDir);
 }
 
 void Tray::openMariaDBConfig()
 {
     QDir dir(QDir::currentPath());
-    QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(cfgMariaDBConfig));
+    QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(cfgMariaDbConfig));
     QProcess::startDetached("cmd", QStringList() << "/c" << "start "+strDir);
 }
 
