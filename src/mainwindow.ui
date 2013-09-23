@@ -63,7 +63,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open Nginx Access Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Open Nginx Access Log</string>
         </property>
         <property name="text">
          <string/>
@@ -216,7 +216,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open PHP Error Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Open PHP Error Log</string>
         </property>
         <property name="text">
          <string notr="true"/>
@@ -239,7 +239,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open Nginx Error Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Open Nginx Error Log</string>
         </property>
         <property name="text">
          <string/>
@@ -536,7 +536,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open MariaDB Error Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Open MariaDB Error Log</string>
         </property>
         <property name="text">
          <string notr="true"/>
@@ -638,7 +638,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Start MariaDb</string>
+         <string>Start Memcached</string>
         </property>
         <property name="text">
          <string/>
@@ -684,7 +684,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop MariaDb</string>
+         <string>Stop Memcached</string>
         </property>
         <property name="text">
          <string/>
@@ -801,7 +801,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open MongoDb Log&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Open MongoDb Log</string>
         </property>
         <property name="text">
          <string/>
