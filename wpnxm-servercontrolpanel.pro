@@ -27,7 +27,7 @@ DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
 CONFIG += qt static console warn-on
 
-QT += network
+QT += network widgets
 
 # this define disables qDebug() output to console
 #DEFINES += QT_NO_DEBUG_OUTPUT
@@ -85,6 +85,7 @@ static {                                      # everything below takes effect wi
     CONFIG += staticlib                       # this is needed if you create a static library, not a static executable
     DEFINES += STATIC
     win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
-    QMAKE_LFLAGS *= -static -static-libgcc -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
+    QMAKE_LFLAGS *= -static -static-libgcc
+    #-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
     #QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
 }

@@ -25,7 +25,7 @@
 #define MAIN_H
 
 // global includes
-#include <QtGui>
+#include <QtWidgets>
 
 void exitIfAlreadyRunning();
 void handleCommandLineArguments(QStringList args);

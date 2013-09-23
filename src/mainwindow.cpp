@@ -20,7 +20,6 @@
     You should have received a copy of the GNU General Public License
     along with WPN-XM SCP. If not, see <http://www.gnu.org/licenses/>.
 */
-
 // Local includes
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -32,11 +31,16 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QSharedMemory>
-#include <QtGui>
 #include <QRegExp>
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDebug>
+#include <QTimer>
+#include <QDir>
+#include <QDialogButtonBox>
+#include <QCheckbox>
+
+class QCloseEvent;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -240,8 +244,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
         hide();
 
         // do not propagate the event to the base class
-        event->ignore();
+        event->ignore();       
     }
+    event->accept();
 }
 
 void MainWindow::setVisible(bool visible)
@@ -643,10 +648,10 @@ void MainWindow::checkAlreadyActiveDaemons()
     {
         //qDebug() << "Searching for process: " << processesToSearch.at(i).toLocal8Bit().constData() << endl;
 
-        if(processList.contains( processesToSearch.at(i).toAscii().constData() ))
+        if(processList.contains( processesToSearch.at(i).toLatin1().constData() ))
         {
             // process found
-            processesFoundList << processesToSearch.at(i).toAscii().constData();
+            processesFoundList << processesToSearch.at(i).toLatin1().constData();
         }
     }
 
@@ -726,7 +731,7 @@ void MainWindow::checkAlreadyActiveDaemons()
                }
                delete cb;
             }
-        }
+        }        
         delete vbox;
         delete labelA;
         delete labelB;

@@ -25,8 +25,9 @@
 #define MAINWINDOW_H
 
 // local includes
-#include "version.h"
 #include "tray.h"
+#include <QCloseEvent>
+class QCloseEvent;
 
 // global includes
 #include <QMainWindow>

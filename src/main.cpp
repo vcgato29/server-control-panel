@@ -23,10 +23,11 @@
 
 // local WPN-XM SCP includes
 #include "main.h"
+#include "version.h"
 #include "mainwindow.h"
 
 // global QT includes
-#include <QtGui>
+#include <QtWidgets>
 #include <QtCore>
 #include <QCoreApplication>
 
