@@ -44,7 +44,6 @@ HEADERS += \
     src/configurationdialog.h \
     src/settings.h \
     src/settingsTable.h \
-    src/strings.h
 
 SOURCES += \
     src/main.cpp \
@@ -86,6 +85,5 @@ static {                                      # everything below takes effect wi
     DEFINES += STATIC
     win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
     QMAKE_LFLAGS *= -static -static-libgcc
-    #-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
-    #QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
+    QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
 }
