@@ -43,8 +43,8 @@ QT_END_NAMESPACE
 /// Implements a tray menu with icons.
 /*!
     This class creates a tray menu with icons.
-    The tray menu might be used to control the daemons
-    and tray menu icons show their state.
+    The tray menu and the main window might be used to control the daemons.
+    Daemon processes are monitored and their process state is displayed.
 */
 class Tray : public QSystemTrayIcon
 {

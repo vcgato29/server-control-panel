@@ -237,7 +237,7 @@ void Tray::goToWebsiteHelp()
 void Tray::startAllDaemons()
 {
     startNginx();
-//startPhp();
+    //startPhp();
     //startMariaDb();
     //startMongoDb();
     //startMemcached();

@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string notr="true">WPN-XM Server Control Panel</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QGroupBox" name="DaemonStatusGroupBox">
     <property name="enabled">
@@ -990,9 +993,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>500</x>
-      <y>80</y>
+      <y>90</y>
       <width>111</width>
-      <height>152</height>
+      <height>161</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="ConfigureCloseVerticalLayout" stretch="0,0,0,0,0">

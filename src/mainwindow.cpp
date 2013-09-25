@@ -551,31 +551,46 @@ void MainWindow::openConfigurationDialogMongoDb()
 
 void MainWindow::openLogNginxAccess()
 {
-    //qDebug() << qApp->applicationDirPath() + "/logs/access.log";
+    if(QDir(qApp->applicationDirPath() + "/logs/access.log").exists() == false) {
+        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
+    }
+
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/access.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogNginxError()
 {
-    //qDebug() << qApp->applicationDirPath() + "/logs/error.log";
+    if(QDir(qApp->applicationDirPath() + "/logs/error.log").exists() == false) {
+        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
+    }
+
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/error.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogPHP()
 {
-    //qDebug() << qApp->applicationDirPath() + "/logs/php_error.log";
+    if(QDir(qApp->applicationDirPath() + "/logs/php_error.log").exists() == false) {
+        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
+    }
+
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/php_error.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogMariaDb()
 {
-    //qDebug() << qApp->applicationDirPath() + "/logs/mariadb_error.log";
+    if(QDir(qApp->applicationDirPath() + "/logs/mariadb_error.log").exists() == false) {
+        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
+    }
+
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/mariadb_error.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogMongoDb()
 {
-    //qDebug() << qApp->applicationDirPath() + "/logs/mongodb.log";
+    if(QDir(qApp->applicationDirPath() + "/logs/mongodb.log").exists() == false) {
+        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
+    }
+
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/mongodb.log", QUrl::TolerantMode));
 }
 
@@ -605,6 +620,7 @@ void MainWindow::openAboutDialog()
             "<br><br>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.<br>"
     ));
     about.setParent(this);
+    about.setAutoFillBackground(true);
     about.exec();
 }
 

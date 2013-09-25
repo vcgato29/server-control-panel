@@ -25,7 +25,13 @@ message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
-CONFIG += qt static console warn-on
+VERSION = 1.20.30.40
+QMAKE_TARGET_COMPANY = Koch Softwaresystemtechnik
+QMAKE_TARGET_PRODUCT = WPN-XM Server Control Panel
+QMAKE_TARGET_DESCRIPTION = WPN-XM SCP Tray Application.
+QMAKE_TARGET_COPYRIGHT = (c) Jens-André Koch
+
+CONFIG += qt console warn-on #static
 
 QT += network widgets
 
@@ -57,33 +63,31 @@ SOURCES += \
     src/settings.cpp \
     src/settingsTable.cpp
 
-# WINDOWS RC-FILE (sets the executable attributes)
-win32:CONFIG += embed_manifest_exe
-#win32:RC_FILE += src/resources/application_res.rc
-
 RESOURCES += \
     src/resources/resources.qrc
-
 
 FORMS += \
     src/mainwindow.ui \
     src/configurationdialog.ui
 
+# WINDOWS RC-FILE (sets the executable attributes)
+win32: RC_FILE = src/resources/application.rc
+
 # Build destination and binary name
 CONFIG(debug, debug|release) {
-     DESTDIR = build/debug
-     TARGET = wpnxm-scp-debug
- } else {
-     DESTDIR = build/release
-     TARGET = wpnxm-scp
- }
+    DESTDIR = build/debug
+    TARGET = wpnxm-scp-debug
+} else {
+    DESTDIR = build/release
+    TARGET = wpnxm-scp
+}
 
 static {                                      # everything below takes effect with CONFIG += static
-    message("~~~ Static Build ~~~")           # this is for information, that the static build is done
-    CONFIG += static
-    CONFIG += staticlib                       # this is needed if you create a static library, not a static executable
+    message("~~~ Static Build ~~~")           # this is for information, that a static build is done
+    CONFIG += static staticlib
     DEFINES += STATIC
     win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
-    QMAKE_LFLAGS *= -static -static-libgcc
+    QMAKE_LFLAGS += -static -static-libgcc
     QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
 }
+
