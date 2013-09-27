@@ -102,22 +102,22 @@ public slots:
 
         void openPhpConfig();
 
-        void openMariaDBClient();
-        void openMariaDBConfig();
+        void openMariaDbClient();
+        void openMariaDbConfig();
 
         // Status Action Slots
         void globalStateChanged();
 
         void nginxStateChanged(QProcess::ProcessState state);
         void phpStateChanged(QProcess::ProcessState state);
-        void mariaDBStateChanged(QProcess::ProcessState state);
-        void mongoDBStateChanged(QProcess::ProcessState state);
+        void mariaDbStateChanged(QProcess::ProcessState state);
+        void mongoDbStateChanged(QProcess::ProcessState state);
         void memcachedStateChanged(QProcess::ProcessState state);
 
         void nginxProcessError(QProcess::ProcessError error);
         void phpProcessError(QProcess::ProcessError error);
-        void mariaDBProcessError(QProcess::ProcessError error);
-        void mongoDBProcessError(QProcess::ProcessError error);
+        void mariaDbProcessError(QProcess::ProcessError error);
+        void mongoDbProcessError(QProcess::ProcessError error);
         void memcachedProcessError(QProcess::ProcessError error);
 
 signals:
@@ -155,7 +155,7 @@ private:
 #define MARIADB_EXEC "/mysqld.exe"
 #define MARIADB_CLIENT_EXEC "/mysql.exe"
         QString cfgMariaDbConfig;
-        QString cfgMariaDBClientExec;
+        QString cfgMariaDbClientExec;
 
         // MongoDB
         QString cfgMongoDbDir;
@@ -168,8 +168,8 @@ private:
         // Process Monitoring
         QProcess* processNginx;
         QProcess* processPhp;
-        QProcess* processMariaDB;
-        QProcess* processMongoDB;
+        QProcess* processMariaDb;
+        QProcess* processMongoDb;
         QProcess* processMemcached;
 
         // The Tray Menu
@@ -178,8 +178,8 @@ private:
          // The Submenus of the Tray Menu
         QMenu* nginxStatusSubmenu;
         QMenu* phpStatusSubmenu;
-        QMenu* mariaDBStatusSubmenu;
-        QMenu* mongoDBStatusSubmenu;
+        QMenu* mariaDbStatusSubmenu;
+        QMenu* mongoDbStatusSubmenu;
         QMenu* memcachedStatusSubmenu;
 
         void initializeConfiguration();
