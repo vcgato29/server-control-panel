@@ -698,9 +698,10 @@ void Tray::memcachedProcessError(QProcess::ProcessError error)
 
 QString Tray::getProcessErrorMessage(QProcess::ProcessError error){
     QString ret;
+    ret = ret + " <br/> ";
     switch(error){
         case QProcess::FailedToStart:
-            ret = "The process failed to start. Either the invoked program is missing, or you may have insufficient permissions to invoke the program.";
+            ret = "The process failed to start. <br/> Either the invoked program is missing, or you may have insufficient permissions to invoke the program.";
             break;
         case QProcess::Crashed:
             ret = "The process crashed some time after starting successfully.";
@@ -709,10 +710,10 @@ QString Tray::getProcessErrorMessage(QProcess::ProcessError error){
             ret = "The process timed out.";
             break;
         case QProcess::WriteError:
-            ret = "An error occurred when attempting to write to the process. For example, the process may not be running, or it may have closed its input channel.";
+            ret = "An error occurred when attempting to write to the process. <br/> For example, the process may not be running, or it may have closed its input channel.";
             break;
         case QProcess::ReadError:
-            ret = "An error occurred when attempting to read from the process. For example, the process may not be running.";
+            ret = "An error occurred when attempting to read from the process. <br/> For example, the process may not be running.";
             break;
         case QProcess::UnknownError:
             ret = "An unknown error occurred.";
