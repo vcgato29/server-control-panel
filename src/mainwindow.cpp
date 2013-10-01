@@ -551,7 +551,7 @@ void MainWindow::openConfigurationDialogMongoDb()
 
 void MainWindow::openLogNginxAccess()
 {
-    if(QDir(qApp->applicationDirPath() + "/logs/access.log").exists() == false) {
+    if(QFile().exists(qApp->applicationDirPath() + "/logs/access.log") == false) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
@@ -560,7 +560,7 @@ void MainWindow::openLogNginxAccess()
 
 void MainWindow::openLogNginxError()
 {
-    if(QDir(qApp->applicationDirPath() + "/logs/error.log").exists() == false) {
+    if(QFile().exists(qApp->applicationDirPath() + "/logs/error.log") == false) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
@@ -569,7 +569,7 @@ void MainWindow::openLogNginxError()
 
 void MainWindow::openLogPHP()
 {
-    if(QDir(qApp->applicationDirPath() + "/logs/php_error.log").exists() == false) {
+    if(QFile().exists(qApp->applicationDirPath() + "/logs/php_error.log") == false) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
@@ -578,7 +578,7 @@ void MainWindow::openLogPHP()
 
 void MainWindow::openLogMariaDb()
 {
-    if(QDir(qApp->applicationDirPath() + "/logs/mariadb_error.log").exists() == false) {
+    if(QFile().exists(qApp->applicationDirPath() + "/logs/mariadb_error.log") == false) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
@@ -587,7 +587,7 @@ void MainWindow::openLogMariaDb()
 
 void MainWindow::openLogMongoDb()
 {
-    if(QDir(qApp->applicationDirPath() + "/logs/mongodb.log").exists() == false) {
+    if(QFile().exists(qApp->applicationDirPath() + "/logs/mongodb.log") == false) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
