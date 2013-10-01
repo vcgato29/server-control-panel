@@ -618,7 +618,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Start MariaDb</string>
+         <string>Start MongoDb</string>
         </property>
         <property name="text">
          <string/>
@@ -664,7 +664,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="toolTip">
-         <string>Stop MariaDb</string>
+         <string>Stop MongoDb</string>
         </property>
         <property name="text">
          <string/>
