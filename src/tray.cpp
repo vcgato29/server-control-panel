@@ -416,18 +416,46 @@ void Tray::startMongoDb()
         return;
     }
 
+    // mongodb doesn't start, when data dir is missing...
+    QString const mongoDbDataDir = cfgMongoDbDir + "/data/db";
+    if(QDir().exists(qApp->applicationDirPath() + "/bin/mongodb") && !QDir().exists(mongoDbDataDir)) {
+        qDebug() << "Creating Directory for Mongo's Database... " << mongoDbDataDir;
+        QDir().mkpath(mongoDbDataDir);
+    }
+
+    // mongodb doesn't start, when logfile is missing...
+    QFile f(qApp->applicationDirPath() + "/logs/mongodb.log");
+    if(!f.exists()) {
+        qDebug() << "Creating empty logfile... " << qApp->applicationDirPath() + "/logs/mongodb.log";
+        f.open(QIODevice::ReadWrite);
+        f.close();
+    }
+
+    // build mongo start command
+    QString const mongoStartCommand = cfgMongoDbDir+MONGODB_EXEC
+             + " --config " + qApp->applicationDirPath() + "/bin/mongodb/mongodb.conf"
+             + " --dbpath " + qApp->applicationDirPath() + "/bin/mongodb/data/db"
+             + " --logpath " + qApp->applicationDirPath() + "/logs/mongodb.log";
+
+    qDebug() << mongoStartCommand;
+
     // start
-    qDebug() << cfgMongoDbDir+MONGODB_EXEC;
-    processMongoDb->start(cfgMongoDbDir+MONGODB_EXEC);
+    processMongoDb->start(mongoStartCommand);
 }
 
 void Tray::stopMongoDb()
 {
-    // disconnect process monitoring, before crashing the process
-    disconnect(processMongoDb, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mongoDbProcessError(QProcess::ProcessError)));
+    // build mongo stop command
+    QString const mongoStopCommand = cfgMongoDbDir + "/mongo.exe"
+             + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
-    processMongoDb->kill();
-    processMongoDb->waitForFinished();
+    qDebug() << "Shutting down MongoDb...\n" << mongoStopCommand;
+
+    if(QProcess::execute(mongoStopCommand))
+    {
+        // disconnect process monitoring, if shutdown command successfully send
+        disconnect(processMongoDb, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mongoDbProcessError(QProcess::ProcessError)));
+    }
 }
 
 void Tray::restartMongoDb()

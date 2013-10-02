@@ -341,20 +341,20 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
 
 QString MainWindow::getNginxVersion()
 {
-    /*QProcess* processNginx;
+    QProcess* processNginx;
 
     processNginx = new QProcess(this);
-    process.setProcessChannelMode(QProcess::MergedChannels);
-    //processNginx->setWorkingDirectory(cfgNginxDir);
-    //processNginx->start("./nginx", QStringList() << "-v");
+    processNginx->setProcessChannelMode(QProcess::MergedChannels);
+    processNginx->setWorkingDirectory(cfgNginxDir);
+    processNginx->start("./nginx", QStringList() << "-v");
     processNginx->waitForFinished(-1);
 
-    //QString p_stdout = processNginx->readAllStandardOutput();*/
+    QString p_stdout = processNginx->readAllStandardOutput();
 
     // test
-    QString p_stdout = "nginx version: nginx/1.2.1";
+    //QString p_stdout = "nginx version: nginx/1.2.1";
 
-    //qDebug() << p_stdout;
+    qDebug() << p_stdout;
 
     return parseVersionNumber(p_stdout);
 }
@@ -604,7 +604,7 @@ void MainWindow::openAboutDialog()
     QMessageBox about(this);
     about.setWindowTitle(tr("About"));
     about.setText(
-        trUtf8(
+        tr(
             "<table border=0>"
             "<tr><td colspan=2><img src=\":/wpnxm-logo-dark-transparent\"></img>&nbsp;"
             "<span style=\"display: inline-block; vertical-align: super; top: -20px; font-weight: bold; font-size: 14px;\">v" APP_VERSION "</span>"
