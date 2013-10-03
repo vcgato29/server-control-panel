@@ -36,7 +36,7 @@ CONFIG += qt console warn-on #static
 QT += network widgets
 
 # this define disables qDebug() output to console
-#DEFINES += QT_NO_DEBUG_OUTPUT
+#DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
 
 HEADERS += \
     src/version.h \
@@ -90,4 +90,3 @@ static {                                      # everything below takes effect wi
     QMAKE_LFLAGS += -static -static-libgcc
     QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
 }
-

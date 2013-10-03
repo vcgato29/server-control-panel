@@ -341,87 +341,93 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
 
 QString MainWindow::getNginxVersion()
 {
-    QProcess* processNginx;
+    QProcess processNginx;
+    processNginx.setProcessChannelMode(QProcess::MergedChannels);
+    qDebug() << "./bin/nginx/nginx.exe -v";
+    processNginx.start("./bin/nginx/nginx.exe -v");
 
-    processNginx = new QProcess(this);
-    processNginx->setProcessChannelMode(QProcess::MergedChannels);
-    processNginx->setWorkingDirectory(cfgNginxDir);
-    processNginx->start("./nginx", QStringList() << "-v");
-    processNginx->waitForFinished(-1);
+    if (!processNginx.waitForFinished())
+        qDebug() << "Nginx Version failed:" << processNginx.errorString();
 
-    QString p_stdout = processNginx->readAllStandardOutput();
+    QByteArray p_stdout = processNginx.readAll();
 
-    // test
+    // string for regexp testing
     //QString p_stdout = "nginx version: nginx/1.2.1";
 
-    qDebug() << p_stdout;
+    qDebug() << "Nginx Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout);
 }
 
 QString MainWindow::getMariaVersion()
 {
-    /*QProcess* processMaria;
-    processMaria = new QProcess(this);
-    process.setProcessChannelMode(QProcess::MergedChannels);
-    //processMaria->setWorkingDirectory(cfgMariaDir);
-    processMaria->start("./mysqld", QStringList() << "-V"); // upper-case V
-    processMaria->waitForFinished(-1);
+    QProcess processMaria;
+    processMaria.setProcessChannelMode(QProcess::MergedChannels);
+    processMaria.start("./bin/mariadb/bin/mysqld.exe -V"); // upper-case V
 
-    //QString p_stdout = processMaria->readAllStandardOutput();*/
+    if (!processMaria.waitForFinished())
+        qDebug() << "MariaDb Version failed:" << processMaria.errorString();
+
+    QByteArray p_stdout = processMaria.readAll();
 
     // test
-    QString p_stdout = "mysql  Ver 15.1 Distrib 5.5.24-MariaDB, for Win32 (x86)";
+    //QString p_stdout = "mysql  Ver 15.1 Distrib 5.5.24-MariaDB, for Win32 (x86)";
 
-    //qDebug() << p_stdout;
+    qDebug() << "MariaDb Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout.mid(15));
 }
 
 QString MainWindow::getPHPVersion()
 {
-    /*QProcess* processPhp;
+    QProcess processPhp;
+    processPhp.setProcessChannelMode(QProcess::MergedChannels);
+    processPhp.start("./bin/php/php.exe -v");
 
-    processPhp = new QProcess(this);
-    process.setProcessChannelMode(QProcess::MergedChannels);
-    processPhp->setWorkingDirectory(cfgPHPDir);
-    processPhp->start(cfgPHPDir+cfgPHPExec, QStringList() << "-v");
-    processPhp->waitForFinished(-1);*/
+    if (!processPhp.waitForFinished())
+        qDebug() << "PHP Version failed:" << processPhp.errorString();
 
-    //QString p_stdout = processPhp->readAllStandardOutput();;*/
+    QByteArray p_stdout = processPhp.readAll();
 
     // test
-    QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+    //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
 
-    //qDebug() << p_stdout;
+    qDebug() << "PHP Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout);
 }
 
 QString MainWindow::getMongoVersion()
 {
-    /*QProcess* processMongoDB;
-    processMongoDB = new QProcess(this);
-    processMongoDB->setWorkingDirectory(cfgMongoDBDir);
-    processMongoDB->start("./mongod", QStringList() << "--version");
-    processMongoDB->waitForFinished(-1);*/
+    QProcess processMongoDB;
+    processMongoDB.start("./bin/mongodb/bin/mongod --version");
 
-   /* QString p_stdout = processMongoDB->readAllStandardOutput();*/
-    QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+    if (!processMongoDB.waitForFinished())
+        qDebug() << "MongoDB Version failed:" << processMongoDB.errorString();
+
+    QByteArray p_stdout = processMongoDB.readAll();
+
+    //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+
+    qDebug() << "MongoDb Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout.mid(3)); //21
 }
 
 QString MainWindow::getMemcachedVersion()
 {
-    /*QProcess* processMemcached;
-    processMemcached = new QProcess(this);
-    processMemcached->setWorkingDirectory(cfgMemcachedDir);
-    processMemcached->start("./memcached", QStringList() << "-h");
-    processMemcached->waitForFinished(-1);*/
+    QProcess processMemcached;
+    processMemcached.start("./bin/memcached/memcached.exe -h");
+
+    if (!processMemcached.waitForFinished())
+        qDebug() << "Memcached Version failed:" << processMemcached.errorString();
+
+    QByteArray p_stdout = processMemcached.readAll();
 
     /*QString p_stdout = processMemcached->readAllStandardOutput();*/
-    QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+    //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+
+    qDebug() << "Memcached Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout.mid(2)); //10
 }

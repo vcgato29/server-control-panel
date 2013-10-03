@@ -239,7 +239,7 @@ void Tray::initializeConfiguration()
 
     cfgMongoDbDir           = globalSettings.value("paths/mongodb", "./bin/mongodb/bin").toString();
 
-    cfgMemcachedDir         = globalSettings.value("paths/memcached", "./bin/memcached/bin").toString();
+    cfgMemcachedDir         = globalSettings.value("paths/memcached", "./bin/memcached").toString();
 
     globalSettings.sync();
 }
@@ -476,7 +476,8 @@ void Tray::startMemcached()
     }
 
     // start
-    qDebug() << cfgMemcachedDir+MEMCACHED_EXEC;
+    qDebug() << "Starting Memcached...\n" << cfgMemcachedDir+MEMCACHED_EXEC;
+
     processMemcached->start(cfgMemcachedDir+MEMCACHED_EXEC);
 }
 
@@ -484,6 +485,8 @@ void Tray::stopMemcached()
 {
     // disconnect process monitoring, before crashing the process
     disconnect(processMemcached, SIGNAL(error(QProcess::ProcessError)), this, SLOT(memcachedProcessError(QProcess::ProcessError)));
+
+    qDebug() << "Stopping Memcached...\n";
 
     processMemcached->kill();
     processMemcached->waitForFinished();
