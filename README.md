@@ -5,40 +5,41 @@ The WPN-XM Server Control Panel is a Tray Application written in Qt.
 
 ## Build Dependencies
 
-* Qt >= 4.8
+* Qt >= 5
 
 ### Downloading Qt
 
-Install Qt binaries from either the Qt SDK or standalone binary package.
+Install Qt binaries from either the Qt SDK or standalone binary package or just use the Qt Online Installer.
 
 You should be able to find everything at http://qt-project.org/downloads or ftp://ftp.qt-project.org/
 
-* Qt libraries 4.8.4 for Windows (minGW 4.4, 317 MB)
+* Qt Online Installer
 
-  http://releases.qt-project.org/qt4/source/qt-win-opensource-4.8.4-mingw.exe
+  http://download.qt-project.org/official_releases/online_installers/1.4/qt-windows-opensource-1.4.0-2-x86-online.exe
 
-* Qt Creator 2.7.0 for Windows (52 MB)
+* Qt 5.1.1 for Windows 32-bit (MinGW 4.8, OpenGL, 666 MB)
 
-  http://releases.qt-project.org/qtcreator/2.7.0/qt-creator-windows-opensource-2.7.0.exe
+  http://download.qt-project.org/official_releases/qt/5.1/5.1.1/qt-windows-opensource-5.1.1-mingw48_opengl-x86-offline.exe
+  
+* Qt Creator 2.8.1 for Windows (53 MB)
 
-* MinGW Extension "make" for w32 (mingw32-make.exe, 1 MB)
+  http://download.qt-project.org/official_releases/qtcreator/2.8/2.8.1/qt-creator-windows-opensource-2.8.1.exe
 
-  http://sourceforge.net/projects/mingw/files/MinGW/Extension/make/make-3.82-mingw32/
+### Installation Steps and Requirements for Qt
 
-### Installation Steps for Qt
-
-http://qt-project.org/doc/qt-4.8/install-win.html
+  http://qt-project.org/doc/qt-5.0/qtdoc/install-win.html
+  http://qt-project.org/doc/qt-5.0/qtdoc/requirements-win.html
 
 #### Add Qt folder to PATH
 
 In order to build and use Qt, the PATH environment variable needs to be extended
-by adding the Qt installation folder, e.g. "c:\Qt-4.8.0".
+by adding the Qt installation folder, e.g. "c:\Qt".
 
 * Control Panel -> System -> Advanced -> Environment variables
 
 #### Build the Qt Library
 
-Go to the installation folder, e.g. "c:\Qt-4.8.0" and run "configure" followed by "mingw32-make".
+Go to the installation folder, e.g. "c:\Qt" and run "configure" followed by "mingw32-make".
 
 Type configure -help to get a list of all available options.
 The Configuration Options for Qt page gives a brief overview of these.
@@ -57,9 +58,16 @@ You have to build the libraries to be able to link successfully.
 
 * \wpnxm.ini
 * \libs\libgcc_s_dw2-1.dll
+* \libs\icudt51.dll
+* \libs\icuin51.dll
+* \libs\icuuc51.dll
+* \libs\libgcc_s_dw2-1.dll
+* \libs\libstdc++-6.dll
+* \libs\libwinphtread-1.dll
 * \libs\mingwm10.dll
-* \libs\QtCore4.dll
-* \libs\QtGui4.dll
+* \libs\QtCore5.dll
+* \libs\QtWidgets.dll
+* \libs\QtNetwork.dll
 
 ### 2 Run environment
 
