@@ -52,22 +52,24 @@ You have to build the libraries to be able to link successfully.
 
 * Start -> Programs -> Qt -> Qt Build Debug Libraries
 
-## Build Instructions
+## Build and Deployment Instructions
 
 ### 1 The "/build" directory must contain the following files:
 
+* \platforms\qwindows.dll
+* \icudt51.dll
+* \icuin51.dll
+* \icuuc51.dll
+* \libgcc_s_dw2-1.dll
+* \libstdc++-6.dll
+* \libwinphtread-1.dll
+* \Qt5Core.dll
+* \Qt5Network.dll
+* \Qt5Gui.dll
+* \Qt5Widgets.dll
+* \wpnxm-scp.exe
+
 * \wpnxm.ini
-* \libs\libgcc_s_dw2-1.dll
-* \libs\icudt51.dll
-* \libs\icuin51.dll
-* \libs\icuuc51.dll
-* \libs\libgcc_s_dw2-1.dll
-* \libs\libstdc++-6.dll
-* \libs\libwinphtread-1.dll
-* \libs\mingwm10.dll
-* \libs\QtCore5.dll
-* \libs\QtWidgets.dll
-* \libs\QtNetwork.dll
 
 ### 2 Run environment
 
