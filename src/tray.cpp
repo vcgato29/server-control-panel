@@ -417,7 +417,7 @@ void Tray::startMongoDb()
     }
 
     // mongodb doesn't start, when data dir is missing...
-    QString const mongoDbDataDir = cfgMongoDbDir + "/data/db";
+    QString const mongoDbDataDir = qApp->applicationDirPath() + "/bin/mongodb/data/db";
     if(QDir().exists(qApp->applicationDirPath() + "/bin/mongodb") && !QDir().exists(mongoDbDataDir)) {
         qDebug() << "Creating Directory for Mongo's Database... " << mongoDbDataDir;
         QDir().mkpath(mongoDbDataDir);
