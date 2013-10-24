@@ -1014,7 +1014,7 @@ p, li { white-space: pre-wrap; }
         <bool>true</bool>
        </property>
        <property name="toolTip">
-        <string>Close to tray.</string>
+        <string>Open Webinterface in Browser.</string>
        </property>
        <property name="text">
         <string>Webinterface</string>
@@ -1065,6 +1065,9 @@ p, li { white-space: pre-wrap; }
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="toolTip">
+        <string>Open the WPN-XM wiki help pages.</string>
+       </property>
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -1106,6 +1109,11 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
     </layout>
+    <zorder>pushButton_Configuration</zorder>
+    <zorder>pushButton_Webinterface</zorder>
+    <zorder>pushButton_Help</zorder>
+    <zorder>pushButton_About</zorder>
+    <zorder>pushButton_Close</zorder>
    </widget>
    <widget class="QGroupBox" name="DaemonsGroupBox">
     <property name="geometry">
