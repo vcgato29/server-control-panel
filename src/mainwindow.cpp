@@ -91,8 +91,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_Nginx_Port->setText("80");
     ui->label_PHP_Port->setText("9100");
     ui->label_MariaDb_Port->setText("3306");
-    ui->label_MongoDB_Port->setText("123");
-    ui->label_Memcached_Port->setText("123");
+    ui->label_MongoDB_Port->setText("27017");
+    ui->label_Memcached_Port->setText("11211");
 
     showPushButtonsOnlyForInstalledTools();
     enableToolsPushButtons(false);

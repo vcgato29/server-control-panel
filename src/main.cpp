@@ -33,8 +33,22 @@
 
 // main method
 int main(int argc, char * argv[])
-{
+{    
     Q_INIT_RESOURCE(resources);
+
+    wchar_t dirpath[MAX_PATH];
+    GetModuleFileName(0, dirpath, MAX_PATH);
+    QFileInfo dir(QString::fromWCharArray(dirpath));
+    QApplication::addLibraryPath(dir.absolutePath()+"/plugins");
+/*
+    QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() + QDir::separator() + "libs" );
+
+    QStringList libpaths = QCoreApplication::libraryPaths();
+    libpaths.prepend(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
+    libpaths.prepend(QCoreApplication::applicationDirPath() + QDir::separator() + "libs/platforms");
+    libpaths.prepend(appDir);
+    QCoreApplication::setLibraryPaths(libpaths);
+*/
 
     // if CLI args are found, the application reacts as a console application
     if (argc > 1) { // first arg is the executable itself
