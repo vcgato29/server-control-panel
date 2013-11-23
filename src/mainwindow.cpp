@@ -91,8 +91,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_Nginx_Port->setText("80");
     ui->label_PHP_Port->setText("9100");
     ui->label_MariaDb_Port->setText("3306");
-    ui->label_MongoDB_Port->setText("27017");
-    ui->label_Memcached_Port->setText("11211");
+    ui->label_MongoDB_Port->setText("123");
+    ui->label_Memcached_Port->setText("123");
 
     showPushButtonsOnlyForInstalledTools();
     enableToolsPushButtons(false);
@@ -613,7 +613,7 @@ void MainWindow::openAboutDialog()
         tr(
             "<table border=0>"
             "<tr><td colspan=2><img src=\":/wpnxm-logo-dark-transparent\"></img>&nbsp;"
-            "<span style=\"display: inline-block; vertical-align: super; top: -20px; font-weight: bold; font-size: 14px;\">v" APP_VERSION "</span>"
+            "<span style=\"display: inline-block; vertical-align: super; top: -20px; font-weight: bold; font-size: 16px;\">v" APP_VERSION "</span>"
             "</td></tr>"
             "<tr><td colspan=2>&nbsp;&nbsp;</td></tr>"
             "<tr><td align=center><b>Website</b></td><td><a href=\"http://wpn-xm.org/\">http://wpn-xm.org/</a><br></td></tr>"
@@ -621,7 +621,7 @@ void MainWindow::openAboutDialog()
             "<tr><td align=center><b>Author(s)</b></td><td>Jens-André Koch (C) 2011 - onwards, <br>Yann Le Moigne (C) 2010.<br></td></tr>"
             "<tr><td align=center><b>Github</b></td><td>WPN-XM is developed on Github.<br><a href=\"https://github.com/WPN-XM/WPN-XM/\">https://github.com/WPN-XM/WPN-XM/</a><br></td></tr>"
             "<tr><td align=center><b>Icons</b></td><td>We are using Yusukue Kamiyamane's Fugue Icon Set.<br><a href=\"http://p.yusukekamiyamane.com/\">http://p.yusukekamiyamane.com/</a><br></td></tr>"
-            "<tr><td align=center><b>+1?</b></td><td>If you like using WPN-XM, consider supporting it:<br><a href=\"http://wpn-xm.org/donate.html\">http://wpn-xm.org/donate.html</a><br></td></tr>"
+            "<tr><td align=center><b>+1?</b></td><td>If you like using WPN-XM, consider supporting it:<br><a href=\"http://wpn-xm.org/donate.html\">http://wpn-xm.org/#donate</a><br></td></tr>"
             "</td></tr></table>"
             "<br><br>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.<br>"
     ));
