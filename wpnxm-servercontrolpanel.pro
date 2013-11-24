@@ -90,3 +90,19 @@ static {                                      # everything below takes effect wi
     QMAKE_LFLAGS += -static -static-libgcc
     QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
 }
+
+# Copy Dependencies to Build Folder
+dlls.path  =  $${DESTDIR}
+dlls.files += $$[QT_INSTALL_BINS]/icudt51.dll
+dlls.files += $$[QT_INSTALL_BINS]/icuin51.dll
+dlls.files += $$[QT_INSTALL_BINS]/icuuc51.dll
+dlls.files += $$[QT_INSTALL_BINS]/libgcc_s_dw2-1.dll
+dlls.files += $$[QT_INSTALL_BINS]/libstdc++-6.dll
+dlls.files += $$[QT_INSTALL_BINS]/libwinpthread-1.dll
+dlls.files += $$[QT_INSTALL_BINS]/Qt5Core.dll
+dlls.files += $$[QT_INSTALL_BINS]/Qt5Network.dll
+dlls.files += $$[QT_INSTALL_BINS]/Qt5Gui.dll
+dlls.files += $$[QT_INSTALL_BINS]/Qt5Widgets.dll
+dll.path   += $${DESTDIR}/platforms
+dll.files  += $$[QT_INSTALL_PLUGINS]/platforms/qwindows.dll
+INSTALLS   += dlls dll
