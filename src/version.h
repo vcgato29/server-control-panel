@@ -1,11 +1,11 @@
 /*
     WPN-XM Server Control Panel
 
-    WPN-XM SCP is a tool to manage Nginx, PHP and MariaDb daemons under windows.
-    It's a fork of Easy WEMP originally written by Yann Le Moigne and (c) 2010.
+    WPN-XM SCP is a GUI tool for managing server daemons under Windows.
+    It's a fork of Easy WEMP written by Yann Le Moigne and (c) 2010.
     WPN-XM SCP is written by Jens-Andre Koch and (c) 2011 - onwards.
 
-    This file is part of WPN-XM Serverpack for Windows.
+    This file is part of WPN-XM Server Stack for Windows.
 
     WPN-XM SCP is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 #define APP_VERSION "@APPVERSION@"
 
 // Application name
-#define APP_NAME "WPN-XM Server Control Panel"
+#define APP_NAME "WPИ-XM Server Control Panel"
 
 // Application name and version
-#define APP_NAME_AND_VERSION "WPN-XM Server Control Panel @APPVERSION@"
+#define APP_NAME_AND_VERSION "WPИ-XM Server Control Panel @APPVERSION@"
 
 // Settings for application_win.rc
 // These values are the attributes of the executable, shown when right-clicking on it.

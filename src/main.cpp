@@ -1,11 +1,11 @@
 /*
     WPN-XM Server Control Panel
 
-    WPN-XM SCP is a tool to manage Nginx, PHP and MariaDb daemons under windows.
-    It's a fork of Easy WEMP originally written by Yann Le Moigne and (c) 2010.
+    WPN-XM SCP is a GUI tool for managing server daemons under Windows.
+    It's a fork of Easy WEMP written by Yann Le Moigne and (c) 2010.
     WPN-XM SCP is written by Jens-Andre Koch and (c) 2011 - onwards.
 
-    This file is part of WPN-XM Serverpack for Windows.
+    This file is part of WPN-XM Server Stack for Windows.
 
     WPN-XM SCP is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "main.h"
 #include "version.h"
 #include "mainwindow.h"
+#include "splashscreen.h"
 
 // global QT includes
 #include <QtWidgets>
@@ -33,22 +34,8 @@
 
 // main method
 int main(int argc, char * argv[])
-{    
+{
     Q_INIT_RESOURCE(resources);
-
-    wchar_t dirpath[MAX_PATH];
-    GetModuleFileName(0, dirpath, MAX_PATH);
-    QFileInfo dir(QString::fromWCharArray(dirpath));
-    QApplication::addLibraryPath(dir.absolutePath()+"/plugins");
-/*
-    QCoreApplication::addLibraryPath( QCoreApplication::applicationDirPath() + QDir::separator() + "libs" );
-
-    QStringList libpaths = QCoreApplication::libraryPaths();
-    libpaths.prepend(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
-    libpaths.prepend(QCoreApplication::applicationDirPath() + QDir::separator() + "libs/platforms");
-    libpaths.prepend(appDir);
-    QCoreApplication::setLibraryPaths(libpaths);
-*/
 
     // if CLI args are found, the application reacts as a console application
     if (argc > 1) { // first arg is the executable itself
@@ -69,6 +56,10 @@ int main(int argc, char * argv[])
     app.setOrganizationName("Jens-André Koch");
     app.setOrganizationDomain("http://wpn-xm.org/");
     app.setWindowIcon(QIcon(":/wpnxm"));
+
+    SplashScreen splash(QPixmap(), 0);
+    splash.show();
+    splash.setAutoFillBackground(true);
 
     // do not leave application, until Quit is clicked in the tray menu
     app.setQuitOnLastWindowClosed(false);
