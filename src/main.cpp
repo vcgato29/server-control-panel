@@ -57,15 +57,18 @@ int main(int argc, char * argv[])
     app.setOrganizationDomain("http://wpn-xm.org/");
     app.setWindowIcon(QIcon(":/wpnxm"));
 
-    SplashScreen splash(QPixmap(), 0);
+    // splash on
+    SplashScreen splash(QPixmap(), Qt::WindowStaysOnTopHint);
     splash.show();
-    splash.setAutoFillBackground(true);
 
     // do not leave application, until Quit is clicked in the tray menu
     app.setQuitOnLastWindowClosed(false);
 
     MainWindow mainWindow;
     mainWindow.show();
+
+    // splash off
+    splash.finish(&mainWindow);
 
     // enter the Qt Event loop here
     return app.exec();

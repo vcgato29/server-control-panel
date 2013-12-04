@@ -21,5 +21,6 @@
         <file alias="money">money-coin.png</file>
         <file alias="question">question.png</file>
         <file alias="wpnxm">wpnxm.ico</file>
+        <file alias="splash">splash.png</file>
     </qresource>
 </RCC>

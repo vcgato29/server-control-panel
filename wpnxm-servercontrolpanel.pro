@@ -1,11 +1,11 @@
 #
 #    WPN-XM Server Control Panel
 #
-#    WPN-XM SCP is a tool to manage Nginx, PHP and MariaDB daemons under Windows.
-#    It's a fork of Easy WEMP originally written by Yann Le Moigne and (c) 2010.
+#    WPN-XM SCP is a GUI tool for managing server daemons under Windows.
+#    It's a fork of Easy WEMP written by Yann Le Moigne and (c) 2010.
 #    WPN-XM SCP is written by Jens-Andre Koch and (c) 2011 - onwards.
 #
-#    This file is part of WPN-XM Serverpack for Windows.
+#    This file is part of WPN-XM Server Stack for Windows.
 #
 #    WPN-XM SCP is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ QMAKE_TARGET_PRODUCT = WPN-XM Server Control Panel
 QMAKE_TARGET_DESCRIPTION = WPN-XM SCP Tray Application.
 QMAKE_TARGET_COPYRIGHT = (c) Jens-André Koch
 
-CONFIG += qt console #warn-on #static
+CONFIG += qt #warn-on #console #static
 
 QT += network widgets
 
@@ -50,6 +50,7 @@ HEADERS += \
     src/configurationdialog.h \
     src/settings.h \
     src/settingsTable.h \
+    src/splashscreen.h
 
 SOURCES += \
     src/main.cpp \
@@ -61,7 +62,8 @@ SOURCES += \
     src/hostmanager/hostmanagerdialog.cpp \
     src/configurationdialog.cpp \
     src/settings.cpp \
-    src/settingsTable.cpp
+    src/settingsTable.cpp \
+    src/splashscreen.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
