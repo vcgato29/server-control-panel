@@ -72,8 +72,6 @@ Tray::~Tray()
     if(bStopDaemonsOnQuit == true) {
         stopAllDaemons();
     }
-
-    delete trayMenu;
 }
 
 void Tray::startMonitoringDaemonProcesses()
