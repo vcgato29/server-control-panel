@@ -29,7 +29,7 @@
 
 void exitIfAlreadyRunning();
 void handleCommandLineArguments(QStringList args);
-void printHelpText();
+int printHelpText();
 
 class Main : public QObject
 {

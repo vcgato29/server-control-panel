@@ -128,42 +128,7 @@ signals:
 private:
         QTimer* timer;
 
-        // The settings manager.
-        Settings m_settings;
-
-        bool bAutostartDaemons;
-        bool bStopDaemonsOnQuit;
-
-        // Global
-        QString cfgLogsDir;
-
-        // PHP
-        QString cfgPhpDir;
-#define PHPCGI_EXEC "/php-cgi.exe"
-        QString cfgPhpConfig;
-        QString cfgPhpFastCgiHost;
-        QString cfgPhpFastCgiPort;
-
-        // NGINX
-        QString cfgNginxDir;
-#define NGINX_EXEC "/nginx.exe"
-        QString cfgNginxConfig;
-        QString cfgNginxSites;
-
-        // MySQL
-        QString cfgMariaDbDir;
-#define MARIADB_EXEC "/mysqld.exe"
-#define MARIADB_CLIENT_EXEC "/mysql.exe"
-        QString cfgMariaDbConfig;
-        QString cfgMariaDbClientExec;
-
-        // MongoDB
-        QString cfgMongoDbDir;
-#define MONGODB_EXEC "/mongod.exe"
-
-        // Memcached
-        QString cfgMemcachedDir;
-#define MEMCACHED_EXEC "/memcached.exe"
+        Settings* settings;
 
         // Process Monitoring
         QProcess* processNginx;
@@ -182,7 +147,14 @@ private:
         QMenu* mongoDbStatusSubmenu;
         QMenu* memcachedStatusSubmenu;
 
-        void initializeConfiguration();
+// Executables
+#define PHPCGI_EXEC "/php-cgi.exe"
+#define NGINX_EXEC "/nginx.exe"
+#define MARIADB_EXEC "/mysqld.exe"
+#define MARIADB_CLIENT_EXEC "/mysql.exe"
+#define MONGODB_EXEC "/mongod.exe"
+#define MEMCACHED_EXEC "/memcached.exe"
+
         void startMonitoringDaemonProcesses();
 
         QString getProcessErrorMessage(QProcess::ProcessError);

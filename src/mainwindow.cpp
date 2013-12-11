@@ -26,6 +26,7 @@
 #include "tray.h"
 #include "configurationdialog.h"
 #include "settings.h"
+#include "settingsTable.h"
 
 // Global includes
 #include <QApplication>
@@ -39,6 +40,7 @@
 #include <QDir>
 #include <QDialogButtonBox>
 #include <QCheckbox>
+#include <QDesktopWidget>
 
 class QCloseEvent;
 
@@ -56,7 +58,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // overrides the window title defined in mainwindow.ui
     setWindowTitle(APP_NAME_AND_VERSION);
 
-    settings.readSettings();
+    setDefaultSettings();
+    loadSettings();
+
     checkAlreadyActiveDaemons();
 
     // inital state of status leds is disabled
@@ -79,20 +83,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createTrayIcon();
 
-    // fetch version numbers from the daemons and set label text accordingly
+    // fetch version numbers from the daemons and set label texts
     ui->label_Nginx_Version->setText( getNginxVersion() );
     ui->label_PHP_Version->setText( getPHPVersion() );
     ui->label_MariaDb_Version->setText( getMariaVersion() );
     ui->label_MongoDB_Version->setText( getMongoVersion() );
     ui->label_Memcached_Version->setText( getMemcachedVersion() );
 
-    // hardcode ports for v0.3.0
-    // @todo these ports need to be read from wpnxm.ini
-    ui->label_Nginx_Port->setText("80");
-    ui->label_PHP_Port->setText("9100");
-    ui->label_MariaDb_Port->setText("3306");
-    ui->label_MongoDB_Port->setText("123");
-    ui->label_Memcached_Port->setText("123");
+    // fetch ports and set label texts
+    ui->label_Nginx_Port->setText(cfgNginxPort); // 80
+    ui->label_PHP_Port->setText(cfgPhpFastCgiPort); // 9100
+    ui->label_MariaDb_Port->setText(cfgMariaDBPort); // 3306
+    ui->label_MongoDB_Port->setText(cfgMongoDBPort); // 27015
+    ui->label_Memcached_Port->setText(cfgMemcachedPort); // 11211
 
     showPushButtonsOnlyForInstalledTools();
     enableToolsPushButtons(false);
@@ -308,34 +311,18 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
     }
 
     // if tool directory exists, show pushButton
-
-    if(QDir(getProjectFolder() + "/webinterface").exists())
-    {
-        ui->pushButton_tools_phpinfo->setVisible(true);
-    }
-
-    if(QDir(getProjectFolder() + "/phpmyadmin").exists())
-    {
-        ui->pushButton_tools_phpmyadmin->setVisible(true);
-    }
-
-    if(QDir(getProjectFolder() + "/adminer").exists())
-    {
-        ui->pushButton_tools_adminer->setVisible(true);
-    }
-
-    if(QDir(getProjectFolder() + "/webgrind").exists())
-    {
-        ui->pushButton_tools_webgrind->setVisible(true);
-    }
+    if(QDir(getProjectFolder() + "/webinterface").exists()) { ui->pushButton_tools_phpinfo->setVisible(true); }
+    if(QDir(getProjectFolder() + "/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setVisible(true); }
+    if(QDir(getProjectFolder() + "/adminer").exists())      { ui->pushButton_tools_adminer->setVisible(true); }
+    if(QDir(getProjectFolder() + "/webgrind").exists())     { ui->pushButton_tools_webgrind->setVisible(true); }
 }
 
 void MainWindow::setLabelStatusActive(QString label, bool enabled)
 {
-    if(label == "nginx") { ui->label_Nginx_Status->setEnabled(enabled); }
-    if(label == "php") { ui->label_PHP_Status->setEnabled(enabled); }
-    if(label == "mariadb"){ ui->label_MariaDb_Status->setEnabled(enabled); }
-    if(label == "mongodb") { ui->label_MongoDb_Status->setEnabled(enabled); }
+    if(label == "nginx")     { ui->label_Nginx_Status->setEnabled(enabled); }
+    if(label == "php")       { ui->label_PHP_Status->setEnabled(enabled); }
+    if(label == "mariadb")   { ui->label_MariaDb_Status->setEnabled(enabled); }
+    if(label == "mongodb")   { ui->label_MongoDb_Status->setEnabled(enabled); }
     if(label == "memcached") { ui->label_Memcached_Status->setEnabled(enabled); }
 }
 
@@ -346,8 +333,9 @@ QString MainWindow::getNginxVersion()
     qDebug() << "./bin/nginx/nginx.exe -v";
     processNginx.start("./bin/nginx/nginx.exe -v");
 
-    if (!processNginx.waitForFinished())
+    if (!processNginx.waitForFinished()) {
         qDebug() << "Nginx Version failed:" << processNginx.errorString();
+    }
 
     QByteArray p_stdout = processNginx.readAll();
 
@@ -365,8 +353,9 @@ QString MainWindow::getMariaVersion()
     processMaria.setProcessChannelMode(QProcess::MergedChannels);
     processMaria.start("./bin/mariadb/bin/mysqld.exe -V"); // upper-case V
 
-    if (!processMaria.waitForFinished())
+    if (!processMaria.waitForFinished()) {
         qDebug() << "MariaDb Version failed:" << processMaria.errorString();
+    }
 
     QByteArray p_stdout = processMaria.readAll();
 
@@ -764,4 +753,70 @@ void MainWindow::checkAlreadyActiveDaemons()
         delete grid;
         delete dlg;
     }
+}
+
+void MainWindow::setDefaultSettings()
+{
+    settings.readSettings();
+
+    // The MainWindow position. Default value is screen center.
+    QPoint center = QApplication::desktop()->screenGeometry().center();
+    settings.addSetting("MainWindowPosition", center, center);
+
+    //QMap<QString, QVariant> languages;
+    //languages[str::sLanguageEnglishTitle] = str::sLanguageEnglishKey;
+    //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
+    //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
+
+    settings.addSetting("global/autostartdaemons",  true);
+    settings.addSetting("global/stopdaemonsonquit", true);
+
+    settings.addSetting("paths/logs",               "/logs");
+    settings.addSetting("paths/php",                "./bin/php");
+    settings.addSetting("paths/mongodb",            "./bin/mongodb/bin");
+    settings.addSetting("paths/memcached",          "./bin/memcached");
+    settings.addSetting("paths/mariadb",            "./bin/mariadb/bin");
+    settings.addSetting("paths/nginx",              "./bin/nginx");
+
+    settings.addSetting("php/config",               "./bin/php/php.ini");
+    settings.addSetting("php/fastcgi-host",         "localhost");
+    settings.addSetting("php/fastcgi-port",         "9100");
+    settings.addSetting("nginx/config",             "./bin/nginx/conf/nginx.conf");
+    settings.addSetting("nginx/sites",              "/www");
+    settings.addSetting("nginx/port",               "80");
+    settings.addSetting("mariadb/config",           "./bin/mariadb/my.ini");
+    settings.addSetting("mariadb/port",             "3306");
+    settings.addSetting("memcached/port",           "11211");
+    settings.addSetting("mongodb/port",             "27015");
+}
+
+void MainWindow::loadSettings()
+{
+    bAutostartDaemons       = settings.value("global/autostartdaemons").toBool();
+    bStopDaemonsOnQuit      = settings.value("global/stopdaemonsonquit").toBool();
+
+    // paths
+    cfgLogsDir              = settings.value("paths/logs").toString();
+    cfgPhpDir               = settings.value("paths/php").toString();
+    cfgNginxDir             = settings.value("paths/nginx").toString();
+    cfgMariaDBDir           = settings.value("paths/mariadb").toString();
+    cfgMongoDBDir           = settings.value("paths/mongodb").toString();
+    cfgMemcachedDir         = settings.value("paths/memcached").toString();
+
+    cfgPhpConfig            = settings.value("php/config").toString();
+    cfgPhpFastCgiHost       = settings.value("php/fastcgi-host").toString();
+    cfgPhpFastCgiPort       = settings.value("php/fastcgi-port").toString();
+
+    cfgNginxConfig          = settings.value("nginx/config").toString();    
+    cfgNginxSites           = settings.value("nginx/sites").toString();
+    cfgNginxPort            = settings.value("nginx/port").toString();
+    cfgMariaDBConfig        = settings.value("mariadb/config").toString();
+
+    cfgMariaDBPort          = settings.value("mariadb/port").toString();
+    cfgMemcachedPort        = settings.value("memcached/port").toString();
+    cfgMongoDBPort          = settings.value("mongodb/port").toString();
+
+    qDebug() << "[Settings]\n" << settings.toString();
+
+    settings.saveSettings();
 }

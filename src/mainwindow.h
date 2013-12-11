@@ -55,9 +55,15 @@ public:
 
     QString parseVersionNumber(QString stringWithVersion);
 
-    bool bAutostartDaemons;
+    // The settings manager.
+    Settings settings;
 
-    // Global
+    /*
+     * Settings
+     */
+    bool bAutostartDaemons;
+    bool bStopDaemonsOnQuit;
+
     QString cfgLogsDir;
 
     // PHP
@@ -72,6 +78,7 @@ public:
 #define NGINX_EXEC "/nginx.exe"
     QString cfgNginxConfig;
     QString cfgNginxSites;
+    QString cfgNginxPort;
 
     // MySQL
     QString cfgMariaDBDir;
@@ -87,6 +94,10 @@ public:
     // Memcached
     QString cfgMemcachedDir;
 #define MEMCACHED_EXEC "/memcached.exe"
+
+    QString cfgMariaDBPort;
+    QString cfgMemcachedPort;
+    QString cfgMongoDBPort;
 
     // Process Monitoring
     QProcess* processNginx;
@@ -143,12 +154,12 @@ private:
     void createTrayIcon();
     void startMonitoringDaemonProcesses();
 
+    void setDefaultSettings();
+    void loadSettings();
+
     // Returns full path to project folder (appPath + www).
     QString getProjectFolder() const;
     void showPushButtonsOnlyForInstalledTools();
-
-    // The settings manager.
-    Settings settings;
 
 private slots:
 

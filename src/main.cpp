@@ -25,6 +25,7 @@
 #include "main.h"
 #include "version.h"
 #include "mainwindow.h"
+#include "settings.h"
 #include "splashscreen.h"
 
 // global QT includes
@@ -157,21 +158,19 @@ void handleCommandLineArguments(QStringList args)
     }
 }
 
-void printHelpText()
+int printHelpText()
 {
-      QString usage = "\n"
-    "Usage: " + QCoreApplication::arguments().at(0) + " [option]\n"
-    "\n"
-    "Options:\n"
-      "-v or --version                      Prints the version \n"
-      "-h or --help                         Prints this help message \n"
-      "-s or --service <daemon> <command>   Executes <command> on <daemon> \n"
-         "    [<daemon>]: The name of a daemon, e.g. nginx, mariadb, memcached, mongodb \n"
-         "    [<command>]: The command to execute, e.g. start, stop, restart \n"
-         "    Ports specified in \"wpnxm.ini\" will be used. \n"
-    "\n";
-
-   qDebug() << "Unkown:" << usage;
-   //printf(usage);
-   exit(-1);
+    QString usage = "\n"
+        "Usage: " + QCoreApplication::arguments().at(0) + " [option]\n"
+        "\n"
+        "Options:\n"
+          "-v or --version                      Prints the version \n"
+          "-h or --help                         Prints this help message \n"
+          "-s or --service <daemon> <command>   Executes <command> on <daemon> \n"
+             "    [<daemon>]: The name of a daemon, e.g. nginx, mariadb, memcached, mongodb \n"
+             "    [<command>]: The command to execute, e.g. start, stop, restart \n"
+             "    Ports specified in \"wpnxm.ini\" will be used. \n"
+        "\n";
+   puts(usage.toStdString().c_str());
+   return 0;
 }

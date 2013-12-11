@@ -21,8 +21,8 @@
     along with WPN-XM SCP. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROPERTYTABLE_H
-#define PROPERTYTABLE_H
+#ifndef SETTINGSTABLE_H
+#define SETTINGSTABLE_H
 
 // global includes
 #include <QHash>
@@ -52,7 +52,7 @@ public:
     virtual ~SettingsTable();
 
     /// Adds new property with the given name and value.
-    void addProperty(const QString &name,
+    void addSetting(const QString &name,
                      const QVariant &value,
                      const QVariant &defaultValue = QVariant());
 
@@ -73,8 +73,8 @@ public:
     /// Returns the formated string with the properties and their values.
     /*!
         This function returns formated string that contains property-value pairs
-        in format <name>:<tab><values><new_line>. The properties are
-        alphabethically sorted by names.
+        in format <name>:<tab><values><new_line>.
+        The properties are alphabethically sorted by names.
     */
     QString toString() const;
 
@@ -159,7 +159,7 @@ protected:
     };
 
     /// Store the properties
-    QHash<QString, Setting> m_settings;
+    QHash<QString, Setting> settings;
 };
 
 #endif // SETTINGSTABLE_H

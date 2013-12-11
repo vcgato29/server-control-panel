@@ -33,28 +33,28 @@ SettingsTable::SettingsTable(const SettingsTable &other, QObject *parent) : QObj
     setParent(other.parent());
 
     // just copy one container from another
-    m_settings = other.m_settings;
+    settings = other.settings;
 }
 
 SettingsTable::~SettingsTable()
 {
     // clear properties
-    m_settings.clear();
+    settings.clear();
 }
 
-void SettingsTable::addProperty(const QString &name,
+void SettingsTable::addSetting(const QString &name,
                                 const QVariant &value,
                                 const QVariant &defaultValue)
 {
-    Setting pD(name, value, defaultValue);
-    m_settings[name] = pD;
+    Setting setting(name, value, defaultValue);
+    settings[name] = setting;
 }
 
 QVariant SettingsTable::value(const QString &name) const
 {
-    if (m_settings.contains(name))
+    if (settings.contains(name))
     {
-        Setting setting = m_settings.value(name);
+        Setting setting = settings.value(name);
         return setting.value();
     }
     else
@@ -63,9 +63,9 @@ QVariant SettingsTable::value(const QString &name) const
 
 void SettingsTable::setValue(const QString &name, const QVariant &value)
 {
-    QHash<QString, Setting>::iterator i = m_settings.find(name);
+    QHash<QString, Setting>::iterator i = settings.find(name);
 
-    if(i != m_settings.end() && i.key() == name)
+    if(i != settings.end() && i.key() == name)
     {
         if(value.isValid())
             i.value().setValue(value);
@@ -79,9 +79,9 @@ void SettingsTable::setValue(const QString &name, const QVariant &value)
 
 void SettingsTable::resetToDefault()
 {
-    QHash<QString, Setting>::iterator i = m_settings.begin();
+    QHash<QString, Setting>::iterator i = settings.begin();
 
-    while (i != m_settings.end())
+    while (i != settings.end())
     {
         // Reset the property value
         i.value().resetToDefault();
@@ -113,10 +113,10 @@ QString SettingsTable::toString() const
 
 QMap<QString, QVariant> SettingsTable::settingsMap() const
 {
-    QHash<QString, Setting>::const_iterator i = m_settings.constBegin();
+    QHash<QString, Setting>::const_iterator i = settings.constBegin();
     QMap<QString, QVariant> settingsMap;
 
-    while (i != m_settings.constEnd())
+    while (i != settings.constEnd())
     {
         Setting setting = i.value();
         settingsMap[setting.name()] = setting.value();

@@ -28,6 +28,7 @@
 #include <QSettings>
 #include <QApplication>
 #include <QDebug>
+#include <QDir>
 
 const QString appSettingsFileName("wpn-xm.ini");
 
@@ -40,23 +41,26 @@ Settings::~Settings()
 {
 }
 
-
 QString Settings::file() const
 {
-    qDebug() << "Using settings file : " << QCoreApplication::applicationDirPath() << '/' << appSettingsFileName;
-
-    return QCoreApplication::applicationDirPath() + '/' + appSettingsFileName;
+    QString file = QCoreApplication::applicationDirPath() + '/' + appSettingsFileName;
+    file = QDir::toNativeSeparators(file);
+    qDebug() << "[Using Settings File]" << file;
+    return file;
 }
 
 void Settings::saveSettings() const
 {
-    QHash<QString, Setting>::const_iterator i = m_settings.constBegin();
+    qDebug() << "[Save Settings]";
+
+    QHash<QString, Setting>::const_iterator i = settings.constBegin();
 
     // Create a QSettings object. Use the INI format to store data.
     QSettings settingsWriter(file(), QSettings::IniFormat);
 
-    while (i != m_settings.constEnd())
+    while (i != settings.constEnd())
     {
+        qDebug() << i.value().name();
         settingsWriter.setValue(i.value().name(), i.value().value());
         ++i;
     }
@@ -64,19 +68,20 @@ void Settings::saveSettings() const
 
 void Settings::readSettings()
 {
+     qDebug() << "[Read Settings]";
+
     // Create a QSettings object. Use the INI format to read data.
     QSettings settingsReader(file(), QSettings::IniFormat);
 
-    QHash<QString, Setting>::iterator i = m_settings.begin();
+    QHash<QString, Setting>::iterator i = settings.begin();
 
-    while (i != m_settings.end())
+    while (i != settings.end())
     {
         QString settingName = i.key();
         QVariant settingValue = settingsReader.value(settingName);
 
-        // set the new value we read from the file
+        // set the new value we read from the file to the SettingsTable
         setValue(settingName, settingValue);
-
         ++i;
     }
 }

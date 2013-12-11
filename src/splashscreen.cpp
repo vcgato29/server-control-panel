@@ -47,6 +47,7 @@ SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
     QString titleText       = QString(QApplication::applicationName());
     QString versionText     = QString("Version %1").arg(QString::fromStdString(APP_VERSION));
     QString copyrightText   = QChar(0xA9)+QString(" 2010-%1 ").arg(QDate::currentDate().toString("yyyy")) + QString(tr("Jens-André Koch"));
+    //QString madeinText      = QString("Made in Germany.");
 
     QString font            = "Arial";
 
@@ -81,10 +82,13 @@ SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
     int copyrightTextWidth = pixPaint.fontMetrics().width(copyrightText);
     pixPaint.drawText(newPixmap.width()-copyrightTextWidth-paddingRight-2,paddingTop+titleCopyrightVSpace,copyrightText);
 
+    // made in germany
+    //int madeinTextWidth = pixPaint.fontMetrics().width(madeinText) + 5;
+    //pixPaint.drawText(newPixmap.width()-madeinTextWidth,newPixmap.height()-5,madeinText);
+
     pixPaint.end();
 
     this->setPixmap(newPixmap);
 
-    Qt::Alignment mms = Qt::AlignBottom | Qt::AlignLeft;
-    this->showMessage("Loading...", mms, Qt::gray);
+    this->showMessage("Loading...", Qt::AlignBottom | Qt::AlignLeft, Qt::gray);
 }
