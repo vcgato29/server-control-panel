@@ -305,14 +305,14 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
     // set all PushButtons invisible
     for(int i = 0; i < allPushButtonsButtons.size(); ++i)
     {
-       allPushButtonsButtons[i]->setVisible(false);
+       allPushButtonsButtons[i]->setDisabled(true);
     }
 
     // if tool directory exists, show pushButton
-    if(QDir(getProjectFolder() + "/webinterface").exists()) { ui->pushButton_tools_phpinfo->setVisible(true); }
-    if(QDir(getProjectFolder() + "/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setVisible(true); }
-    if(QDir(getProjectFolder() + "/adminer").exists())      { ui->pushButton_tools_adminer->setVisible(true); }
-    if(QDir(getProjectFolder() + "/webgrind").exists())     { ui->pushButton_tools_webgrind->setVisible(true); }
+    if(QDir(getProjectFolder() + "/webinterface").exists()) { ui->pushButton_tools_phpinfo->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/adminer").exists())      { ui->pushButton_tools_adminer->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/webgrind").exists())     { ui->pushButton_tools_webgrind->setDisabled(false); }
 }
 
 void MainWindow::setLabelStatusActive(QString label, bool enabled)
@@ -322,6 +322,7 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
     if(label == "mariadb")   { ui->label_MariaDb_Status->setEnabled(enabled); }
     if(label == "mongodb")   { ui->label_MongoDb_Status->setEnabled(enabled); }
     if(label == "memcached") { ui->label_Memcached_Status->setEnabled(enabled); }
+
 }
 
 QString MainWindow::getNginxVersion()
