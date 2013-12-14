@@ -328,7 +328,6 @@ QString MainWindow::getNginxVersion()
 {
     QProcess processNginx;
     processNginx.setProcessChannelMode(QProcess::MergedChannels);
-    qDebug() << "./bin/nginx/nginx.exe -v";
     processNginx.start("./bin/nginx/nginx.exe -v");
 
     if (!processNginx.waitForFinished()) {
@@ -357,7 +356,7 @@ QString MainWindow::getMariaVersion()
 
     QByteArray p_stdout = processMaria.readAll();
 
-    // test
+    // string for regexp testing
     //QString p_stdout = "mysql  Ver 15.1 Distrib 5.5.24-MariaDB, for Win32 (x86)";
 
     qDebug() << "MariaDb Version: " << p_stdout;
@@ -376,7 +375,7 @@ QString MainWindow::getPHPVersion()
 
     QByteArray p_stdout = processPhp.readAll();
 
-    // test
+    // string for regexp testing
     //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
 
     qDebug() << "PHP Version: " << p_stdout;
@@ -394,7 +393,8 @@ QString MainWindow::getMongoVersion()
 
     QByteArray p_stdout = processMongoDB.readAll();
 
-    //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+    // string for regexp testing
+    //QString p_stdout = "----";
 
     qDebug() << "MongoDb Version: " << p_stdout;
 
@@ -410,9 +410,6 @@ QString MainWindow::getMemcachedVersion()
         qDebug() << "Memcached Version failed:" << processMemcached.errorString();
 
     QByteArray p_stdout = processMemcached.readAll();
-
-    /*QString p_stdout = processMemcached->readAllStandardOutput();*/
-    //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
 
     qDebug() << "Memcached Version: " << p_stdout;
 
@@ -544,11 +541,11 @@ void MainWindow::openConfigurationDialogMongoDb()
 
 void MainWindow::openLogNginxAccess()
 {
-    if(QFile().exists(qApp->applicationDirPath() + "/logs/access.log") == false) {
+    if(QFile().exists(settings->get("paths/logs").toString() + "/access.log") == false) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
-    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/access.log", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/access.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogNginxError()
@@ -557,7 +554,7 @@ void MainWindow::openLogNginxError()
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
-    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/error.log", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/error.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogPHP()
@@ -566,7 +563,7 @@ void MainWindow::openLogPHP()
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
-    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/php_error.log", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/php_error.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogMariaDb()
@@ -575,7 +572,7 @@ void MainWindow::openLogMariaDb()
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
-    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/mariadb_error.log", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/mariadb_error.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openLogMongoDb()
@@ -584,7 +581,7 @@ void MainWindow::openLogMongoDb()
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
     }
 
-    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/logs/mongodb.log", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/mongodb.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openHelpDialog()
