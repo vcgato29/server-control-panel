@@ -113,7 +113,6 @@ private:
     void startMonitoringDaemonProcesses();
 
     void setDefaultSettings();
-    void loadSettings();
 
     // Returns full path to project folder (appPath + www).
     QString getProjectFolder() const;

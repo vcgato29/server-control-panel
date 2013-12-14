@@ -54,15 +54,15 @@ Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
     setToolTip("WPN-XM");
 
     this->settings = new Settings;
-    qDebug() << settings;
 
     startMonitoringDaemonProcesses();
 
     createTrayMenu();
 
-    //if(settings->get("global/autostartdaemons").toBool()) {
-    //    startAllDaemons();
-    //};
+    // daemon autostart
+    if(settings->get("global/autostartdaemons").toBool()) {
+        autostartDaemons();
+    };
 }
 
 // Destructor
@@ -216,6 +216,15 @@ void Tray::goToReportIssue()
 void Tray::goToWebsiteHelp()
 {
     QDesktopServices::openUrl(QUrl("https://github.com/WPN-XM/WPN-XM/wiki/Using-the-Server-Control-Panel"));
+}
+
+void Tray::autostartDaemons()
+{
+    if(settings->get("autostart/nginx").toBool()) startNginx();
+    if(settings->get("autostart/php").toBool()) startPhp();
+    if(settings->get("autostart/mariadb").toBool()) startMariaDb();
+    if(settings->get("autostart/mongodb").toBool()) startMongoDb();
+    if(settings->get("autostart/memcached").toBool()) startMemcached();
 }
 
 //*

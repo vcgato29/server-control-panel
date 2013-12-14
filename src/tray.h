@@ -127,6 +127,8 @@ signals:
 private:
         QTimer* timer;
 
+        void autostartDaemons();
+
         Settings *settings;
 
         // Process Monitoring

@@ -58,7 +58,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(APP_NAME_AND_VERSION);
 
     setDefaultSettings();
-    //loadSettings();
 
     // inital state of status leds is disabled
     ui->label_Nginx_Status->setEnabled(false);
@@ -775,54 +774,22 @@ void MainWindow::setDefaultSettings()
     settings->set("paths/mariadb",          "./bin/mariadb/bin");
     settings->set("paths/nginx",            "./bin/nginx");
 
-    settings->set("autostart/nginx",        false);
-    settings->set("autostart/php",          false);
-    settings->set("autostart/mariadb",      false);
-    settings->set("autostart/mongodb",      false);
-    settings->set("autostart/memcached",    false);
+    settings->set("autostart/nginx",        0);
+    settings->set("autostart/php",          0);
+    settings->set("autostart/mariadb",      0);
+    settings->set("autostart/mongodb",      0);
+    settings->set("autostart/memcached",    0);
 
     settings->set("php/config",             "./bin/php/php.ini");
     settings->set("php/fastcgi-host",       "localhost");
-    settings->set("php/fastcgi-port",       "9100");
+    settings->set("php/fastcgi-port",       9100);
     settings->set("nginx/config",           "./bin/nginx/conf/nginx.conf");
     settings->set("nginx/sites",            "/www");
-    settings->set("nginx/port",             "80");
+    settings->set("nginx/port",             80);
     settings->set("mariadb/config",         "./bin/mariadb/my.ini");
-    settings->set("mariadb/port",           "3306");
-    settings->set("memcached/port",         "11211");
-    settings->set("mongodb/port",           "27015");
+    settings->set("mariadb/port",           3306);
+    settings->set("memcached/port",         11211);
+    settings->set("mongodb/port",           27015);
 
-    // qDebug() << "[Settings loaded:]\n" << settings;
+    qDebug() << "[Default Settings set.]\n";
 }
-
-/*void MainWindow::loadSettings()
-{
-    bAutostartDaemons       = settings->get("global/autostartdaemons").toBool();
-    bStopDaemonsOnQuit      = settings->get("global/stopdaemonsonquit").toBool();
-
-    // paths
-    cfgLogsDir              = settings->get("paths/logs").toString();
-    cfgPhpDir               = settings->get("paths/php").toString();
-    cfgNginxDir             = settings->get("paths/nginx").toString();
-    cfgMariaDBDir           = settings->get("paths/mariadb").toString();
-    cfgMongoDBDir           = settings->get("paths/mongodb").toString();
-    cfgMemcachedDir         = settings->get("paths/memcached").toString();
-
-    cfgPhpConfig            = settings->get("php/config").toString();
-    cfgPhpFastCgiHost       = settings->get("php/fastcgi-host").toString();
-    cfgPhpFastCgiPort       = settings->get("php/fastcgi-port").toString();
-
-    cfgNginxConfig          = settings->get("nginx/config").toString();
-    cfgNginxSites           = settings->get("nginx/sites").toString();
-    cfgNginxPort            = settings->get("nginx/port").toString();
-    cfgMariaDBConfig        = settings->get("mariadb/config").toString();
-
-    cfgMariaDBPort          = settings->get("mariadb/port").toString();
-    cfgMemcachedPort        = settings->get("memcached/port").toString();
-    cfgMongoDBPort          = settings->get("mongodb/port").toString();
-
-    qDebug() << "[Settings]\n" << settings->toString();
-
-    settings->saveSettings();
-}*/
-
