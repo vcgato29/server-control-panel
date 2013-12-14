@@ -268,9 +268,13 @@ void Tray::startNginx()
     }
 
     // start daemon
-    QString cfgNginxDir = settings->get("paths/nginx").toString();
-    qDebug() << cfgNginxDir + NGINX_EXEC + " -p " + QDir::currentPath() + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
-    processNginx->start(cfgNginxDir + NGINX_EXEC + " -p " + QDir::currentPath() + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf");
+    QString const startNginx = settings->get("path/nginx").toString() + NGINX_EXEC
+            + " -p " + QDir::currentPath()
+            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
+
+    qDebug() << "Starting Nginx" << startNginx;
+
+    processNginx->start(startNginx);
 }
 
 void Tray::stopNginx()
@@ -279,9 +283,13 @@ void Tray::stopNginx()
     processStopNginx.setWorkingDirectory(settings->get("path/nginx").toString());
 
     // fast shutdown
-    QString stopNginx = settings->get("path/nginx").toString() + NGINX_EXEC + " -p " + QDir::currentPath() + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf" + " -s stop";
+    QString stopNginx = settings->get("path/nginx").toString() + NGINX_EXEC
+            + " -p " + QDir::currentPath()
+            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
+            + " -s stop";
 
-    qDebug() << stopNginx;
+    qDebug() << "Stopping Nginx" << stopNginx;
+
     processStopNginx.start(stopNginx);
     processStopNginx.waitForFinished();
 }
@@ -293,7 +301,10 @@ void Tray::reloadNginx()
     QProcess processStopNginx;
     processStopNginx.setWorkingDirectory(cfgNginxDir);
 
-    QString reloadNginx = cfgNginxDir + NGINX_EXEC + " -p " + QDir::currentPath() + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf" + "-s reload";
+    QString const reloadNginx = cfgNginxDir + NGINX_EXEC
+            + " -p " + QDir::currentPath()
+            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
+            + "-s reload";
 
     qDebug() << reloadNginx;
 
@@ -319,12 +330,12 @@ void Tray::startPhp()
     }
 
     // start daemon
-    qDebug() << settings->get("path/php").toString()+PHPCGI_EXEC + " -b " + settings->get("php/fastcgi-host").toString()+":"+settings->get("php/fastcgi-port").toString();
+    QString const startPHP = settings->get("path/php").toString()+PHPCGI_EXEC
+            + " -b " + settings->get("php/fastcgi-host").toString()+":"+settings->get("php/fastcgi-port").toString();
 
-    processPhp->start(
-        settings->get("path/php").toString()+PHPCGI_EXEC,
-        QStringList() << "-b" << settings->get("php/fastcgi-host").toString()+":"+settings->get("php/fastcgi-port").toString()
-    );
+    qDebug() << "Starting PHP" << startPHP;
+
+    processPhp->start(startPHP);
 }
 
 void Tray::stopPhp()
@@ -359,9 +370,9 @@ void Tray::startMariaDb()
     }
 
     // start
-    QString cfgMariaDbDir = settings->get("path/mariadb").toString();
-    qDebug() << cfgMariaDbDir+MARIADB_EXEC;
-    processMariaDb->start(cfgMariaDbDir+MARIADB_EXEC);
+    QString const startMariaDb = settings->get("path/mariadb").toString() + MARIADB_EXEC;
+    qDebug() << "Starting MariaDb" << startMariaDb;
+    processMariaDb->start(startMariaDb);
 }
 
 void Tray::stopMariaDb()
