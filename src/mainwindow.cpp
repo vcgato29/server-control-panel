@@ -709,6 +709,7 @@ void MainWindow::checkAlreadyActiveDaemons()
         dlg->setLayout(grid);
         dlg->resize(250, 100);
         dlg->setWindowTitle(tr(APP_NAME));
+        dlg->setWindowFlags(dlg->windowFlags() | Qt::WindowStaysOnTopHint);
 
         // Set signal and slot for "Buttons"
         connect(ShutdownButton, SIGNAL(clicked()), dlg, SLOT(accept()));
