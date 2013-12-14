@@ -68,13 +68,11 @@ Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
 // Destructor
 Tray::~Tray()
 {
-    //qDebug() << settings->get("global/stopdaemonsonquit").toBool();
-    //qDebug() << " " << settings->get("global/stopdaemonsonquit").toBool();
     // stop all daemons, when quitting the tray application
-    //if(settings->get("global/stopdaemonsonquit").toBool() == true) {
-     //   qDebug() << "[Stopping All Daemons on Quit]";
-      //  stopAllDaemons();
-    //}
+    if(settings->get("global/stopdaemonsonquit").toBool()) {
+        qDebug() << "[Stopping All Daemons on Quit]";
+        stopAllDaemons();
+    }
 }
 
 void Tray::startMonitoringDaemonProcesses()
@@ -84,7 +82,7 @@ void Tray::startMonitoringDaemonProcesses()
     timer->setInterval(1000); // msec = 1sec
 
     processNginx = new QProcess();
-    processNginx->setWorkingDirectory(settings->get("paths/nginx", QString()).toString());
+    processNginx->setWorkingDirectory(settings->get("paths/nginx").toString());
     connect(processNginx, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(nginxStateChanged(QProcess::ProcessState)));
     connect(processNginx, SIGNAL(error(QProcess::ProcessError)), this, SLOT(nginxProcessError(QProcess::ProcessError)));
 
