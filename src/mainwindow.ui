@@ -2362,11 +2362,36 @@ background-color:  qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rg
  <tabstops>
   <tabstop>pushButton_AllDaemons_Start</tabstop>
   <tabstop>pushButton_AllDaemons_Stop</tabstop>
-  <tabstop>pushButton_Close</tabstop>
-  <tabstop>pushButton_About</tabstop>
+  <tabstop>pushButton_Webinterface</tabstop>
+  <tabstop>pushButton_Configuration</tabstop>
   <tabstop>pushButton_Help</tabstop>
+  <tabstop>pushButton_About</tabstop>
+  <tabstop>pushButton_Close</tabstop>
+  <tabstop>pushButton_Website</tabstop>
+  <tabstop>pushButton_GoogleGroup</tabstop>
+  <tabstop>pushButton_ReportBug</tabstop>
+  <tabstop>pushButton_Donate</tabstop>
+  <tabstop>pushButton_ConfigureNginx</tabstop>
+  <tabstop>pushButton_ConfigurePHP</tabstop>
+  <tabstop>pushButton_ConfigureMariaDb</tabstop>
+  <tabstop>pushButton_ShowLog_NginxAccess</tabstop>
+  <tabstop>pushButton_ShowLog_MongoDb</tabstop>
+  <tabstop>pushButton_ShowLog_NginxError</tabstop>
+  <tabstop>pushButton_ShowLog_PHP</tabstop>
+  <tabstop>pushButton_ShowLog_MariaDb</tabstop>
+  <tabstop>pushButton_StopNginx</tabstop>
+  <tabstop>pushButton_StopPHP</tabstop>
+  <tabstop>pushButton_StopMariaDb</tabstop>
+  <tabstop>pushButton_StopMongoDb</tabstop>
+  <tabstop>pushButton_StopMemcached</tabstop>
+  <tabstop>pushButton_StartNginx</tabstop>
+  <tabstop>pushButton_StartPHP</tabstop>
+  <tabstop>pushButton_StartMariaDb</tabstop>
+  <tabstop>pushButton_StartMongoDb</tabstop>
+  <tabstop>pushButton_StartMemcached</tabstop>
   <tabstop>pushButton_tools_phpinfo</tabstop>
   <tabstop>pushButton_tools_phpmyadmin</tabstop>
+  <tabstop>pushButton_tools_adminer</tabstop>
   <tabstop>pushButton_tools_webgrind</tabstop>
   <tabstop>pushButton_OpenProjects_browser</tabstop>
   <tabstop>pushButton_OpenProjects_Explorer</tabstop>
