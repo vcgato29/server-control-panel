@@ -28,7 +28,6 @@
 #include <QSettings>
 #include <QApplication>
 #include <QDir>
-#include <QDebug>
 
 const QString appSettingsFileName("wpn-xm.ini");
 
@@ -40,9 +39,7 @@ Settings::Settings(QObject *parent) : QObject(parent)
 QString Settings::file() const
 {
     QString file = QCoreApplication::applicationDirPath() + '/' + appSettingsFileName;
-    //file = QDir::toNativeSeparators(file);
-    qDebug() << "[Using Settings File]" << file;
-    return file;
+    return QDir::toNativeSeparators(file);
 }
 
 QVariant Settings::get(const QString &key, const QVariant &defaultValue) const
