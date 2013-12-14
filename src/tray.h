@@ -37,7 +37,6 @@ QT_BEGIN_NAMESPACE
 class QAction;
 class QApplication;
 class QMenu;
-class QSettings;
 QT_END_NAMESPACE
 
 /// Implements a tray menu with icons.
@@ -50,8 +49,8 @@ class Tray : public QSystemTrayIcon
 {
         Q_OBJECT // Enables signals and slots
 
-public:
-        explicit Tray(QApplication *parent = 0);
+public:       
+       explicit Tray(QApplication *parent = 0);
         ~Tray();
 
 public slots:
@@ -128,7 +127,7 @@ signals:
 private:
         QTimer* timer;
 
-        Settings* settings;
+        Settings *settings;
 
         // Process Monitoring
         QProcess* processNginx;
@@ -137,10 +136,12 @@ private:
         QProcess* processMongoDb;
         QProcess* processMemcached;
 
-        // The Tray Menu
+        // Tray Menu
         void createTrayMenu();
+
         QMenu* trayMenu;
-         // The Submenus of the Tray Menu
+
+         // Submenus of the Tray Menu
         QMenu* nginxStatusSubmenu;
         QMenu* phpStatusSubmenu;
         QMenu* mariaDbStatusSubmenu;

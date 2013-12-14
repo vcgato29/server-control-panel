@@ -55,50 +55,6 @@ public:
 
     QString parseVersionNumber(QString stringWithVersion);
 
-    // The settings manager.
-    Settings settings;
-
-    /*
-     * Settings
-     */
-    bool bAutostartDaemons;
-    bool bStopDaemonsOnQuit;
-
-    QString cfgLogsDir;
-
-    // PHP
-    QString cfgPhpDir;
-#define PHPCGI_EXEC "/php-cgi.exe"
-    QString cfgPhpConfig;
-    QString cfgPhpFastCgiHost;
-    QString cfgPhpFastCgiPort;
-
-    // NGINX
-    QString cfgNginxDir;
-#define NGINX_EXEC "/nginx.exe"
-    QString cfgNginxConfig;
-    QString cfgNginxSites;
-    QString cfgNginxPort;
-
-    // MySQL
-    QString cfgMariaDBDir;
-#define MARIADB_EXEC "/mysqld.exe"
-#define MARIADB_CLIENT_EXEC "/mysql.exe"
-    QString cfgMariaDBConfig;
-    QString cfgMariaDBClientExec;
-
-    // MongoDB
-    QString cfgMongoDBDir;
-#define MONGODB_EXEC "/mongod.exe"
-
-    // Memcached
-    QString cfgMemcachedDir;
-#define MEMCACHED_EXEC "/memcached.exe"
-
-    QString cfgMariaDBPort;
-    QString cfgMemcachedPort;
-    QString cfgMongoDBPort;
-
     // Process Monitoring
     QProcess* processNginx;
     QProcess* processPhp;
@@ -143,7 +99,9 @@ public slots:
 private:
     Ui::MainWindow *ui;
 
-    QSystemTrayIcon *trayIcon;
+    Tray *tray;
+
+    Settings *settings;
 
     QAction *minimizeAction;
     QAction *restoreAction;

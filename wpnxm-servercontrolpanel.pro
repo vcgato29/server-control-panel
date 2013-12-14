@@ -49,7 +49,6 @@ HEADERS += \
     src/hostmanager/hostmanagerdialog.h \
     src/configurationdialog.h \
     src/settings.h \
-    src/settingsTable.h \
     src/splashscreen.h
 
 SOURCES += \
@@ -62,7 +61,6 @@ SOURCES += \
     src/hostmanager/hostmanagerdialog.cpp \
     src/configurationdialog.cpp \
     src/settings.cpp \
-    src/settingsTable.cpp \
     src/splashscreen.cpp
 
 RESOURCES += \

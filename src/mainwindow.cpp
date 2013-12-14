@@ -26,7 +26,6 @@
 #include "tray.h"
 #include "configurationdialog.h"
 #include "settings.h"
-#include "settingsTable.h"
 
 // Global includes
 #include <QApplication>
@@ -52,16 +51,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // disable Maximize functionality
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
-    setFixedWidth(620);
+    setFixedWidth(620); // @todo: these values need to be adjusted, when the daemons list is automatically resized
     setFixedHeight(380);
 
     // overrides the window title defined in mainwindow.ui
     setWindowTitle(APP_NAME_AND_VERSION);
 
     setDefaultSettings();
-    loadSettings();
-
-    checkAlreadyActiveDaemons();
+    //loadSettings();
 
     // inital state of status leds is disabled
     ui->label_Nginx_Status->setEnabled(false);
@@ -69,6 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_MariaDb_Status->setEnabled(false);
     ui->label_Memcached_Status->setEnabled(false);
     ui->label_MongoDb_Status->setEnabled(false);
+
+    checkAlreadyActiveDaemons();
 
     createActions();
 
@@ -91,11 +90,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_Memcached_Version->setText( getMemcachedVersion() );
 
     // fetch ports and set label texts
-    ui->label_Nginx_Port->setText(cfgNginxPort); // 80
-    ui->label_PHP_Port->setText(cfgPhpFastCgiPort); // 9100
-    ui->label_MariaDb_Port->setText(cfgMariaDBPort); // 3306
-    ui->label_MongoDB_Port->setText(cfgMongoDBPort); // 27015
-    ui->label_Memcached_Port->setText(cfgMemcachedPort); // 11211
+    ui->label_Nginx_Port->setText(      settings->get("nginx/port").toString() ); // 80
+    ui->label_PHP_Port->setText(        settings->get("php/fastcgi-port").toString() ); // 9100
+    ui->label_MariaDb_Port->setText(    settings->get("mariadb/port").toString()); // 3306
+    ui->label_MongoDB_Port->setText(    settings->get("mongodb/port").toString()); // 27015
+    ui->label_Memcached_Port->setText(  settings->get("memcached/port").toString() ); // 11211
 
     showPushButtonsOnlyForInstalledTools();
     enableToolsPushButtons(false);
@@ -104,51 +103,51 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete trayIcon;
+    delete tray;
 }
 
 void MainWindow::createTrayIcon()
 {
     // instantiate and attach the tray icon to the system tray
-    trayIcon = new Tray(qApp);
+    tray = new Tray(qApp);
 
     // the following actions point to SLOTS in the trayIcon object
     // therefore connections must be made, after constructing trayIcon
 
     // handle clicks on the icon
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+    connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
     // Connect Actions for Status Table - Column Status
     // if process state of a daemon changes, then change the label status in UI::MainWindow too
-    connect(trayIcon, SIGNAL(signalSetLabelStatusActive(QString, bool)),
+    connect(tray, SIGNAL(signalSetLabelStatusActive(QString, bool)),
             this, SLOT(setLabelStatusActive(QString, bool)));
 
     // Connect Action for, if process state of NGINX and PHP changes,
     // then change the disabled/ enabled state of pushButtons too
-    connect(trayIcon, SIGNAL(signalEnableToolsPushButtons(bool)),
+    connect(tray, SIGNAL(signalEnableToolsPushButtons(bool)),
             this, SLOT(enableToolsPushButtons(bool)));
 
     // Connect Actions for Status Table - Column Action (Start)
-    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), trayIcon, SLOT(startNginx()));
-    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), trayIcon, SLOT(startPhp()));
-    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), trayIcon, SLOT(startMariaDb()));
-    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), trayIcon, SLOT(startMongoDb()));
-    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), trayIcon, SLOT(startMemcached()));
+    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), tray, SLOT(startNginx()));
+    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), tray, SLOT(startPhp()));
+    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), tray, SLOT(startMariaDb()));
+    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), tray, SLOT(startMongoDb()));
+    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), tray, SLOT(startMemcached()));
 
     // Connect Actions for Status Table - Column Action (Stop)
-    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), trayIcon, SLOT(stopNginx()));
-    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), trayIcon, SLOT(stopPhp()));
-    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), trayIcon, SLOT(stopMariaDb()));
-    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), trayIcon, SLOT(stopMongoDb()));
-    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), trayIcon, SLOT(stopMemcached()));
+    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), tray, SLOT(stopNginx()));
+    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), tray, SLOT(stopPhp()));
+    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), tray, SLOT(stopMariaDb()));
+    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), tray, SLOT(stopMongoDb()));
+    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), tray, SLOT(stopMemcached()));
 
      // Connect Actions for Status Table - AllDaemons Start, Stop
-    connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), trayIcon, SLOT(startAllDaemons()));
-    connect(ui->pushButton_AllDaemons_Stop, SIGNAL(clicked()), trayIcon, SLOT(stopAllDaemons()));
+    connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), tray, SLOT(startAllDaemons()));
+    connect(ui->pushButton_AllDaemons_Stop, SIGNAL(clicked()), tray, SLOT(stopAllDaemons()));
 
     // finally: show the tray icon
-    trayIcon->show();
+    tray->show();
 }
 
 void MainWindow::createActions()
@@ -238,7 +237,7 @@ void MainWindow::changeEvent(QEvent *event)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (trayIcon->isVisible()) {
+    if (tray->isVisible()) {
         QMessageBox::information(this, APP_NAME,
              tr("The program will keep running in the system tray.<br>"
                 "To terminate the program, choose <b>Quit</b> in the context menu of the system tray."));
@@ -757,66 +756,73 @@ void MainWindow::checkAlreadyActiveDaemons()
 
 void MainWindow::setDefaultSettings()
 {
-    settings.readSettings();
-
     // The MainWindow position. Default value is screen center.
-    QPoint center = QApplication::desktop()->screenGeometry().center();
-    settings.addSetting("MainWindowPosition", center, center);
+    //QPoint center = QApplication::desktop()->screenGeometry().center();
+    //settings->set("mainwindow/position", center);
 
     //QMap<QString, QVariant> languages;
     //languages[str::sLanguageEnglishTitle] = str::sLanguageEnglishKey;
     //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
     //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
-    settings.addSetting("global/autostartdaemons",  true);
-    settings.addSetting("global/stopdaemonsonquit", true);
+    settings->set("global/autostartdaemons",  true);
+    settings->set("global/stopdaemonsonquit", true);
 
-    settings.addSetting("paths/logs",               "/logs");
-    settings.addSetting("paths/php",                "./bin/php");
-    settings.addSetting("paths/mongodb",            "./bin/mongodb/bin");
-    settings.addSetting("paths/memcached",          "./bin/memcached");
-    settings.addSetting("paths/mariadb",            "./bin/mariadb/bin");
-    settings.addSetting("paths/nginx",              "./bin/nginx");
+    settings->set("paths/logs",             "/logs");
+    settings->set("paths/php",              "./bin/php");
+    settings->set("paths/mongodb",          "./bin/mongodb/bin");
+    settings->set("paths/memcached",        "./bin/memcached");
+    settings->set("paths/mariadb",          "./bin/mariadb/bin");
+    settings->set("paths/nginx",            "./bin/nginx");
 
-    settings.addSetting("php/config",               "./bin/php/php.ini");
-    settings.addSetting("php/fastcgi-host",         "localhost");
-    settings.addSetting("php/fastcgi-port",         "9100");
-    settings.addSetting("nginx/config",             "./bin/nginx/conf/nginx.conf");
-    settings.addSetting("nginx/sites",              "/www");
-    settings.addSetting("nginx/port",               "80");
-    settings.addSetting("mariadb/config",           "./bin/mariadb/my.ini");
-    settings.addSetting("mariadb/port",             "3306");
-    settings.addSetting("memcached/port",           "11211");
-    settings.addSetting("mongodb/port",             "27015");
+    settings->set("autostart/nginx",        false);
+    settings->set("autostart/php",          false);
+    settings->set("autostart/mariadb",      false);
+    settings->set("autostart/mongodb",      false);
+    settings->set("autostart/memcached",    false);
+
+    settings->set("php/config",             "./bin/php/php.ini");
+    settings->set("php/fastcgi-host",       "localhost");
+    settings->set("php/fastcgi-port",       "9100");
+    settings->set("nginx/config",           "./bin/nginx/conf/nginx.conf");
+    settings->set("nginx/sites",            "/www");
+    settings->set("nginx/port",             "80");
+    settings->set("mariadb/config",         "./bin/mariadb/my.ini");
+    settings->set("mariadb/port",           "3306");
+    settings->set("memcached/port",         "11211");
+    settings->set("mongodb/port",           "27015");
+
+    // qDebug() << "[Settings loaded:]\n" << settings;
 }
 
-void MainWindow::loadSettings()
+/*void MainWindow::loadSettings()
 {
-    bAutostartDaemons       = settings.value("global/autostartdaemons").toBool();
-    bStopDaemonsOnQuit      = settings.value("global/stopdaemonsonquit").toBool();
+    bAutostartDaemons       = settings->get("global/autostartdaemons").toBool();
+    bStopDaemonsOnQuit      = settings->get("global/stopdaemonsonquit").toBool();
 
     // paths
-    cfgLogsDir              = settings.value("paths/logs").toString();
-    cfgPhpDir               = settings.value("paths/php").toString();
-    cfgNginxDir             = settings.value("paths/nginx").toString();
-    cfgMariaDBDir           = settings.value("paths/mariadb").toString();
-    cfgMongoDBDir           = settings.value("paths/mongodb").toString();
-    cfgMemcachedDir         = settings.value("paths/memcached").toString();
+    cfgLogsDir              = settings->get("paths/logs").toString();
+    cfgPhpDir               = settings->get("paths/php").toString();
+    cfgNginxDir             = settings->get("paths/nginx").toString();
+    cfgMariaDBDir           = settings->get("paths/mariadb").toString();
+    cfgMongoDBDir           = settings->get("paths/mongodb").toString();
+    cfgMemcachedDir         = settings->get("paths/memcached").toString();
 
-    cfgPhpConfig            = settings.value("php/config").toString();
-    cfgPhpFastCgiHost       = settings.value("php/fastcgi-host").toString();
-    cfgPhpFastCgiPort       = settings.value("php/fastcgi-port").toString();
+    cfgPhpConfig            = settings->get("php/config").toString();
+    cfgPhpFastCgiHost       = settings->get("php/fastcgi-host").toString();
+    cfgPhpFastCgiPort       = settings->get("php/fastcgi-port").toString();
 
-    cfgNginxConfig          = settings.value("nginx/config").toString();    
-    cfgNginxSites           = settings.value("nginx/sites").toString();
-    cfgNginxPort            = settings.value("nginx/port").toString();
-    cfgMariaDBConfig        = settings.value("mariadb/config").toString();
+    cfgNginxConfig          = settings->get("nginx/config").toString();
+    cfgNginxSites           = settings->get("nginx/sites").toString();
+    cfgNginxPort            = settings->get("nginx/port").toString();
+    cfgMariaDBConfig        = settings->get("mariadb/config").toString();
 
-    cfgMariaDBPort          = settings.value("mariadb/port").toString();
-    cfgMemcachedPort        = settings.value("memcached/port").toString();
-    cfgMongoDBPort          = settings.value("mongodb/port").toString();
+    cfgMariaDBPort          = settings->get("mariadb/port").toString();
+    cfgMemcachedPort        = settings->get("memcached/port").toString();
+    cfgMongoDBPort          = settings->get("mongodb/port").toString();
 
-    qDebug() << "[Settings]\n" << settings.toString();
+    qDebug() << "[Settings]\n" << settings->toString();
 
-    settings.saveSettings();
-}
+    settings->saveSettings();
+}*/
+

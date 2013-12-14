@@ -24,15 +24,15 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-// local includes
-#include "settingsTable.h"
+#include <QObject>
+#include <QVariant>
+#include <QSettings>
 
 /// Implements the application settings repository.
 /*!
     This class stores the application settings.
-    Defaults can be saved and restored from session to session.
 */
-class Settings : public SettingsTable
+class Settings : public QObject
 {
     Q_OBJECT
 
@@ -41,19 +41,16 @@ public:
     /// Default constructor
     Settings(QObject *parent = 0);
 
-    /// Destructor
-    ~Settings();
+    QVariant get(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
-    /// Save defaults to the file.
-    void saveSettings() const;
-
-    /// Reads defaults from the file.
-    void readSettings();
+    void set(const QString &key, const QVariant &value);
 
 private:
 
     /// Returns defaults file's full path and name.
     QString file() const;
+
+    QSettings* settings;
 };
 
 #endif // SETTINGS_H
