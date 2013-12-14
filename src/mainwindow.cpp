@@ -291,10 +291,12 @@ void MainWindow::enableToolsPushButtons(bool enabled)
         allPushButtonsButtons[i]->setEnabled(enabled);
     }
 
+    // the following two buttons provide the same functionality
+    // they open up the webinterface in the browser
     // change state of "Open Projects Folder" >> "Browser" button
-    ui->OpenProjectFolderGroupBox
-      ->findChild<QPushButton*>("pushButton_OpenProjects_browser")
-      ->setEnabled(enabled);
+    ui->pushButton_OpenProjects_browser->setEnabled(enabled);
+    // change state of "Rightside Toolbar" >> "Webinterface" button
+    ui->pushButton_Webinterface->setEnabled(enabled);
 }
 
 void MainWindow::showPushButtonsOnlyForInstalledTools()
@@ -322,7 +324,6 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
     if(label == "mariadb")   { ui->label_MariaDb_Status->setEnabled(enabled); }
     if(label == "mongodb")   { ui->label_MongoDb_Status->setEnabled(enabled); }
     if(label == "memcached") { ui->label_Memcached_Status->setEnabled(enabled); }
-
 }
 
 QString MainWindow::getNginxVersion()
