@@ -297,6 +297,12 @@ void MainWindow::enableToolsPushButtons(bool enabled)
     ui->pushButton_OpenProjects_browser->setEnabled(enabled);
     // change state of "Rightside Toolbar" >> "Webinterface" button
     ui->pushButton_Webinterface->setEnabled(enabled);
+
+    // webinterface configuration is only available, when nginx+php running
+    ui->pushButton_ConfigureMariaDb->setEnabled(enabled);
+    ui->pushButton_ConfigureMongoDb->setEnabled(enabled);
+    ui->pushButton_ConfigureNginx->setEnabled(enabled);
+    ui->pushButton_ConfigurePHP->setEnabled(enabled);
 }
 
 void MainWindow::showPushButtonsOnlyForInstalledTools()
@@ -524,21 +530,25 @@ void MainWindow::openConfigurationDialog()
 void MainWindow::openConfigurationDialogNginx()
 {
     // Open Configuration Dialog - Tab for Nginx
+    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#nginx"));
 }
 
 void MainWindow::openConfigurationDialogPHP()
 {
     // Open Configuration Dialog - Tab for PHP
+    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#php"));
 }
 
 void MainWindow::openConfigurationDialogMariaDb()
 {
     // Open Configuration Dialog - Tab for MariaDb
+    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#mariadb"));
 }
 
 void MainWindow::openConfigurationDialogMongoDb()
 {
     // Open Configuration Dialog - Tab for MongoDb
+    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#mongodb"));
 }
 
 void MainWindow::openLogNginxAccess()
