@@ -45,13 +45,30 @@ public:
     ~ConfigurationDialog();
 
     void setRunOnStartUp(bool run = true);
-
     bool runOnStartUp() const;
+
+    void setAutostartDaemons(bool run = true);
+    bool runAutostartDaemons() const;
+
+    void setClearLogsOnStart(bool run = true);
+    bool runClearLogsOnStart() const;
+
+private slots:
+    void toggleAutostartDaemonCheckboxes(bool run = true);
 
 private:
     Ui::ConfigurationDialog *ui;
 
-    QCheckBox *m_chkRunStartUp;
+    QCheckBox *checkbox_runOnStartUp;
+    QCheckBox *checkbox_autostartDaemons;
+    QCheckBox *checkbox_clearLogsOnStart;
+
+    QCheckBox *checkbox_autostartMariaDb;
+    QCheckBox *checkbox_autostartMongoDb;
+    QCheckBox *checkbox_autostartPHP;
+    QCheckBox *checkbox_autostartNginx;
+    QCheckBox *checkbox_autostartMemcached;
+
 };
 
 #endif // CONFIGURATIONDIALOG_H

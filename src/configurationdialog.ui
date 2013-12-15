@@ -6,19 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>260</width>
-    <height>160</height>
+    <width>360</width>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>120</y>
-     <width>241</width>
+     <y>190</y>
+     <width>341</width>
      <height>41</height>
     </rect>
    </property>
@@ -28,13 +31,16 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
   </widget>
-  <widget class="QCheckBox" name="runOnStartUp">
+  <widget class="QCheckBox" name="checkbox_runOnStartUp">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>10</y>
-     <width>271</width>
+     <width>191</width>
      <height>18</height>
     </rect>
    </property>
@@ -42,31 +48,108 @@
     <string>Start WPN-XM SCP with Windows?</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="runOnStartUp_2">
+  <widget class="QCheckBox" name="checkbox_autostartDaemons">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>30</y>
-     <width>251</width>
+     <width>301</width>
      <height>18</height>
     </rect>
    </property>
    <property name="text">
-    <string>Start all daemons when starting WPN-XM SCP?</string>
+    <string>Start these daemons, when starting WPN-XM SCP:</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="clearLogsOnStartCheckBox">
+  <widget class="QCheckBox" name="checkbox_clearLogsOnStart">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>50</y>
+     <x>20</x>
+     <y>160</y>
      <width>251</width>
-     <height>18</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Reset daemon log, everytime daemon starts</string>
+    <string>Clear daemon logs, everytime daemon starts?</string>
    </property>
+  </widget>
+  <widget class="QWidget" name="formLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>50</y>
+     <width>91</width>
+     <height>102</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="autostartDaemonsFormLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <property name="labelAlignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="formAlignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="verticalSpacing">
+     <number>6</number>
+    </property>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="checkbox_autostartPHP"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="phpLabel">
+      <property name="text">
+       <string>PHP</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="checkbox_autostartNginx"/>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="nginxLabel">
+      <property name="text">
+       <string>Nginx</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="checkbox_autostartMariaDb"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="mariaDbLabel">
+      <property name="text">
+       <string>MariaDb</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QCheckBox" name="checkbox_autostartMongoDb"/>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="mongoDbLabel">
+      <property name="text">
+       <string>MongoDb</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="checkbox_autostartMemcached"/>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLabel" name="memcachedLabel">
+      <property name="text">
+       <string>Memcached</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
