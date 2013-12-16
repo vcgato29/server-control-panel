@@ -774,6 +774,7 @@ void MainWindow::setDefaultSettings()
     //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
     //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
+    settings->set("global/runonstartup",      true);
     settings->set("global/autostartdaemons",  true);
     settings->set("global/stopdaemonsonquit", true);
 

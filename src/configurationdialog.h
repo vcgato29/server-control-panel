@@ -26,6 +26,7 @@
 
 // global includes
 #include <QDialog>
+#include "settings.h"
 
 // forward declarations
 QT_BEGIN_NAMESPACE
@@ -55,9 +56,12 @@ public:
 
 private slots:
     void toggleAutostartDaemonCheckboxes(bool run = true);
+    void onClickedButtonBoxOk();
 
 private:
     Ui::ConfigurationDialog *ui;
+
+    Settings *settings;
 
     QCheckBox *checkbox_runOnStartUp;
     QCheckBox *checkbox_autostartDaemons;
@@ -68,6 +72,9 @@ private:
     QCheckBox *checkbox_autostartPHP;
     QCheckBox *checkbox_autostartNginx;
     QCheckBox *checkbox_autostartMemcached;
+
+    void readSettings();
+    void writeSettings();
 
 };
 

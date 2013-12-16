@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>230</height>
+    <height>266</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>190</y>
+     <y>220</y>
      <width>341</width>
      <height>41</height>
     </rect>
@@ -39,7 +39,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>10</y>
+     <y>20</y>
      <width>191</width>
      <height>18</height>
     </rect>
@@ -52,7 +52,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>40</y>
      <width>301</width>
      <height>18</height>
     </rect>
@@ -68,7 +68,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>160</y>
+     <y>170</y>
      <width>251</width>
      <height>20</height>
     </rect>
@@ -81,7 +81,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>50</y>
+     <y>60</y>
      <width>91</width>
      <height>102</height>
     </rect>
@@ -150,6 +150,22 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QCheckBox" name="checkbox_stopDaemonsOnQuit">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>190</y>
+     <width>251</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Stop all daemons on Quit?</string>
+   </property>
   </widget>
  </widget>
  <resources/>
