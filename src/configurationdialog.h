@@ -75,6 +75,7 @@ private:
 
     void readSettings();
     void writeSettings();
+    void toggleRunOnStartup();
 
 };
 

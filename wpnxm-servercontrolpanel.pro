@@ -35,6 +35,9 @@ CONFIG += qt #warn-on #console #static
 
 QT += network widgets
 
+# needed for "createShellLink", see ConfigurationDialog
+LIBS += -luuid -lole32
+
 # this define disables qDebug() output to console
 #DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
 

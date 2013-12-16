@@ -3,6 +3,16 @@
 #include "ui_configurationdialog.h"
 #include "QDebug"
 
+#include <QStandardPaths>
+#include <QFile>
+
+// this is needed for "createShellLink"
+#include <windows.h>
+#include <objbase.h>
+#include <objidl.h>
+#include <shlobj.h> // type defintion for IShellLink
+#include <shlwapi.h>
+
 ConfigurationDialog::ConfigurationDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ConfigurationDialog)
@@ -63,26 +73,27 @@ void ConfigurationDialog::writeSettings()
 void ConfigurationDialog::onClickedButtonBoxOk()
 {
     writeSettings();
+    toggleRunOnStartup();
 }
 
 bool ConfigurationDialog::runOnStartUp() const
 {
-    return (checkbox_runOnStartUp->checkState() == Qt::Checked);
+    return (ui->checkbox_runOnStartUp->checkState() == Qt::Checked);
 }
 
 void ConfigurationDialog::setRunOnStartUp(bool run)
 {
-    checkbox_runOnStartUp->setChecked(run);
+    ui->checkbox_runOnStartUp->setChecked(run);
 }
 
 bool ConfigurationDialog::runAutostartDaemons() const
 {
-    return (checkbox_autostartDaemons->checkState() == Qt::Checked);
+    return (ui->checkbox_autostartDaemons->checkState() == Qt::Checked);
 }
 
 void ConfigurationDialog::setAutostartDaemons(bool run)
 {
-    checkbox_autostartDaemons->setChecked(run);
+    ui->checkbox_autostartDaemons->setChecked(run);
 }
 
 void ConfigurationDialog::toggleAutostartDaemonCheckboxes(bool run)
@@ -97,10 +108,80 @@ void ConfigurationDialog::toggleAutostartDaemonCheckboxes(bool run)
 
 bool ConfigurationDialog::runClearLogsOnStart() const
 {
-    return (checkbox_clearLogsOnStart->checkState() == Qt::Checked);
+    return (ui->checkbox_clearLogsOnStart->checkState() == Qt::Checked);
 }
 
 void ConfigurationDialog::setClearLogsOnStart(bool run)
 {
-    checkbox_clearLogsOnStart->setChecked(run);
+    ui->checkbox_clearLogsOnStart->setChecked(run);
+}
+
+/*
+ * http://msdn.microsoft.com/en-us/library/windows/desktop/bb776891%28v=vs.85%29.aspx
+ */
+IShellLink* CreateShellLink(QString target_app_path, QString app_args, QString description,
+                            QString icon_path, int icon_index, QString working_dir,
+                            QString linkShortcut)
+{
+    IShellLink* shell_link = NULL;
+
+    HRESULT hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink,
+                                  reinterpret_cast<void**> (&(shell_link)));
+
+    if(SUCCEEDED(hres)) {
+
+        IPersistFile* persistFile = NULL;
+
+        shell_link->SetPath(target_app_path.toStdWString().c_str());
+        shell_link->SetArguments(app_args.toStdWString().c_str());
+        shell_link->SetIconLocation(icon_path.toStdWString().c_str(), icon_index);
+        shell_link->SetDescription(description.toStdWString().c_str());
+        shell_link->SetWorkingDirectory(working_dir.toStdWString().c_str());
+
+        // Query IShellLink for the IPersistFile interface,
+        // used for saving the shortcut in persistent storage.
+        hres = shell_link->QueryInterface(IID_IPersistFile, reinterpret_cast<void**> (&(persistFile)));
+
+        if (SUCCEEDED(hres)) {
+
+            // Save the link by calling IPersistFile::Save.
+            hres = persistFile->Save((LPCOLESTR)linkShortcut.toStdWString().c_str(), STGM_WRITE);
+
+            // Release the pointer to the IPersistFile interface.
+            persistFile->Release();
+        }
+
+        // Release the pointer to the IShellLink interface.
+        shell_link->Release();
+    }
+
+    return shell_link;
+}
+
+void ConfigurationDialog::toggleRunOnStartup()
+{
+    QString startupDir = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + "\\Startup";
+
+     if(ui->checkbox_runOnStartUp->isChecked() == true) {
+
+       /*
+         Add WPN-XM SCP shortcut to the Windows Autostart folder.
+         In Windows terminology shortcuts are "shell links".
+        */
+
+        CreateShellLink(
+            qApp->applicationFilePath(),    // target app
+            "",                             // arguments
+             "WPN-XM Server Control Panel", // desc
+            qApp->applicationFilePath(),    // icon_path
+            0,                              // icon idx
+            qApp->applicationDirPath(),     // working dir
+            startupDir + "\\WPN-XM Server Control Panel.lnk" // filepath of shortcut
+        );
+
+     } else {
+        // remove link
+        QFile::remove(startupDir+"\\WPN-XM Server Control Panel.lnk");
+     }
+
 }
