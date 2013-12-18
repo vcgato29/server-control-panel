@@ -20,7 +20,7 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 * Qt 5.1.1 for Windows 32-bit (MinGW 4.8, OpenGL, 666 MB)
 
   http://download.qt-project.org/official_releases/qt/5.1/5.1.1/qt-windows-opensource-5.1.1-mingw48_opengl-x86-offline.exe
-  
+
 * Qt Creator 2.8.1 for Windows (53 MB)
 
   http://download.qt-project.org/official_releases/qtcreator/2.8/2.8.1/qt-creator-windows-opensource-2.8.1.exe
@@ -67,9 +67,8 @@ You have to build the libraries to be able to link successfully.
 * \Qt5Network.dll
 * \Qt5Gui.dll
 * \Qt5Widgets.dll
-* \wpnxm-scp.exe
-
-* \wpnxm.ini
+* \wpn-xm.exe
+* \wpn-xm.ini (auto-created, if not existant)
 
 ### 2 Run environment
 
