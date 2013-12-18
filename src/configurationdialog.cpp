@@ -36,12 +36,13 @@ ConfigurationDialog::ConfigurationDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->settings = new Settings;
+    readSettings();
+
+    toggleAutostartDaemonCheckboxes(ui->checkbox_autostartDaemons->isChecked());
 
     connect(ui->checkbox_autostartDaemons, SIGNAL(clicked(bool)),
             this, SLOT(toggleAutostartDaemonCheckboxes(bool)));
-
-    this->settings = new Settings;
-    readSettings();
 
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(onClickedButtonBoxOk()));
 }
