@@ -169,7 +169,7 @@ int printHelpText()
           "-s or --service <daemon> <command>   Executes <command> on <daemon> \n"
              "    [<daemon>]: The name of a daemon, e.g. nginx, mariadb, memcached, mongodb \n"
              "    [<command>]: The command to execute, e.g. start, stop, restart \n"
-             "    Ports specified in \"wpnxm.ini\" will be used. \n"
+             "    Ports specified in \"wpn-xm.ini\" will be used. \n"
         "\n";
    puts(usage.toStdString().c_str());
    return 0;
