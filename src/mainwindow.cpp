@@ -339,7 +339,8 @@ QString MainWindow::getNginxVersion()
     processNginx.start("./bin/nginx/nginx.exe -v");
 
     if (!processNginx.waitForFinished()) {
-        qDebug() << "Nginx Version failed:" << processNginx.errorString();
+        qDebug() << "[Nginx] Version failed:" << processNginx.errorString();
+        return "";
     }
 
     QByteArray p_stdout = processNginx.readAll();
@@ -347,7 +348,7 @@ QString MainWindow::getNginxVersion()
     // string for regexp testing
     //QString p_stdout = "nginx version: nginx/1.2.1";
 
-    qDebug() << "Nginx Version: " << p_stdout;
+    qDebug() << "[Nginx] Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout);
 }
@@ -359,7 +360,8 @@ QString MainWindow::getMariaVersion()
     processMaria.start("./bin/mariadb/bin/mysqld.exe -V"); // upper-case V
 
     if (!processMaria.waitForFinished()) {
-        qDebug() << "MariaDb Version failed:" << processMaria.errorString();
+        qDebug() << "[MariaDb] Version failed:" << processMaria.errorString();
+        return "";
     }
 
     QByteArray p_stdout = processMaria.readAll();
@@ -367,7 +369,7 @@ QString MainWindow::getMariaVersion()
     // string for regexp testing
     //QString p_stdout = "mysql  Ver 15.1 Distrib 5.5.24-MariaDB, for Win32 (x86)";
 
-    qDebug() << "MariaDb Version: " << p_stdout;
+    qDebug() << "[MariaDb] Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout.mid(15));
 }
@@ -378,15 +380,17 @@ QString MainWindow::getPHPVersion()
     processPhp.setProcessChannelMode(QProcess::MergedChannels);
     processPhp.start("./bin/php/php.exe -v");
 
-    if (!processPhp.waitForFinished())
-        qDebug() << "PHP Version failed:" << processPhp.errorString();
+    if (!processPhp.waitForFinished()) {
+        qDebug() << "[PHP] Version failed:" << processPhp.errorString();
+        return "";
+    }
 
     QByteArray p_stdout = processPhp.readAll();
 
     // string for regexp testing
     //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
 
-    qDebug() << "PHP Version: " << p_stdout;
+    qDebug() << "[PHP] Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout);
 }
@@ -396,15 +400,17 @@ QString MainWindow::getMongoVersion()
     QProcess processMongoDB;
     processMongoDB.start("./bin/mongodb/bin/mongod --version");
 
-    if (!processMongoDB.waitForFinished())
-        qDebug() << "MongoDB Version failed:" << processMongoDB.errorString();
+    if (!processMongoDB.waitForFinished()) {
+        qDebug() << "[MongoDB] Version failed:" << processMongoDB.errorString();
+        return "";
+    }
 
     QByteArray p_stdout = processMongoDB.readAll();
 
     // string for regexp testing
     //QString p_stdout = "----";
 
-    qDebug() << "MongoDb Version: " << p_stdout;
+    qDebug() << "[MongoDb] Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout.mid(3)); //21
 }
@@ -414,12 +420,14 @@ QString MainWindow::getMemcachedVersion()
     QProcess processMemcached;
     processMemcached.start("./bin/memcached/memcached.exe -h");
 
-    if (!processMemcached.waitForFinished())
-        qDebug() << "Memcached Version failed:" << processMemcached.errorString();
+    if (!processMemcached.waitForFinished()) {
+        qDebug() << "[Memcached] Version failed:" << processMemcached.errorString();
+        return "";
+    }
 
     QByteArray p_stdout = processMemcached.readAll();
 
-    qDebug() << "Memcached Version: " << p_stdout;
+    qDebug() << "[Memcached] Version: " << p_stdout;
 
     return parseVersionNumber(p_stdout.mid(2)); //10
 }

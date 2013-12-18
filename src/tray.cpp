@@ -70,7 +70,7 @@ Tray::~Tray()
 {
     // stop all daemons, when quitting the tray application
     if(settings->get("global/stopdaemonsonquit").toBool()) {
-        qDebug() << "[Stopping All Daemons on Quit]";
+        qDebug() << "[Daemons] Stopping All Daemons on Quit...";
         stopAllDaemons();
     }
 }
@@ -218,6 +218,7 @@ void Tray::goToWebsiteHelp()
 
 void Tray::autostartDaemons()
 {
+    qDebug() << "[Daemons] Autostart...";
     if(settings->get("autostart/nginx").toBool()) startNginx();
     if(settings->get("autostart/php").toBool()) startPhp();
     if(settings->get("autostart/mariadb").toBool()) startMariaDb();
@@ -261,8 +262,7 @@ void Tray::restartAll()
 void Tray::startNginx()
 {
     // already running
-    if(processNginx->state() != QProcess::NotRunning)
-    {
+    if(processNginx->state() != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("Nginx"), tr("Nginx already running."));
         return;
     }
@@ -272,7 +272,7 @@ void Tray::startNginx()
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
 
-    qDebug() << "Starting Nginx" << startNginx;
+    qDebug() << "[Nginx] Starting...\n" << startNginx;
 
     processNginx->start(startNginx);
 }
@@ -288,7 +288,7 @@ void Tray::stopNginx()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
             + " -s stop";
 
-    qDebug() << "Stopping Nginx" << stopNginx;
+    qDebug() << "[Nginx] Stopping...\n" << stopNginx;
 
     processStopNginx.start(stopNginx);
     processStopNginx.waitForFinished();
@@ -333,13 +333,15 @@ void Tray::startPhp()
     QString const startPHP = settings->get("path/php").toString()+PHPCGI_EXEC
             + " -b " + settings->get("php/fastcgi-host").toString()+":"+settings->get("php/fastcgi-port").toString();
 
-    qDebug() << "Starting PHP" << startPHP;
+    qDebug() << "[PHP] Starting...\n" << startPHP;
 
     processPhp->start(startPHP);
 }
 
 void Tray::stopPhp()
 {
+    qDebug() << "[PHP] Stopping...";
+
     // 1) processPhp->terminate(); will fail because WM_CLOSE message not handled
     // 2) By killing the process, we are crashing it!
     //    The user will then get a "Process Crashed" Error MessageBox.
@@ -364,19 +366,21 @@ void Tray::restartPhp()
 void Tray::startMariaDb()
 {
     // already running
-    if(processMariaDb->state() != QProcess::NotRunning){
+    if(processMariaDb->state() != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("MariaDB"), tr("MariaDB already running."));
         return;
     }
 
     // start
     QString const startMariaDb = settings->get("path/mariadb").toString() + MARIADB_EXEC;
-    qDebug() << "Starting MariaDb" << startMariaDb;
+    qDebug() << "[MariaDB] Starting...\n" << startMariaDb;
     processMariaDb->start(startMariaDb);
 }
 
 void Tray::stopMariaDb()
 {
+    qDebug() << "[MariaDB] Stopping...";
+
     // disconnect process monitoring, before crashing the process
     disconnect(processMariaDb, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mariaDbProcessError(QProcess::ProcessError)));
 
@@ -396,7 +400,7 @@ void Tray::restartMariaDb()
 void Tray::startMongoDb()
 {
     // already running
-    if(processMongoDb->state() != QProcess::NotRunning){
+    if(processMongoDb->state() != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("MongoDB"), tr("MongoDB already running."));
         return;
     }
@@ -404,14 +408,14 @@ void Tray::startMongoDb()
     // mongodb doesn't start, when data dir is missing...
     QString const mongoDbDataDir = qApp->applicationDirPath() + "/bin/mongodb/data/db";
     if(QDir().exists(qApp->applicationDirPath() + "/bin/mongodb") && !QDir().exists(mongoDbDataDir)) {
-        qDebug() << "Creating Directory for Mongo's Database... " << mongoDbDataDir;
+        qDebug() << "[MongoDB] Creating Directory for Mongo's Database...\n" << mongoDbDataDir;
         QDir().mkpath(mongoDbDataDir);
     }
 
     // mongodb doesn't start, when logfile is missing...
     QFile f(qApp->applicationDirPath() + "/logs/mongodb.log");
     if(!f.exists()) {
-        qDebug() << "Creating empty logfile... " << qApp->applicationDirPath() + "/logs/mongodb.log";
+        qDebug() << "[MongoDB] Creating empty logfile...\n" << qApp->applicationDirPath() + "/logs/mongodb.log";
         f.open(QIODevice::ReadWrite);
         f.close();
     }
@@ -422,7 +426,7 @@ void Tray::startMongoDb()
              + " --dbpath " + qApp->applicationDirPath() + "/bin/mongodb/data/db"
              + " --logpath " + qApp->applicationDirPath() + "/logs/mongodb.log";
 
-    qDebug() << mongoStartCommand;
+    qDebug() << "[MongoDB] Starting...\n"<< mongoStartCommand;
 
     // start
     processMongoDb->start(mongoStartCommand);
@@ -434,7 +438,7 @@ void Tray::stopMongoDb()
     QString const mongoStopCommand = settings->get("paths/mongodb").toString() + "/mongo.exe"
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
-    qDebug() << "Shutting down MongoDb...\n" << mongoStopCommand;
+    qDebug() << "[MongoDB] Stopping...\n" << mongoStopCommand;
 
     if(QProcess::execute(mongoStopCommand))
     {
@@ -461,7 +465,7 @@ void Tray::startMemcached()
     }
 
     // start
-    qDebug() << "Starting Memcached...\n" << settings->get("paths/memcached").toString()+MEMCACHED_EXEC;
+    qDebug() << "[Memcached] Starting...\n" << settings->get("paths/memcached").toString()+MEMCACHED_EXEC;
 
     processMemcached->start(settings->get("paths/memcached").toString()+MEMCACHED_EXEC);
 }
@@ -471,7 +475,7 @@ void Tray::stopMemcached()
     // disconnect process monitoring, before crashing the process
     disconnect(processMemcached, SIGNAL(error(QProcess::ProcessError)), this, SLOT(memcachedProcessError(QProcess::ProcessError)));
 
-    qDebug() << "Stopping Memcached...\n";
+    qDebug() << "[Memcachaed] Stopping...\n";
 
     processMemcached->kill();
     processMemcached->waitForFinished();
@@ -492,7 +496,7 @@ void Tray::openHostManagerDialog()
     dlg.exec();
 }
 
-void Tray::openAboutDialog()
+/*void Tray::openAboutDialog()
 {
     //AboutDialog dlg;
     //dlg.exec();
@@ -502,9 +506,10 @@ void Tray::openConfigurationDialog()
 {
     //ConfigDialog dlg;
     //dlg.exec();
-}
+}*/
 
-void Tray::openNginxSite()
+/*
+void Tray::openNginxSites()
 {
     QDir dir(QDir::currentPath());
     QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(
@@ -512,8 +517,8 @@ void Tray::openNginxSite()
     );
     // start as own process ( not as a child process), will live after Tray terminates
     QProcess::startDetached("explorer", QStringList() << strDir);
-}
-
+}*/
+/*
 void Tray::openNginxConfig()
 {
     QDir dir(QDir::currentPath());
@@ -526,7 +531,7 @@ void Tray::openNginxLogs()
     QDir dir(QDir::currentPath());
     QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("paths/logs").toString()));
     QProcess::startDetached("explorer", QStringList() << strDir);
-}
+}*/
 
 void Tray::openMariaDbClient()
 {
@@ -537,6 +542,7 @@ void Tray::openMariaDbClient()
     );
 }
 
+/*
 void Tray::openMariaDbConfig()
 {
     QDir dir(QDir::currentPath());
@@ -549,7 +555,7 @@ void Tray::openPhpConfig()
     QDir dir(QDir::currentPath());
     QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("php/config").toString()));
     QProcess::startDetached("cmd", QStringList() << "/c" << "start "+strDir);
-}
+}*/
 
 /*
  * State slots

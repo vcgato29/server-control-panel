@@ -92,17 +92,17 @@ public slots:
 
         // Config Action Slots
         void openHostManagerDialog();
-        void openConfigurationDialog();
-        void openAboutDialog();
+        //void openConfigurationDialog();
+        //void openAboutDialog();
 
-        void openNginxSite();
-        void openNginxConfig();
-        void openNginxLogs();
+        //void openNginxSites();
+        //void openNginxConfig();
+        //void openNginxLogs();
 
-        void openPhpConfig();
+        //void openPhpConfig();
 
         void openMariaDbClient();
-        void openMariaDbConfig();
+        //void openMariaDbConfig();
 
         // Status Action Slots
         void globalStateChanged();
