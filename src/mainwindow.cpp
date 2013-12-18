@@ -792,10 +792,10 @@ void MainWindow::setDefaultSettings()
     //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
     //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
-    settings->set("global/runonstartup",      false);
-    settings->set("global/autostartdaemons",  false);
-    settings->set("global/stopdaemonsonquit", true);
-    settings->set("global/clearlogsonstart",  false);
+    settings->set("global/runonstartup",      0);
+    settings->set("global/autostartdaemons",  0);
+    settings->set("global/stopdaemonsonquit", 1);
+    settings->set("global/clearlogsonstart",  0);
 
     settings->set("paths/logs",             "./logs");
     settings->set("paths/php",              "./bin/php");
