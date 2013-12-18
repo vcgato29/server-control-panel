@@ -202,11 +202,11 @@ void MainWindow::createActions()
     connect(ui->pushButton_ConfigureMariaDb, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
 
     // Actions - Status Table (Logs)
-    connect(ui->pushButton_ShowLog_NginxAccess, SIGNAL(clicked()), this, SLOT(openLogNginxAccess()));
-    connect(ui->pushButton_ShowLog_NginxError, SIGNAL(clicked()), this, SLOT(openLogNginxError()));
-    connect(ui->pushButton_ShowLog_PHP, SIGNAL(clicked()), this, SLOT(openLogPHP()));
-    connect(ui->pushButton_ShowLog_MongoDb, SIGNAL(clicked()), this, SLOT(openLogMongoDb()));
-    connect(ui->pushButton_ShowLog_MariaDb, SIGNAL(clicked()), this, SLOT(openLogMariaDb()));
+    connect(ui->pushButton_ShowLog_NginxAccess, SIGNAL(clicked()), this, SLOT(openLog()));
+    connect(ui->pushButton_ShowLog_NginxError, SIGNAL(clicked()), this, SLOT(openLog()));
+    connect(ui->pushButton_ShowLog_PHP, SIGNAL(clicked()), this, SLOT(openLog()));
+    connect(ui->pushButton_ShowLog_MongoDb, SIGNAL(clicked()), this, SLOT(openLog()));
+    connect(ui->pushButton_ShowLog_MariaDb, SIGNAL(clicked()), this, SLOT(openLog()));
 
 }
 
@@ -576,49 +576,32 @@ void MainWindow::openConfigurationDialogMongoDb()
     QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#mongodb"));
 }
 
-void MainWindow::openLogNginxAccess()
+void MainWindow::openLog()
 {
-    if(QFile().exists(settings->get("paths/logs").toString() + "/access.log") == false) {
-        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
+    // we have a incoming SIGNAL object to this SLOT
+    // lets determine the object name, e.g. pushButton_ShowLog_NginxAccess
+    // and then reduce to the log filename
+
+    QPushButton *button = (QPushButton *)sender();
+    //qDebug() << "Sender : " << button->objectName();
+    QString name = button->objectName();
+    name.replace("pushButton_ShowLog_", "");
+
+    QString logs = settings->get("paths/logs").toString();
+
+    QString logfile = "";
+
+    if(name == "NginxAccess"){ logfile = logs + "/access.log";}
+    if(name == "NginxError") { logfile = logs + "/error.log";}
+    if(name == "PHP")        { logfile = logs + "/php_error.log";}
+    if(name == "MariaDb")    { logfile = logs + "/mariadb_error.log";}
+    if(name == "MongoDb")    { logfile = logs + "/mongodb.log";}
+
+    if(!QFile().exists(logfile)) {
+        QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
+    } else {
+       QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
     }
-
-    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/access.log", QUrl::TolerantMode));
-}
-
-void MainWindow::openLogNginxError()
-{
-    if(QFile().exists(qApp->applicationDirPath() + "/logs/error.log") == false) {
-        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
-    }
-
-    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/error.log", QUrl::TolerantMode));
-}
-
-void MainWindow::openLogPHP()
-{
-    if(QFile().exists(qApp->applicationDirPath() + "/logs/php_error.log") == false) {
-        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
-    }
-
-    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/php_error.log", QUrl::TolerantMode));
-}
-
-void MainWindow::openLogMariaDb()
-{
-    if(QFile().exists(qApp->applicationDirPath() + "/logs/mariadb_error.log") == false) {
-        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
-    }
-
-    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/mariadb_error.log", QUrl::TolerantMode));
-}
-
-void MainWindow::openLogMongoDb()
-{
-    if(QFile().exists(qApp->applicationDirPath() + "/logs/mongodb.log") == false) {
-        QMessageBox::warning(this, tr("Warning"), tr("Log file not found!"), QMessageBox::Yes);
-    }
-
-    QDesktopServices::openUrl(QUrl("file:///" + settings->get("paths/logs").toString() + "/mongodb.log", QUrl::TolerantMode));
 }
 
 void MainWindow::openHelpDialog()
@@ -830,6 +813,7 @@ void MainWindow::setDefaultSettings()
 
     settings->set("memcached/port",         11211);
 
+    settings->set("mongodb/config",         "./bin/mongodb/mongodb.conf");
     settings->set("mongodb/port",           27015);
 
     qDebug() << "[Settings] Loaded Defaults...\n";

@@ -87,11 +87,7 @@ public slots:
     void openConfigurationDialogMariaDb();
     void openConfigurationDialogMongoDb();
 
-    void openLogNginxAccess();
-    void openLogNginxError();
-    void openLogPHP();
-    void openLogMariaDb();
-    void openLogMongoDb();
+    void openLog();
 
     void setLabelStatusActive(QString label, bool enabled);
     void enableToolsPushButtons(bool enabled);
