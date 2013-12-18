@@ -49,6 +49,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // move window to the top
+    setFocus();
+    setWindowState( windowState() & ( ~Qt::WindowMinimized | Qt::WindowActive | Qt::WindowMaximized ) );
+
     // disable Maximize functionality
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
     setFixedWidth(620); // @todo: these values need to be adjusted, when the daemons list is automatically resized
