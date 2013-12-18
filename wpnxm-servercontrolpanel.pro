@@ -52,7 +52,8 @@ HEADERS += \
     src/hostmanager/hostmanagerdialog.h \
     src/configurationdialog.h \
     src/settings.h \
-    src/splashscreen.h
+    src/splashscreen.h \
+    src/windowsapi.h
 
 SOURCES += \
     src/main.cpp \
@@ -64,7 +65,8 @@ SOURCES += \
     src/hostmanager/hostmanagerdialog.cpp \
     src/configurationdialog.cpp \
     src/settings.cpp \
-    src/splashscreen.cpp
+    src/splashscreen.cpp \
+    src/windowsapi.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
