@@ -397,6 +397,9 @@ QString MainWindow::getPHPVersion()
 
     QByteArray p_stdout = processPhp.readAll();
 
+    // remove everything before "PHP" (e.g. warnings from false php.ini settings, etc)
+    p_stdout.remove(0, p_stdout.indexOf("PHP"));
+
     // string for regexp testing
     //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
 
