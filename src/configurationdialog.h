@@ -54,6 +54,9 @@ public:
     void setClearLogsOnStart(bool run = true);
     bool runClearLogsOnStart() const;
 
+    void setStopDaemonsOnQuit(bool run = true);
+    bool stopDaemonsOnQuit() const;
+
 private slots:
     void toggleAutostartDaemonCheckboxes(bool run = true);
     void onClickedButtonBoxOk();
@@ -66,6 +69,7 @@ private:
     QCheckBox *checkbox_runOnStartUp;
     QCheckBox *checkbox_autostartDaemons;
     QCheckBox *checkbox_clearLogsOnStart;
+    QCheckBox *checkbox_stopDaemonsOnQuit;
 
     QCheckBox *checkbox_autostartMariaDb;
     QCheckBox *checkbox_autostartMongoDb;

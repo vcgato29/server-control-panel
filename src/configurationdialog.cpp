@@ -133,9 +133,21 @@ void ConfigurationDialog::setClearLogsOnStart(bool run)
     ui->checkbox_clearLogsOnStart->setChecked(run);
 }
 
+bool ConfigurationDialog::stopDaemonsOnQuit() const
+{
+    return (ui->checkbox_stopDaemonsOnQuit->checkState() == Qt::Checked);
+}
+
+void ConfigurationDialog::setStopDaemonsOnQuit(bool run)
+{
+    ui->checkbox_stopDaemonsOnQuit->setChecked(run);
+}
+
 void ConfigurationDialog::toggleRunOnStartup()
 {
+    // Windows %APPDATA% = Roaming ... Programs\Startup
     QString startupDir = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + "\\Startup";
+    qDebug() << startupDir;
 
      if(ui->checkbox_runOnStartUp->isChecked() == true) {
         // Add WPN-XM SCP shortcut to the Windows Autostart folder.

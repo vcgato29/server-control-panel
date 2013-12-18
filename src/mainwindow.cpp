@@ -164,7 +164,7 @@ void MainWindow::createActions()
     // Its modified from "quit" to "close to tray" with a msgbox
     // qApp is global pointer to QApplication
     quitAction = new QAction(tr("&Quit"), this);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quitApplication()));
 
     // PushButtons:: Website, Mailinglist, ReportBug, Donate
     connect(ui->pushButton_Website, SIGNAL(clicked()), this, SLOT(goToWebsite()));
@@ -330,6 +330,16 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
     if(label == "mariadb")   { ui->label_MariaDb_Status->setEnabled(enabled); }
     if(label == "mongodb")   { ui->label_MongoDb_Status->setEnabled(enabled); }
     if(label == "memcached") { ui->label_Memcached_Status->setEnabled(enabled); }
+}
+
+void MainWindow::quitApplication()
+{
+    ConfigurationDialog* CfgDlg = new ConfigurationDialog();
+    if(CfgDlg->stopDaemonsOnQuit()) {
+        qDebug() << "[Daemons] Stopping on Quit...\n";
+        tray->stopAllDaemons();
+    }
+    qApp->quit();
 }
 
 QString MainWindow::getNginxVersion()
