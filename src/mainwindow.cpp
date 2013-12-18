@@ -804,9 +804,9 @@ void MainWindow::setDefaultSettings()
     settings->set("paths/mariadb",          "./bin/mariadb/bin");
     settings->set("paths/nginx",            "./bin/nginx");
 
-    settings->set("autostart/nginx",        0);
-    settings->set("autostart/php",          0);
-    settings->set("autostart/mariadb",      0);
+    settings->set("autostart/nginx",        1);
+    settings->set("autostart/php",          1);
+    settings->set("autostart/mariadb",      1);
     settings->set("autostart/mongodb",      0);
     settings->set("autostart/memcached",    0);
 
