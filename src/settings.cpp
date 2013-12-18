@@ -33,7 +33,6 @@ const QString appSettingsFileName("wpn-xm.ini");
 
 Settings::Settings(QObject *parent) : QObject(parent)
 {
-
 }
 
 QString Settings::file() const

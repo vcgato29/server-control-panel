@@ -825,5 +825,5 @@ void MainWindow::setDefaultSettings()
 
     settings->set("mongodb/port",           27015);
 
-    qDebug() << "[Default Settings set.]\n";
+    qDebug() << "[Settings] Loaded Defaults...\n";
 }
