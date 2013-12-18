@@ -782,11 +782,12 @@ void MainWindow::setDefaultSettings()
     //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
     //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
-    settings->set("global/runonstartup",      true);
-    settings->set("global/autostartdaemons",  true);
+    settings->set("global/runonstartup",      false);
+    settings->set("global/autostartdaemons",  false);
     settings->set("global/stopdaemonsonquit", true);
+    settings->set("global/clearlogsonstart",  false);
 
-    settings->set("paths/logs",             "/logs");
+    settings->set("paths/logs",             "./logs");
     settings->set("paths/php",              "./bin/php");
     settings->set("paths/mongodb",          "./bin/mongodb/bin");
     settings->set("paths/memcached",        "./bin/memcached");
@@ -802,12 +803,16 @@ void MainWindow::setDefaultSettings()
     settings->set("php/config",             "./bin/php/php.ini");
     settings->set("php/fastcgi-host",       "localhost");
     settings->set("php/fastcgi-port",       9100);
+
     settings->set("nginx/config",           "./bin/nginx/conf/nginx.conf");
-    settings->set("nginx/sites",            "/www");
+    settings->set("nginx/sites",            "./www");
     settings->set("nginx/port",             80);
+
     settings->set("mariadb/config",         "./bin/mariadb/my.ini");
     settings->set("mariadb/port",           3306);
+
     settings->set("memcached/port",         11211);
+
     settings->set("mongodb/port",           27015);
 
     qDebug() << "[Default Settings set.]\n";
