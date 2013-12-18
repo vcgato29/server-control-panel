@@ -268,7 +268,7 @@ void Tray::startNginx()
     }
 
     // start daemon
-    QString const startNginx = settings->get("path/nginx").toString() + NGINX_EXEC
+    QString const startNginx = settings->get("paths/nginx").toString() + NGINX_EXEC
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
 
@@ -280,10 +280,10 @@ void Tray::startNginx()
 void Tray::stopNginx()
 {
     QProcess processStopNginx;
-    processStopNginx.setWorkingDirectory(settings->get("path/nginx").toString());
+    processStopNginx.setWorkingDirectory(settings->get("paths/nginx").toString());
 
     // fast shutdown
-    QString stopNginx = settings->get("path/nginx").toString() + NGINX_EXEC
+    QString stopNginx = settings->get("paths/nginx").toString() + NGINX_EXEC
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
             + " -s stop";
@@ -296,7 +296,7 @@ void Tray::stopNginx()
 
 void Tray::reloadNginx()
 {
-    QString cfgNginxDir = settings->get("path/nginx").toString();
+    QString cfgNginxDir = settings->get("paths/nginx").toString();
 
     QProcess processStopNginx;
     processStopNginx.setWorkingDirectory(cfgNginxDir);
@@ -330,7 +330,7 @@ void Tray::startPhp()
     }
 
     // start daemon
-    QString const startPHP = settings->get("path/php").toString()+PHPCGI_EXEC
+    QString const startPHP = settings->get("paths/php").toString()+PHPCGI_EXEC
             + " -b " + settings->get("php/fastcgi-host").toString()+":"+settings->get("php/fastcgi-port").toString();
 
     qDebug() << "[PHP] Starting...\n" << startPHP;
@@ -372,7 +372,7 @@ void Tray::startMariaDb()
     }
 
     // start
-    QString const startMariaDb = settings->get("path/mariadb").toString() + MARIADB_EXEC;
+    QString const startMariaDb = settings->get("paths/mariadb").toString() + MARIADB_EXEC;
     qDebug() << "[MariaDB] Starting...\n" << startMariaDb;
     processMariaDb->start(startMariaDb);
 }
@@ -513,7 +513,7 @@ void Tray::openNginxSites()
 {
     QDir dir(QDir::currentPath());
     QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(
-        settings->get("path/nginx").toString()+settings->get("nginx/sites").toString())
+        settings->get("paths/nginx").toString()+settings->get("nginx/sites").toString())
     );
     // start as own process ( not as a child process), will live after Tray terminates
     QProcess::startDetached("explorer", QStringList() << strDir);
@@ -536,9 +536,9 @@ void Tray::openNginxLogs()
 void Tray::openMariaDbClient()
 {
     QProcess::startDetached(
-        settings->get("path/mariadb").toString()+MARIADB_CLIENT_EXEC,
+        settings->get("paths/mariadb").toString()+MARIADB_CLIENT_EXEC,
         QStringList(),
-        settings->get("path/mariadb").toString()
+        settings->get("paths/mariadb").toString()
     );
 }
 
