@@ -81,10 +81,10 @@ win32: RC_FILE = src/resources/application.rc
 # Build destination and binary name
 CONFIG(debug, debug|release) {
     DESTDIR = build/debug
-    TARGET = wpnxm-scp-debug
+    TARGET = wpn-xm-debug
 } else {
     DESTDIR = build/release
-    TARGET = wpnxm-scp
+    TARGET = wpn-xm
 }
 
 static {                                      # everything below takes effect with CONFIG += static
