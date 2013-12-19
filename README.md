@@ -15,15 +15,15 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 
 * Qt Online Installer
 
-  http://download.qt-project.org/official_releases/online_installers/1.4/qt-windows-opensource-1.4.0-2-x86-online.exe
+  http://download.qt-project.org/official_releases/online_installers/1.5/qt-windows-opensource-1.5.0-x86-online.exe
 
-* Qt 5.1.1 for Windows 32-bit (MinGW 4.8, OpenGL, 666 MB)
+* Qt 5.2.0 for Windows 32-bit (MinGW 4.8, OpenGL, 689 MB)
 
-  http://download.qt-project.org/official_releases/qt/5.1/5.1.1/qt-windows-opensource-5.1.1-mingw48_opengl-x86-offline.exe
+  http://download.qt-project.org/official_releases/qt/5.2/5.2.0/qt-windows-opensource-5.2.0-mingw48_opengl-x86-offline.exe
 
-* Qt Creator 2.8.1 for Windows (53 MB)
+* Qt Creator 3.0.0 for Windows (66 MB)
 
-  http://download.qt-project.org/official_releases/qtcreator/2.8/2.8.1/qt-creator-windows-opensource-2.8.1.exe
+  http://download.qt-project.org/official_releases/qtcreator/3.0/3.0.0/qt-creator-opensource-windows-x86-3.0.0.exe
 
 ### Installation Steps and Requirements for Qt
 
