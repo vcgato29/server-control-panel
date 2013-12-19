@@ -405,6 +405,12 @@ void Tray::startMongoDb()
         return;
     }
 
+    // if not installed, skip
+    if(!QFile().exists(settings->get("paths/mongodb").toString()+MONGODB_EXEC)) {
+        qDebug() << "[MongoDB] Is not installed. Skipping start command.";
+        return;
+    }
+
     // mongodb doesn't start, when data dir is missing...
     QString const mongoDbDataDir = qApp->applicationDirPath() + "/bin/mongodb/data/db";
     if(QDir().exists(qApp->applicationDirPath() + "/bin/mongodb") && !QDir().exists(mongoDbDataDir)) {
@@ -434,6 +440,12 @@ void Tray::startMongoDb()
 
 void Tray::stopMongoDb()
 {
+    // if not installed, skip
+    if(!QFile().exists(settings->get("paths/mongodb").toString()+MONGODB_EXEC)) {
+        qDebug() << "[MongoDB] Is not installed. Skipping stop command.";
+        return;
+    }
+
     // build mongo stop command
     QString const mongoStopCommand = settings->get("paths/mongodb").toString() + "/mongo.exe"
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
@@ -464,6 +476,12 @@ void Tray::startMemcached()
         return;
     }
 
+    // if not installed, skip
+    if(!QFile().exists(settings->get("paths/memcached").toString()+MEMCACHED_EXEC)) {
+        qDebug() << "[Memcached] Is not installed. Skipping start command.";
+        return;
+    }
+
     // start
     qDebug() << "[Memcached] Starting...\n" << settings->get("paths/memcached").toString()+MEMCACHED_EXEC;
 
@@ -472,6 +490,12 @@ void Tray::startMemcached()
 
 void Tray::stopMemcached()
 {
+    // if not installed, skip
+    if(!QFile().exists(settings->get("paths/memcached").toString()+MEMCACHED_EXEC)) {
+        qDebug() << "[Memcached] Is not installed. Skipping stop command.";
+        return;
+    }
+
     // disconnect process monitoring, before crashing the process
     disconnect(processMemcached, SIGNAL(error(QProcess::ProcessError)), this, SLOT(memcachedProcessError(QProcess::ProcessError)));
 
