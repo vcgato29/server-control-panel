@@ -177,6 +177,7 @@ void MainWindow::createActions()
     connect(ui->pushButton_Donate, SIGNAL(clicked()), this, SLOT(goToDonate()));
 
     // PushButtons: Configuration, Help, About, Close
+    connect(ui->pushButton_Webinterface, SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
     connect(ui->pushButton_Configuration, SIGNAL(clicked()), this, SLOT(openConfigurationDialog()));
     connect(ui->pushButton_Help, SIGNAL(clicked()), this, SLOT(openHelpDialog()));
     connect(ui->pushButton_About, SIGNAL(clicked()), this, SLOT(openAboutDialog()));
