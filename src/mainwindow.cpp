@@ -810,6 +810,7 @@ void MainWindow::setDefaultSettings()
 
     settings->set("mariadb/config",         "./bin/mariadb/my.ini");
     settings->set("mariadb/port",           3306);
+    settings->set("mariadb/password",       "");
 
     settings->set("memcached/port",         11211);
 
