@@ -166,7 +166,6 @@ void MainWindow::createActions()
     // title bar - close
     // Note that this action is intercepted by MainWindow::closeEvent()
     // Its modified from "quit" to "close to tray" with a msgbox
-    // qApp is global pointer to QApplication
     quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quitApplication()));
 
@@ -181,10 +180,7 @@ void MainWindow::createActions()
     connect(ui->pushButton_Configuration, SIGNAL(clicked()), this, SLOT(openConfigurationDialog()));
     connect(ui->pushButton_Help, SIGNAL(clicked()), this, SLOT(openHelpDialog()));
     connect(ui->pushButton_About, SIGNAL(clicked()), this, SLOT(openAboutDialog()));
-
-    // @todo the following action is not intercepted by the closeEvent()
-    // connect(ui->pushButton_Close, SIGNAL(clicked()), qApp, SLOT(quit()));
-    // workaround is to not quit, but hide the window
+    // clicking Close, does not quit, but closes the window to tray
     connect(ui->pushButton_Close, SIGNAL(clicked()), this, SLOT(hide()));
 
     // Actions - Tools
@@ -222,11 +218,7 @@ void MainWindow::changeEvent(QEvent *event)
                 // minimize to tray (do not minimize to taskbar)
                 if (this->windowState() & Qt::WindowMinimized)
                 {
-                    // @todo provide configuration options to let the user decide on this
-                    //if (Preferences::instance().minimizeToTray())
-                    //{
-                        QTimer::singleShot(0, this, SLOT(hide()));
-                    //}
+                    QTimer::singleShot(0, this, SLOT(hide()));
                 }
 
                 break;
@@ -242,9 +234,26 @@ void MainWindow::changeEvent(QEvent *event)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (tray->isVisible()) {
-        QMessageBox::information(this, APP_NAME,
-             tr("The program will keep running in the system tray.<br>"
-                "To terminate the program, choose <b>Quit</b> in the context menu of the system tray."));
+
+        bool doNotAskAgainCloseToTray = settings->get("global/donotaskagainclosetotray").toBool();
+
+        if(!doNotAskAgainCloseToTray)
+        {
+            QCheckBox *checkbox = new QCheckBox(tr("Do not show this message again."), this);
+            checkbox->setChecked(doNotAskAgainCloseToTray);
+
+            QMessageBox msgbox(this);
+            msgbox.setWindowTitle(qApp->applicationName());
+            msgbox.setIconPixmap(QMessageBox::standardIcon(QMessageBox::Information));
+            msgbox.setText(
+               tr("This program will keep running in the system tray.<br>"
+                  "To terminate the program, choose <b>Quit</b> in the context menu of the system tray.")
+            );
+            msgbox.setCheckBox(checkbox);
+            msgbox.exec();
+
+            settings->set("global/donotaskagainclosetotray", int(msgbox.checkBox()->checkState()));
+        }
 
         // hide mainwindow
         hide();
@@ -786,6 +795,7 @@ void MainWindow::setDefaultSettings()
     settings->set("global/autostartdaemons",  0);
     settings->set("global/stopdaemonsonquit", 1);
     settings->set("global/clearlogsonstart",  0);
+    settings->set("global/donotaskagainclosetotray", 0);
 
     settings->set("paths/logs",             "./logs");
     settings->set("paths/php",              "./bin/php");
