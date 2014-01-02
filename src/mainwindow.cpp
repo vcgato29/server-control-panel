@@ -339,8 +339,7 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
 
 void MainWindow::quitApplication()
 {
-    ConfigurationDialog* CfgDlg = new ConfigurationDialog();
-    if(CfgDlg->stopDaemonsOnQuit()) {
+    if(settings->get("global/stopdaemonsonquit").toBool()) {
         qDebug() << "[Daemons] Stopping on Quit...\n";
         tray->stopAllDaemons();
     }
