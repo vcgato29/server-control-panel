@@ -22,5 +22,9 @@
         <file alias="question">question.png</file>
         <file alias="wpnxm">wpnxm.ico</file>
         <file alias="splash">splash.png</file>
+        <file alias="server">wpnxm.png</file>
+        <file alias="key">key-solid.png</file>
+        <file alias="tick">tick.png</file>
+        <file alias="cross">cross.png</file>
     </qresource>
 </RCC>
