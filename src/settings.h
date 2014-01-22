@@ -42,6 +42,7 @@ public:
     Settings(QObject *parent = 0);
 
     QVariant get(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    QStringList getKeys(const QString &groupPrefix) const;
 
     void set(const QString &key, const QVariant &value);
 

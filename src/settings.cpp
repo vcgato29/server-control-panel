@@ -52,3 +52,10 @@ void Settings::set(const QString &key, const QVariant &value)
     QSettings settings(file(), QSettings::IniFormat);
     settings.setValue(key, value);
 }
+
+QStringList Settings::getKeys(const QString &groupPrefix) const
+{
+    QSettings settings(file(), QSettings::IniFormat);
+    settings.beginGroup(groupPrefix);
+    return settings.allKeys();
+}
