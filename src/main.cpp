@@ -32,6 +32,8 @@
 #include <QtWidgets>
 #include <QtCore>
 #include <QCoreApplication>
+#include <QCommandLineParser>
+#include <QCommandLineOption>
 
 // main method
 int main(int argc, char * argv[])
@@ -40,8 +42,10 @@ int main(int argc, char * argv[])
 
     // if CLI args are found, the application reacts as a console application
     if (argc > 1) { // first arg is the executable itself
-        QCoreApplication app(argc, argv, false);
-        handleCommandLineArguments(app.arguments());
+        QCoreApplication app(argc, argv);
+        QCoreApplication::setApplicationName(APP_NAME);
+        QCoreApplication::setApplicationVersion(APP_VERSION);
+        handleCommandLineArguments(app);
         return app.exec();
     }
 
@@ -100,77 +104,146 @@ void exitIfAlreadyRunning()
       }
 }
 
-void handleCommandLineArguments(QStringList args)
+void handleCommandLineArguments(QCoreApplication &app)
 {
-    QString service;
-    QString command;
+    // lets support multiple cli options, each with different options
+    // this should handle, e.g. "wpn-xm.exe --service nginx start"
 
-    qDebug() << args;
+    QCommandLineParser parser;
 
-    /*if (QCoreApplication::arguments().count() < 2) {
-        printf("Error. Please provide valid parameters...\n");
-        printHelpText();
-    } else */
-    if ((QCoreApplication::arguments().at(1) == "-h") || (QCoreApplication::arguments().at(1) == "--help")) {
-        printHelpText();
-    } else if ((QCoreApplication::arguments().at(1) == "-s") || (QCoreApplication::arguments().at(1) == "--service")) {
+    // -h, --help, -?
+    QCommandLineOption helpOption(QStringList() << "h" << "help" << "?", "Prints this help message.");
+    parser.addOption(helpOption);
 
-        // handle "scp.exe --service nginx start"
-        if (QCoreApplication::arguments().count() < 3) {
-            printf("Error. No service specfied...");
-            printHelpText();
-        } else if (QCoreApplication::arguments().count() == 3) {
-            service = QCoreApplication::arguments().at(3);
+    // -v, --version
+    QCommandLineOption versionOption(QStringList() << "v" << "version", "Display the version.");
+    parser.addOption(versionOption);
 
-        } else if (QCoreApplication::arguments().count() < 4) {
-            printf("Error. No command specfied...");
-            printHelpText();
-        } else if (QCoreApplication::arguments().count() == 4) {
-            command = QCoreApplication::arguments().at(4);
+    // -s, --service
+    QCommandLineOption serviceOption(QStringList() << "s" << "service", "Execute a service.", "[daemon] [command]");
+    parser.addOption(serviceOption);
 
-        } else if (QCoreApplication::arguments().count() > 5) {
-            printf("Error. Too many arguments for -s (--service) <daemon> <command>.");
-            printHelpText();
+    // call parse() to find out the positional arguments.
+    parser.parse(QCoreApplication::arguments());
+    const QStringList args = parser.positionalArguments();
+    //qDebug() << args;
+    const QString command = args.isEmpty() ? QString() : args.first();
+    //qDebug() << command;
+
+    // at this point we already have "--service <daemon>", but not <command>//
+    if (parser.isSet(serviceOption)) {
+
+        // daemon is the service value
+        QString daemon = parser.value(serviceOption);
+
+        if(daemon.isEmpty()) {
+            printHelpText(QString("Error: no <daemon> specified."));
         }
 
-    } else {
-        printf("Error. Please provide valid argument...\n");
+        QStringList availableDaemons = QStringList() << "nginx" << "mariadb" << "mongodb";
+        if(!availableDaemons.contains(daemon)) {
+            printHelpText(
+                QString("Error: \"%1\" is not a valid <daemon>.")
+                    .arg(daemon.toLocal8Bit().constData())
+            );
+        }
+
+        if(command.isEmpty()) {
+            printHelpText(QString("Error: no <command> specified."));
+        }
+
+        QStringList availableCommands = QStringList() << "start" << "stop" << "restart";
+        if(!availableCommands.contains(command)) {
+            printHelpText(
+                QString("Error: \"%1\" is not a valid <command>.")
+                    .arg(command.toLocal8Bit().constData())
+            );
+        }
+
+        executeDaemonCommand(daemon, command);
+    }
+
+    if(parser.isSet(versionOption)) {
+        printf("WPN-XM Server Stack " APP_VERSION " - Command Line Interface \n");
+        app.exit(0);
+    }
+
+    if(parser.isSet(helpOption)) {
         printHelpText();
     }
 
-    // definition of known CLI arguments as regular expressions
-    QRegExp rxArgStart("--start\\s(\\S+)");
-    QRegExp rxArgStop("--stop\\s(\\S+)");
-
-    // loop over string list and check if we have some matches
-    for (int i = 1; i < args.size(); ++i) {
-
-        if (rxArgStart.indexIn(args.at(i)) != -1 ) {
-            qDebug() << i << ":" << args.at(i) << "Starting " << rxArgStart.capturedTexts();
-        }
-        else if (rxArgStop.indexIn(args.at(i)) != -1 ) {
-            qDebug() << i << ":" << args.at(i) << "Stopping " << rxArgStop.capturedTexts();
-        }
-        else {
-            qDebug() << "Uknown arg:" << args.at(i);
-        }
-
-    }
+    //if(parser.unknownOptionNames().count() > 1) {
+        printHelpText(QString("Error: Unknown option."));
+    //}
 }
 
-int printHelpText()
+void printHelpText(const QString &errorMessage)
 {
-    QString usage = "\n"
-        "Usage: " + QCoreApplication::arguments().at(0) + " [option]\n"
+    QString helpText = "\n"
+        "WPN-XM Server Stack " APP_VERSION " - Command Line Interface \n"
         "\n"
-        "Options:\n"
-          "-v or --version                      Prints the version \n"
-          "-h or --help                         Prints this help message \n"
-          "-s or --service <daemon> <command>   Executes <command> on <daemon> \n"
-             "    [<daemon>]: The name of a daemon, e.g. nginx, mariadb, memcached, mongodb \n"
-             "    [<command>]: The command to execute, e.g. start, stop, restart \n"
-             "    Ports specified in \"wpn-xm.ini\" will be used. \n"
+        "Usage: " + QCoreApplication::arguments().at(0) + " [option] \n"
+        "\n"
+        "Example: " + QCoreApplication::arguments().at(0) + " --service nginx start \n"
+        "\n"
+        "Options: \n"
+        " -v, --version                        Prints the version. \n"
+        " -h, --help                           Prints this help message. \n"
+        " -s, --service <daemon> <command>     Executes <command> on <daemon>. \n"
+        "\n"
+        "Arguments: \n"
+        " <daemon>:  The name of a daemon, e.g. nginx, mariadb, memcached, mongodb. \n"
+        " <command>: The command to execute, e.g. start, stop, restart. \n"
+        "\n"
+        "Info :\n"
+        " Ports specified in \"wpn-xm.ini\" will be used. \n"
         "\n";
-   puts(usage.toStdString().c_str());
-   return 0;
+
+   printf("%s\n%s\n",
+          errorMessage.toLocal8Bit().constData(),
+          helpText.toLocal8Bit().constData()
+   );
+
+   exit(0);
+}
+
+void executeDaemonCommand(const QString &daemon, const QString &command)
+{
+    // instantiate and attach the tray icon to the system tray
+    Servers *servers = new Servers();
+
+    if(daemon == "nginx") {
+        if(command == "start") { servers->startNginx(); }
+        if(command == "stop") { }
+        if(command == "restart") { }
+    }
+
+    if(daemon == "mariadb") {
+        if(command == "start") { }
+        if(command == "stop") { }
+        if(command == "restart") { }
+    }
+
+    if(daemon == "php") {
+        if(command == "start") { }
+        if(command == "stop") { }
+        if(command == "restart") { }
+    }
+
+    if(daemon == "mongodb") {
+        if(command == "start") { }
+        if(command == "stop") { }
+        if(command == "restart") { }
+    }
+
+    if(daemon == "memcached") {
+        if(command == "start") { }
+        if(command == "stop") { }
+        if(command == "restart") { }
+    }
+
+    printHelpText(
+       QString("Command not handled, yet! (daemon = %1) (command = %2) \n")
+          .arg(daemon.toLocal8Bit().constData(), command.toLocal8Bit().constData())
+    );
 }
