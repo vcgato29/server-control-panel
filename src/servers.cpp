@@ -408,9 +408,10 @@ void Servers::showProcessError(QProcess::ProcessError error)
     QMessageBox::warning(0, title, msg);
 }
 
-QString Servers::getProcessErrorMessage(QProcess::ProcessError error){
-    QString ret;
-    ret = ret + " <br/> ";
+QString Servers::getProcessErrorMessage(QProcess::ProcessError error)
+{
+    QString ret = " <br/> ";
+
     switch(error){
         case QProcess::FailedToStart:
             ret = "The process failed to start. <br/> Either the invoked program is missing, or you may have insufficient permissions to invoke the program.";
@@ -431,6 +432,6 @@ QString Servers::getProcessErrorMessage(QProcess::ProcessError error){
             ret = "An unknown error occurred.";
             break;
     }
+
     return ret;
 }
-
