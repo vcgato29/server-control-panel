@@ -32,6 +32,8 @@ class QCloseEvent;
 // global includes
 #include <QMainWindow>
 #include <QAction>
+#include <QLayoutItem>
+#include <QGridLayout>
 
 namespace Ui {
     class MainWindow;
@@ -100,6 +102,7 @@ private:
     Tray *tray;
 
     Settings *settings;
+    Servers *servers;
 
     QAction *minimizeAction;
     QAction *restoreAction;
@@ -111,6 +114,12 @@ private:
     void startMonitoringDaemonProcesses();
 
     void setDefaultSettings();
+
+    void deleteChildWidgets(QLayoutItem *item);
+    void removeRow(QGridLayout *layout, int row, bool deleteWidgets);
+    void remove(QGridLayout *layout, int row, int column, bool deleteWidgets);
+    void showOnlyInstalledDaemons();
+
 
     // Returns full path to project folder (appPath + www).
     QString getProjectFolder() const;

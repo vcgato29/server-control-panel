@@ -47,7 +47,7 @@
        <height>195</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="Daemon_and_VersionNumber" rowstretch="0,0,0,0,0,0" columnstretch="0,0,0,0,0,0,0,0,0">
+     <layout class="QGridLayout" name="DaemonsGridLayout" rowstretch="0,0,0,0,0,0" columnstretch="0,0,0,0,0,0,0,0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>

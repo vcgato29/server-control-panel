@@ -45,7 +45,8 @@ class QCloseEvent;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    servers(new Servers)
 {
     ui->setupUi(this);
 
@@ -101,6 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     showPushButtonsOnlyForInstalledTools();
     enableToolsPushButtons(false);
+
+    showOnlyInstalledDaemons();
 }
 
 MainWindow::~MainWindow()
@@ -132,18 +135,18 @@ void MainWindow::createTrayIcon()
             this, SLOT(enableToolsPushButtons(bool)));
 
     // Connect Actions for Status Table - Column Action (Start)
-    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), tray, SLOT(startNginx()));
-    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), tray, SLOT(startPhp()));
-    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), tray, SLOT(startMariaDb()));
-    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), tray, SLOT(startMongoDb()));
-    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), tray, SLOT(startMemcached()));
+    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), servers, SLOT(startNginx()));
+    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), servers, SLOT(startPhp()));
+    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), servers, SLOT(startMariaDb()));
+    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), servers, SLOT(startMongoDb()));
+    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached()));
 
     // Connect Actions for Status Table - Column Action (Stop)
-    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), tray, SLOT(stopNginx()));
-    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), tray, SLOT(stopPhp()));
-    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), tray, SLOT(stopMariaDb()));
-    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), tray, SLOT(stopMongoDb()));
-    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), tray, SLOT(stopMemcached()));
+    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), servers, SLOT(stopNginx()));
+    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), servers, SLOT(stopPhp()));
+    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), servers, SLOT(stopMariaDb()));
+    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), servers, SLOT(stopMongoDb()));
+    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached()));
 
      // Connect Actions for Status Table - AllDaemons Start, Stop
     connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), tray, SLOT(startAllDaemons()));
@@ -829,3 +832,73 @@ void MainWindow::setDefaultSettings()
 
     qDebug() << "[Settings] Loaded Defaults...\n";
 }
+
+void MainWindow::showOnlyInstalledDaemons()
+{
+    removeRow(ui->DaemonsGridLayout, ui->DaemonsGridLayout->rowCount()-1, true);
+
+}
+
+/**
+ * Helper function. Deletes all child widgets of the given layout @a item.
+ */
+void MainWindow::deleteChildWidgets(QLayoutItem *item) {
+    if (item->layout()) {
+        // Process all child items recursively.
+        for (int i = 0; i < item->layout()->count(); i++) {
+            deleteChildWidgets(item->layout()->itemAt(i));
+        }
+    }
+    delete item->widget();
+}
+
+/**
+ * Helper function. Removes all layout items within the given @a layout
+ * which either span the given @a row or @a column. If @a deleteWidgets
+ * is true, all concerned child widgets become not only removed from the
+ * layout, but also deleted.
+ */
+void MainWindow::remove(QGridLayout *layout, int row, int column, bool deleteWidgets) {
+    // We avoid usage of QGridLayout::itemAtPosition() here to improve performance.
+    for (int i = layout->count() - 1; i >= 0; i--) {
+        int r, c, rs, cs;
+        layout->getItemPosition(i, &r, &c, &rs, &cs);
+        if ((r <= row && r + rs - 1 >= row) || (c <= column && c + cs - 1 >= column)) {
+            // This layout item is subject to deletion.
+            QLayoutItem *item = layout->takeAt(i);
+            if (deleteWidgets) {
+                deleteChildWidgets(item);
+            }
+            delete item;
+        }
+    }
+}
+
+
+/**
+ * Removes all layout items on the given @a row from the given grid
+ * @a layout. If @a deleteWidgets is true, all concerned child widgets
+ * become not only removed from the layout, but also deleted. Note that
+ * this function doesn't actually remove the row itself from the grid
+ * layout, as this isn't possible (i.e. the rowCount() and row indices
+ * will stay the same after this function has been called).
+ */
+void MainWindow::removeRow(QGridLayout *layout, int row, bool deleteWidgets) {
+    remove(layout, row, -1, deleteWidgets);
+    layout->setRowMinimumHeight(row, 0);
+    layout->setRowStretch(row, 0);
+}
+
+/**
+ * Removes all layout items on the given @a column from the given grid
+ * @a layout. If @a deleteWidgets is true, all concerned child widgets
+ * become not only removed from the layout, but also deleted. Note that
+ * this function doesn't actually remove the column itself from the grid
+ * layout, as this isn't possible (i.e. the columnCount() and column
+ * indices will stay the same after this function has been called).
+ */
+/*void MainWindow::removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
+    remove(layout, -1, column, deleteWidgets);
+    layout->setColumnMinimumWidth(column, 0);
+    layout->setColumnStretch(column, 0);
+}*/
