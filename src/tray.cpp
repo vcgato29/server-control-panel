@@ -25,6 +25,7 @@
 #include "tray.h"
 #include "settings.h"
 #include "hostmanager/hostmanagerdialog.h"
+#include "servers.h"
 
 // Global Qt includes
 #include <QApplication>
@@ -44,7 +45,10 @@
 #include <QtNetwork/QHostAddress>
 
 // Constructor
-Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
+Tray::Tray(QApplication *parent) :
+  QSystemTrayIcon(parent),
+  settings(new Settings),
+  servers(new Servers)
 {
     // set Tray Icon
     setIcon(QIcon(":/wpnxm"));
@@ -52,8 +56,6 @@ Tray::Tray(QApplication *parent) : QSystemTrayIcon(parent)
     // @todo append status of the daemons to tooltip, e.g. "Nginx up, PHP up, MariaDB up"
     // or create seperate popup?
     setToolTip("WPN-XM");
-
-    this->settings = new Settings;
 
     startMonitoringDaemonProcesses();
 
@@ -81,30 +83,16 @@ void Tray::startMonitoringDaemonProcesses()
     timer = new QTimer(this);
     timer->setInterval(1000); // msec = 1sec
 
-    processNginx = new QProcess();
-    processNginx->setWorkingDirectory(settings->get("paths/nginx").toString());
-    connect(processNginx, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(nginxStateChanged(QProcess::ProcessState)));
-    connect(processNginx, SIGNAL(error(QProcess::ProcessError)), this, SLOT(nginxProcessError(QProcess::ProcessError)));
+    foreach(Server *server, servers->servers()) {
 
-    processPhp = new QProcess();
-    processPhp->setWorkingDirectory(settings->get("paths/php").toString());
-    connect(processPhp, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(phpStateChanged(QProcess::ProcessState)));
-    connect(processPhp, SIGNAL(error(QProcess::ProcessError)), this, SLOT(phpProcessError(QProcess::ProcessError)));
+        QProcess *process = new QProcess();
+        process->setWorkingDirectory(qApp->applicationDirPath() + "/" + server->workingDirectory);
 
-    processMariaDb = new QProcess();
-    processMariaDb->setWorkingDirectory(settings->get("paths/mariadb").toString());
-    connect(processMariaDb, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(mariaDbStateChanged(QProcess::ProcessState)));
-    connect(processMariaDb, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mariaDbProcessError(QProcess::ProcessError)));
+        connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), SLOT(updateProcessStates()));
+        connect(process, SIGNAL(error(QProcess::ProcessError)), servers, SLOT(showProcessError(QProcess::ProcessError)));
 
-    processMongoDb = new QProcess();
-    processMongoDb->setWorkingDirectory(settings->get("paths/mongodb").toString());
-    connect(processMongoDb, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(mongoDbStateChanged(QProcess::ProcessState)));
-    connect(processMongoDb, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mongoDbProcessError(QProcess::ProcessError)));
-
-    processMemcached = new QProcess();
-    processMemcached->setWorkingDirectory(settings->get("paths/memcached").toString());
-    connect(processMemcached, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(memcachedStateChanged(QProcess::ProcessState)));
-    connect(processMemcached, SIGNAL(error(QProcess::ProcessError)), this, SLOT(memcachedProcessError(QProcess::ProcessError)));
+        server->process = process;
+    }
 }
 
 void Tray::createTrayMenu()
@@ -117,48 +105,6 @@ void Tray::createTrayMenu()
         trayMenu = new QMenu;
         setContextMenu(trayMenu);
     }
-
-    // Nginx
-    nginxStatusSubmenu = new QMenu("Nginx", trayMenu);
-    nginxStatusSubmenu->setIcon(QIcon(":/status_stop"));
-    nginxStatusSubmenu->addAction(QIcon(":/action_reload"), tr("Reload"), this, SLOT(reloadNginx()), QKeySequence());
-    nginxStatusSubmenu->addSeparator();
-    nginxStatusSubmenu->addAction(QIcon(":/action_restart"), tr("Restart"), this, SLOT(restartNginx()), QKeySequence());
-    nginxStatusSubmenu->addSeparator();
-    nginxStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startNginx()), QKeySequence());
-    nginxStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopNginx()), QKeySequence());
-
-    // PHP
-    phpStatusSubmenu = new QMenu("PHP", trayMenu);
-    phpStatusSubmenu->setIcon(QIcon(":/status_stop"));
-    phpStatusSubmenu->addAction(QIcon(":/action_restart"), tr("Restart"), this, SLOT(restartPhp()), QKeySequence());
-    phpStatusSubmenu->addSeparator();
-    phpStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startPhp()), QKeySequence());
-    phpStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopPhp()), QKeySequence());
-
-    // MariaDB
-    mariaDbStatusSubmenu = new QMenu("MariaDB", trayMenu);
-    mariaDbStatusSubmenu->setIcon(QIcon(":/status_stop"));
-    mariaDbStatusSubmenu->addAction(QIcon(":/action_restart"), tr("Restart"), this, SLOT(restartMariaDb()), QKeySequence());
-    mariaDbStatusSubmenu->addSeparator();
-    mariaDbStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startMariaDb()), QKeySequence());
-    mariaDbStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopMariaDb()), QKeySequence());
-
-    // MongoDB
-    mongoDbStatusSubmenu = new QMenu("MongoDB", trayMenu);
-    mongoDbStatusSubmenu->setIcon(QIcon(":/status_stop"));
-    mongoDbStatusSubmenu->addAction(QIcon(":/action_restart"), tr("Restart"), this, SLOT(restartMongoDb()), QKeySequence());
-    mongoDbStatusSubmenu->addSeparator();
-    mongoDbStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startMongoDb()), QKeySequence());
-    mongoDbStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopMongoDb()), QKeySequence());
-
-    // Memcached
-    memcachedStatusSubmenu = new QMenu("Memcached", trayMenu);
-    memcachedStatusSubmenu->setIcon(QIcon(":/status_stop"));
-    memcachedStatusSubmenu->addAction(QIcon(":/action_restart"), tr("Restart"), this, SLOT(restartMemcached()), QKeySequence());
-    memcachedStatusSubmenu->addSeparator();
-    memcachedStatusSubmenu->addAction(QIcon(":/action_run"), tr("Start"), this, SLOT(startMemcached()), QKeySequence());
-    memcachedStatusSubmenu->addAction(QIcon(":/action_stop"), tr("Stop"), this, SLOT(stopMemcached()), QKeySequence());
 
     // Add local IPs to the tray menu
     // important note: this section needs "QT += network" in the .pro file
@@ -187,11 +133,12 @@ void Tray::createTrayMenu()
     trayMenu->addAction(QIcon(":/action_run"), tr("Start All"), this, SLOT(startAllDaemons()), QKeySequence());
     trayMenu->addAction(QIcon(":/action_stop"), tr("Stop All"), this, SLOT(stopAllDaemons()), QKeySequence());
     trayMenu->addSeparator();
-    trayMenu->addMenu(nginxStatusSubmenu);
-    trayMenu->addMenu(phpStatusSubmenu);
-    trayMenu->addMenu(mariaDbStatusSubmenu);
-    trayMenu->addMenu(mongoDbStatusSubmenu);
-    trayMenu->addMenu(memcachedStatusSubmenu);
+
+    // Submenus of the Tray Menu
+    foreach(Server *server, servers->servers()) {
+        trayMenu->addMenu(server->trayMenu);
+    }
+
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(":/gear"), tr("Manage Hosts"), this, SLOT(openHostManagerDialog()), QKeySequence());
     trayMenu->addAction(QIcon(":/gear"), tr("Webinterface"), this, SLOT(goToWebinterface()), QKeySequence());
@@ -219,11 +166,11 @@ void Tray::goToWebsiteHelp()
 void Tray::autostartDaemons()
 {
     qDebug() << "[Daemons] Autostart...";
-    if(settings->get("autostart/nginx").toBool()) startNginx();
-    if(settings->get("autostart/php").toBool()) startPhp();
-    if(settings->get("autostart/mariadb").toBool()) startMariaDb();
-    if(settings->get("autostart/mongodb").toBool()) startMongoDb();
-    if(settings->get("autostart/memcached").toBool()) startMemcached();
+    if(settings->get("autostart/nginx").toBool()) servers->startNginx();
+    if(settings->get("autostart/php").toBool()) servers->startPhp();
+    if(settings->get("autostart/mariadb").toBool()) servers->startMariaDb();
+    if(settings->get("autostart/mongodb").toBool()) servers->startMongoDb();
+    if(settings->get("autostart/memcached").toBool()) servers->startMemcached();
 }
 
 //*
@@ -231,285 +178,31 @@ void Tray::autostartDaemons()
 //*
 void Tray::startAllDaemons()
 {
-    startNginx();
-    startPhp();
-    startMariaDb();
-    startMongoDb();
-    startMemcached();
+    servers->startNginx();
+    servers->startPhp();
+    servers->startMariaDb();
+    servers->startMongoDb();
+    servers->startMemcached();
 }
 
 void Tray::stopAllDaemons()
 {
-    stopMariaDb();
-    stopPhp();
-    stopNginx();
-    stopMongoDb();
-    stopMemcached();
+    servers->stopMariaDb();
+    servers->stopPhp();
+    servers->stopNginx();
+    servers->stopMongoDb();
+    servers->stopMemcached();
 }
 
 void Tray::restartAll()
 {
-    restartNginx();
-    restartPhp();
-    restartMariaDb();
-    restartMongoDb();
-    restartMemcached();
+    servers->restartNginx();
+    servers->restartPhp();
+    servers->restartMariaDb();
+    servers->restartMongoDb();
+    servers->restartMemcached();
 }
 
-/*
- * Nginx - Actions: run, stop, restart
- */
-void Tray::startNginx()
-{
-    // already running
-    if(processNginx->state() != QProcess::NotRunning) {
-        QMessageBox::warning(0, tr("Nginx"), tr("Nginx already running."));
-        return;
-    }
-
-    // start daemon
-    QString const startNginx = settings->get("paths/nginx").toString() + NGINX_EXEC
-            + " -p " + QDir::currentPath()
-            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
-
-    qDebug() << "[Nginx] Starting...\n" << startNginx;
-
-    processNginx->start(startNginx);
-}
-
-void Tray::stopNginx()
-{
-    QProcess processStopNginx;
-    processStopNginx.setWorkingDirectory(settings->get("paths/nginx").toString());
-
-    // fast shutdown
-    QString stopNginx = settings->get("paths/nginx").toString() + NGINX_EXEC
-            + " -p " + QDir::currentPath()
-            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
-            + " -s stop";
-
-    qDebug() << "[Nginx] Stopping...\n" << stopNginx;
-
-    processStopNginx.start(stopNginx);
-    processStopNginx.waitForFinished();
-}
-
-void Tray::reloadNginx()
-{
-    QString cfgNginxDir = settings->get("paths/nginx").toString();
-
-    QProcess processStopNginx;
-    processStopNginx.setWorkingDirectory(cfgNginxDir);
-
-    QString const reloadNginx = cfgNginxDir + NGINX_EXEC
-            + " -p " + QDir::currentPath()
-            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
-            + "-s reload";
-
-    qDebug() << reloadNginx;
-
-    processStopNginx.start(reloadNginx);
-    processStopNginx.waitForFinished();
-}
-
-void Tray::restartNginx()
-{
-    stopNginx();
-    startNginx();
-}
-
-/*
- * PHP - Actions: run, stop, restart
- */
-void Tray::startPhp()
-{
-    // already running
-    if(processPhp->state() != QProcess::NotRunning) {
-        QMessageBox::warning(0, tr("PHP"), tr("PHP is already running."));
-        return;
-    }
-
-    // start daemon
-    QString const startPHP = settings->get("paths/php").toString()+PHPCGI_EXEC
-            + " -b " + settings->get("php/fastcgi-host").toString()+":"+settings->get("php/fastcgi-port").toString();
-
-    qDebug() << "[PHP] Starting...\n" << startPHP;
-
-    processPhp->start(startPHP);
-}
-
-void Tray::stopPhp()
-{
-    qDebug() << "[PHP] Stopping...";
-
-    // 1) processPhp->terminate(); will fail because WM_CLOSE message not handled
-    // 2) By killing the process, we are crashing it!
-    //    The user will then get a "Process Crashed" Error MessageBox.
-    //    Therefore we need to disconnect signal/sender from method/receiver.
-    //    The result is, that crashing the php daemon intentionally is not shown as error.
-    disconnect(processPhp, SIGNAL(error(QProcess::ProcessError)), this, SLOT(phpProcessError(QProcess::ProcessError)));
-
-    // kill PHP daemon
-    processPhp->kill();
-    processPhp->waitForFinished();
-}
-
-void Tray::restartPhp()
-{
-    stopPhp();
-    startPhp();
-}
-
-/*
- * MariaDb Actions - run, stop, restart
- */
-void Tray::startMariaDb()
-{
-    // already running
-    if(processMariaDb->state() != QProcess::NotRunning) {
-        QMessageBox::warning(0, tr("MariaDB"), tr("MariaDB already running."));
-        return;
-    }
-
-    // start
-    QString const startMariaDb = settings->get("paths/mariadb").toString() + MARIADB_EXEC;
-    qDebug() << "[MariaDB] Starting...\n" << startMariaDb;
-    processMariaDb->start(startMariaDb);
-}
-
-void Tray::stopMariaDb()
-{
-    qDebug() << "[MariaDB] Stopping...";
-
-    // disconnect process monitoring, before crashing the process
-    disconnect(processMariaDb, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mariaDbProcessError(QProcess::ProcessError)));
-
-    processMariaDb->kill();
-    processMariaDb->waitForFinished();
-}
-
-void Tray::restartMariaDb()
-{
-    stopMariaDb();
-    startMariaDb();
-}
-
-/*
- * MongoDB Actions - run, stop, restart
- */
-void Tray::startMongoDb()
-{
-    // already running
-    if(processMongoDb->state() != QProcess::NotRunning) {
-        QMessageBox::warning(0, tr("MongoDB"), tr("MongoDB already running."));
-        return;
-    }
-
-    // if not installed, skip
-    if(!QFile().exists(settings->get("paths/mongodb").toString()+MONGODB_EXEC)) {
-        qDebug() << "[MongoDB] Is not installed. Skipping start command.";
-        return;
-    }
-
-    // mongodb doesn't start, when data dir is missing...
-    QString const mongoDbDataDir = qApp->applicationDirPath() + "/bin/mongodb/data/db";
-    if(QDir().exists(qApp->applicationDirPath() + "/bin/mongodb") && !QDir().exists(mongoDbDataDir)) {
-        qDebug() << "[MongoDB] Creating Directory for Mongo's Database...\n" << mongoDbDataDir;
-        QDir().mkpath(mongoDbDataDir);
-    }
-
-    // mongodb doesn't start, when logfile is missing...
-    QFile f(qApp->applicationDirPath() + "/logs/mongodb.log");
-    if(!f.exists()) {
-        qDebug() << "[MongoDB] Creating empty logfile...\n" << qApp->applicationDirPath() + "/logs/mongodb.log";
-        f.open(QIODevice::ReadWrite);
-        f.close();
-    }
-
-    // build mongo start command
-    QString const mongoStartCommand = settings->get("paths/mongodb").toString()+MONGODB_EXEC
-             + " --config " + qApp->applicationDirPath() + "/bin/mongodb/mongodb.conf"
-             + " --dbpath " + qApp->applicationDirPath() + "/bin/mongodb/data/db"
-             + " --logpath " + qApp->applicationDirPath() + "/logs/mongodb.log";
-
-    qDebug() << "[MongoDB] Starting...\n"<< mongoStartCommand;
-
-    // start
-    processMongoDb->start(mongoStartCommand);
-}
-
-void Tray::stopMongoDb()
-{
-    // if not installed, skip
-    if(!QFile().exists(settings->get("paths/mongodb").toString()+MONGODB_EXEC)) {
-        qDebug() << "[MongoDB] Is not installed. Skipping stop command.";
-        return;
-    }
-
-    // build mongo stop command
-    QString const mongoStopCommand = settings->get("paths/mongodb").toString() + "/mongo.exe"
-             + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
-
-    qDebug() << "[MongoDB] Stopping...\n" << mongoStopCommand;
-
-    if(QProcess::execute(mongoStopCommand))
-    {
-        // disconnect process monitoring, if shutdown command successfully send
-        disconnect(processMongoDb, SIGNAL(error(QProcess::ProcessError)), this, SLOT(mongoDbProcessError(QProcess::ProcessError)));
-    }
-}
-
-void Tray::restartMongoDb()
-{
-    stopMongoDb();
-    startMongoDb();
-}
-
-/*
- * Memcached Actions - run, stop, restart
- */
-void Tray::startMemcached()
-{
-    // already running
-    if(processMemcached->state() != QProcess::NotRunning){
-        QMessageBox::warning(0, tr("Memcached"), tr("Memcached already running."));
-        return;
-    }
-
-    // if not installed, skip
-    if(!QFile().exists(settings->get("paths/memcached").toString()+MEMCACHED_EXEC)) {
-        qDebug() << "[Memcached] Is not installed. Skipping start command.";
-        return;
-    }
-
-    // start
-    qDebug() << "[Memcached] Starting...\n" << settings->get("paths/memcached").toString()+MEMCACHED_EXEC;
-
-    processMemcached->start(settings->get("paths/memcached").toString()+MEMCACHED_EXEC);
-}
-
-void Tray::stopMemcached()
-{
-    // if not installed, skip
-    if(!QFile().exists(settings->get("paths/memcached").toString()+MEMCACHED_EXEC)) {
-        qDebug() << "[Memcached] Is not installed. Skipping stop command.";
-        return;
-    }
-
-    // disconnect process monitoring, before crashing the process
-    disconnect(processMemcached, SIGNAL(error(QProcess::ProcessError)), this, SLOT(memcachedProcessError(QProcess::ProcessError)));
-
-    qDebug() << "[Memcachaed] Stopping...\n";
-
-    processMemcached->kill();
-    processMemcached->waitForFinished();
-}
-
-void Tray::restartMemcached()
-{
-    stopMemcached();
-    startMemcached();
-}
 
 /*
  * Config slots
@@ -584,191 +277,48 @@ void Tray::openPhpConfig()
 /*
  * State slots
  */
-void Tray::globalStateChanged()
+void Tray::updateProcessStates()
 {
-    QProcess::ProcessState stateNginx = QProcess::Running;
-    QProcess::ProcessState statePhp = QProcess::Running;
-    QProcess::ProcessState stateMariaDb = QProcess::Running;
-    QProcess::ProcessState stateMongoDb = QProcess::Running;
-    QProcess::ProcessState stateMemcached = QProcess::Running;
+     foreach(Server *server, servers->servers()) {
 
-    stateNginx = processNginx->state();
-    statePhp = processPhp->state();
-    stateMariaDb = processMariaDb->state();
-    stateMongoDb = processMongoDb->state();
-    stateMemcached = processMemcached->state();
+         switch(server->process->state())
+         {
+             case QProcess::NotRunning:
+                 server->trayMenu->setIcon(QIcon(":/status_stop"));
+                 emit signalSetLabelStatusActive(server->name, false);
+                 break;
+             case QProcess::Running:
+                 server->trayMenu->setIcon(QIcon(":/status_run"));
+                 emit signalSetLabelStatusActive(server->name, true);
+                 break;
+             case QProcess::Starting:
+                 server->trayMenu->setIcon(QIcon(":/status_reload"));
+                 break;
+         }
 
-    if(stateNginx==QProcess::Starting || statePhp==QProcess::Starting || stateMariaDb==QProcess::Starting
-            || stateMongoDb ==QProcess::Starting || stateMemcached ==QProcess::Starting)
-    {
-        timer->start();
-    }
-    else
-    {
-        timer->stop();
-        setIcon(QIcon(":/wpnxm"));
-    }
+         if(server->process->state() == QProcess::Starting)
+         {
+             timer->start();
+         } else {
+             timer->stop();
+             //setIcon(QIcon(":/wpnxm"));
+         }
 
-    // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
-    if(processNginx->state() == QProcess::NotRunning or processPhp->state() == QProcess::NotRunning)
-    {
-        emit signalEnableToolsPushButtons(false);
-    }
+         // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
+         if((server->name == "Nginx" && server->process->state() == QProcess::NotRunning)
+          or(server->name == "PHP"   && server->process->state() == QProcess::NotRunning))
+         {
+             emit signalEnableToolsPushButtons(false);
+         }
 
-    // if NGINX and PHP are running, enable PushButtons of Tools section
-    if(processNginx->state() == QProcess::Running and processPhp->state() == QProcess::Running)
-    {
-        emit signalEnableToolsPushButtons(true);
-    }
+         // if NGINX and PHP are running, enable PushButtons of Tools section
+         if((server->name == "Nginx" && server->process->state() == QProcess::Running)
+         and(server->name == "PHP"   && server->process->state() == QProcess::Running))
+         {
+             emit signalEnableToolsPushButtons(true);
+         }
+
+     }
 
     return;
-}
-
-void Tray::nginxStateChanged(QProcess::ProcessState state)
-{
-    switch(state)
-    {
-        case QProcess::NotRunning:
-            nginxStatusSubmenu->setIcon(QIcon(":/status_stop"));
-            emit signalSetLabelStatusActive("nginx", false);
-            break;
-        case QProcess::Running:
-            nginxStatusSubmenu->setIcon(QIcon(":/status_run"));
-            emit signalSetLabelStatusActive("nginx", true);
-            break;
-        case QProcess::Starting:
-            nginxStatusSubmenu->setIcon(QIcon(":/status_reload"));
-            break;
-    }
-    globalStateChanged();
-}
-
-void Tray::phpStateChanged(QProcess::ProcessState state)
-{
-    switch(state)
-    {
-        case QProcess::NotRunning:
-            phpStatusSubmenu->setIcon(QIcon(":/status_stop"));
-            emit signalSetLabelStatusActive("php", false);
-            break;
-        case QProcess::Running:
-            phpStatusSubmenu->setIcon(QIcon(":/status_run"));
-            emit signalSetLabelStatusActive("php", true);
-            break;
-        case QProcess::Starting:
-            phpStatusSubmenu->setIcon(QIcon(":/status_reload"));
-            break;
-    }
-    globalStateChanged();
-}
-
-void Tray::mariaDbStateChanged(QProcess::ProcessState state)
-{
-    switch(state)
-    {
-        case QProcess::NotRunning:
-            mariaDbStatusSubmenu->setIcon(QIcon(":/status_stop"));
-            emit signalSetLabelStatusActive("mariadb", false);
-            break;
-        case QProcess::Running:
-            mariaDbStatusSubmenu->setIcon(QIcon(":/status_run"));
-            emit signalSetLabelStatusActive("mariadb", true);
-            break;
-        case QProcess::Starting:
-            mariaDbStatusSubmenu->setIcon(QIcon(":/status_reload"));
-            break;
-    }
-    globalStateChanged();
-}
-
-void Tray::mongoDbStateChanged(QProcess::ProcessState state)
-{
-    switch(state)
-    {
-        case QProcess::NotRunning:
-            mongoDbStatusSubmenu->setIcon(QIcon(":/status_stop"));
-            emit signalSetLabelStatusActive("mongodb", false);
-            break;
-        case QProcess::Running:
-            mongoDbStatusSubmenu->setIcon(QIcon(":/status_run"));
-            emit signalSetLabelStatusActive("mongodb", true);
-            break;
-        case QProcess::Starting:
-            mongoDbStatusSubmenu->setIcon(QIcon(":/status_reload"));
-            break;
-    }
-    globalStateChanged();
-}
-
-void Tray::memcachedStateChanged(QProcess::ProcessState state)
-{
-    switch(state)
-    {
-        case QProcess::NotRunning:
-            memcachedStatusSubmenu->setIcon(QIcon(":/status_stop"));
-            emit signalSetLabelStatusActive("memcached", false);
-            break;
-        case QProcess::Running:
-            memcachedStatusSubmenu->setIcon(QIcon(":/status_run"));
-            emit signalSetLabelStatusActive("memcached", true);
-            break;
-        case QProcess::Starting:
-            memcachedStatusSubmenu->setIcon(QIcon(":/status_reload"));
-            break;
-    }
-    globalStateChanged();
-}
-
-/*
- * Error slots
- */
-void Tray::nginxProcessError(QProcess::ProcessError error)
-{
-    QMessageBox::warning(0, APP_NAME " - Error", "Nginx Error. "+getProcessErrorMessage(error));
-}
-
-void Tray::phpProcessError(QProcess::ProcessError error)
-{
-    QMessageBox::warning(0, APP_NAME " - Error", "PHP Error. "+getProcessErrorMessage(error));
-}
-
-void Tray::mariaDbProcessError(QProcess::ProcessError error)
-{
-    QMessageBox::warning(0, APP_NAME " - Error", "MariaDB Error. "+getProcessErrorMessage(error));
-}
-
-void Tray::mongoDbProcessError(QProcess::ProcessError error)
-{
-    QMessageBox::warning(0, APP_NAME " - Error", "MongoDB Error. "+getProcessErrorMessage(error));
-}
-
-void Tray::memcachedProcessError(QProcess::ProcessError error)
-{
-    QMessageBox::warning(0, APP_NAME " - Error", "Memcached Error. "+getProcessErrorMessage(error));
-}
-
-QString Tray::getProcessErrorMessage(QProcess::ProcessError error){
-    QString ret;
-    ret = ret + " <br/> ";
-    switch(error){
-        case QProcess::FailedToStart:
-            ret = "The process failed to start. <br/> Either the invoked program is missing, or you may have insufficient permissions to invoke the program.";
-            break;
-        case QProcess::Crashed:
-            ret = "The process crashed some time after starting successfully.";
-            break;
-        case QProcess::Timedout:
-            ret = "The process timed out.";
-            break;
-        case QProcess::WriteError:
-            ret = "An error occurred when attempting to write to the process. <br/> For example, the process may not be running, or it may have closed its input channel.";
-            break;
-        case QProcess::ReadError:
-            ret = "An error occurred when attempting to read from the process. <br/> For example, the process may not be running.";
-            break;
-        case QProcess::UnknownError:
-            ret = "An unknown error occurred.";
-            break;
-    }
-    return ret;
 }

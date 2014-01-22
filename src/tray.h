@@ -32,6 +32,7 @@
 // local includes
 #include "settings.h"
 #include "version.h"
+#include "servers.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -64,32 +65,6 @@ public slots:
         void goToReportIssue();
         void goToWebinterface();
 
-        // Nginx Action Slots
-        void startNginx();
-        void stopNginx();
-        void reloadNginx();
-        void restartNginx();
-
-        // PHP Action Slots
-        void startPhp();
-        void stopPhp();
-        void restartPhp();
-
-        // MySQL Action Slots
-        void startMariaDb();
-        void stopMariaDb();
-        void restartMariaDb();
-
-        // MongoDB Action Slots
-        void startMongoDb();
-        void stopMongoDb();
-        void restartMongoDb();
-
-        // Memcached Action Slots
-        void startMemcached();
-        void stopMemcached();
-        void restartMemcached();
-
         // Config Action Slots
         void openHostManagerDialog();
         //void openConfigurationDialog();
@@ -105,19 +80,7 @@ public slots:
         //void openMariaDbConfig();
 
         // Status Action Slots
-        void globalStateChanged();
-
-        void nginxStateChanged(QProcess::ProcessState state);
-        void phpStateChanged(QProcess::ProcessState state);
-        void mariaDbStateChanged(QProcess::ProcessState state);
-        void mongoDbStateChanged(QProcess::ProcessState state);
-        void memcachedStateChanged(QProcess::ProcessState state);
-
-        void nginxProcessError(QProcess::ProcessError error);
-        void phpProcessError(QProcess::ProcessError error);
-        void mariaDbProcessError(QProcess::ProcessError error);
-        void mongoDbProcessError(QProcess::ProcessError error);
-        void memcachedProcessError(QProcess::ProcessError error);
+        void updateProcessStates();
 
 signals:
         // following signal is connected to MainWindow::setLabelStatusActive()
@@ -130,37 +93,14 @@ private:
         void autostartDaemons();
 
         Settings *settings;
-
-        // Process Monitoring
-        QProcess* processNginx;
-        QProcess* processPhp;
-        QProcess* processMariaDb;
-        QProcess* processMongoDb;
-        QProcess* processMemcached;
+        Servers *servers;
 
         // Tray Menu
         void createTrayMenu();
 
         QMenu* trayMenu;
 
-         // Submenus of the Tray Menu
-        QMenu* nginxStatusSubmenu;
-        QMenu* phpStatusSubmenu;
-        QMenu* mariaDbStatusSubmenu;
-        QMenu* mongoDbStatusSubmenu;
-        QMenu* memcachedStatusSubmenu;
-
-// Executables
-#define PHPCGI_EXEC "/php-cgi.exe"
-#define NGINX_EXEC "/nginx.exe"
-#define MARIADB_EXEC "/mysqld.exe"
-#define MARIADB_CLIENT_EXEC "/mysql.exe"
-#define MONGODB_EXEC "/mongod.exe"
-#define MEMCACHED_EXEC "/memcached.exe"
-
         void startMonitoringDaemonProcesses();
-
-        QString getProcessErrorMessage(QProcess::ProcessError);
 };
 
 #endif // Tray_H
