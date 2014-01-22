@@ -76,7 +76,7 @@ public slots:
 
         //void openPhpConfig();
 
-        void openMariaDbClient();
+        //void openMariaDbClient();
         //void openMariaDbConfig();
 
         // Status Action Slots

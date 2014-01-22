@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QProcess>
+#include <QTimer>
 
 Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 {
@@ -19,7 +20,20 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
         server->configFiles = QStringList() << "a" << "b";
         server->logFiles = QStringList() << "a" << "b";
         server->workingDirectory = settings->get("paths/" + server->name).toString();
-        server->process = new QProcess();
+        server->exe = getExecutable(server->name);
+
+        // the timer is used for monitoring the process state of each daemon
+        //timer = new QTimer(this);
+        //timer->setInterval(1000); // msec = 1sec
+
+        QProcess *process = new QProcess();
+        process->setObjectName(server->name);
+        process->setWorkingDirectory(server->workingDirectory);
+
+        //connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), tray, SLOT(updateProcessStates()));
+        connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(showProcessError(QProcess::ProcessError)));
+
+        server->process = process;
 
         QMenu *menu =  new QMenu(server->name);
         menu->setObjectName(QString("menu").append(server->name));
@@ -39,7 +53,7 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
         menu->addAction(stopAction);
 
         // connect ONLY ONCE
-        connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(mySlot(QAction*)), Qt::UniqueConnection);
+        connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(mapAction(QAction*)), Qt::UniqueConnection);
 
         server->trayMenu = menu;
 
@@ -47,8 +61,8 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
     }
 }
 
-void Servers::mySlot(QAction *action) {
-   action->dumpObjectInfo();
+void Servers::mapAction(QAction *action) {
+    QMetaObject::invokeMethod(this, action->objectName().toLocal8Bit().constData() );
 }
 
 QString Servers::fixName(QString &serverName) const
@@ -59,6 +73,18 @@ QString Servers::fixName(QString &serverName) const
     if(serverName == "mariadb") { return "MariaDb"; }
     if(serverName == "php") { return "PHP"; }
     return QString();
+}
+
+QString Servers::getExecutable(QString &serverName) const
+{
+    QString s = serverName.toLower();
+    QString exe;
+    if(s == "nginx")     { exe = "nginx.exe"; }
+    if(s == "memcached") { exe = "memcached.exe"; }
+    if(s == "mongodb")   { exe = "mongod.exe"; }
+    if(s == "mariadb")   { exe = "mysqld.exe"; }
+    if(s == "php")       { exe = "php-cgi.exe"; }
+    return settings->get("paths/" + serverName).toString() + "/" + exe;
 }
 
 QStringList Servers::getListOfServerNames() const
@@ -74,11 +100,6 @@ QList<Server*> Servers::servers() const
     return serversList;
 }
 
-/**
- * @brief Servers::getServer
- * @param serverName
- * @return Server
- */
 Server* Servers::getServer(const char *serverName) const
 {
      QString name = QString(serverName).toLocal8Bit().constData();
@@ -88,7 +109,7 @@ Server* Servers::getServer(const char *serverName) const
              return server;
      }
 
-     // faked return
+     // anti "control reaches end of non-void function" faked return
      Server *server = new Server();
      server->name = QString("Unknown");
      return server;
@@ -111,18 +132,14 @@ QProcess::ProcessState Servers::getProcessState(const char *serverName) const
  */
 void Servers::startNginx()
 {
-    qDebug() << "1";
-
     // already running
     if(getProcessState("Nginx") != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("Nginx"), tr("Nginx already running."));
         return;
     }
 
-     qDebug() << "2";
-
     // start daemon
-    QString const startNginx = settings->get("paths/nginx").toString() + NGINX_EXEC
+    QString const startNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
 
@@ -133,37 +150,33 @@ void Servers::startNginx()
 
 void Servers::stopNginx()
 {
-    QProcess processStopNginx;
-    processStopNginx.setWorkingDirectory(settings->get("paths/nginx").toString());
+    QProcess *processStopNginx = getProcess("Nginx");
 
     // fast shutdown
-    QString stopNginx = settings->get("paths/nginx").toString() + NGINX_EXEC
+    QString const stopNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
             + " -s stop";
 
     qDebug() << "[Nginx] Stopping...\n" << stopNginx;
 
-    processStopNginx.start(stopNginx);
-    processStopNginx.waitForFinished();
+    processStopNginx->start(stopNginx);
+    processStopNginx->waitForFinished();
 }
 
 void Servers::reloadNginx()
 {
-    QString cfgNginxDir = settings->get("paths/nginx").toString();
+    QProcess *processStopNginx = getProcess("Nginx");
 
-    QProcess processStopNginx;
-    processStopNginx.setWorkingDirectory(cfgNginxDir);
-
-    QString const reloadNginx = cfgNginxDir + NGINX_EXEC
+    QString const reloadNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
             + "-s reload";
 
-    qDebug() << reloadNginx;
+    qDebug() << "[Nginx] Reloading...\n" << reloadNginx;
 
-    processStopNginx.start(reloadNginx);
-    processStopNginx.waitForFinished();
+    processStopNginx->start(reloadNginx);
+    processStopNginx->waitForFinished();
 }
 
 void Servers::restartNginx()
@@ -175,7 +188,7 @@ void Servers::restartNginx()
 /*
  * PHP - Actions: run, stop, restart
  */
-void Servers::startPhp()
+void Servers::startPHP()
 {
     // already running
     if(getProcessState("PHP") != QProcess::NotRunning) {
@@ -184,20 +197,18 @@ void Servers::startPhp()
     }
 
     // start daemon
-    QString const startPHP = settings->get("paths/php").toString()+PHPCGI_EXEC
-            + " -b " + settings->get("php/fastcgi-host").toString()+":"+settings->get("php/fastcgi-port").toString();
+    QString const startPHP = getServer("PHP")->exe
+            + " -b " + settings->get("php/fastcgi-host").toString()
+            + ":" + settings->get("php/fastcgi-port").toString();
 
     qDebug() << "[PHP] Starting...\n" << startPHP;
 
     getProcess("PHP")->start(startPHP);
 }
 
-void Servers::stopPhp()
+void Servers::stopPHP()
 {
     qDebug() << "[PHP] Stopping...";
-
-    Server *server = getServer("PHP");
-    qDebug() << server->name;
 
     if(getProcessState("PHP") == QProcess::NotRunning) {
         qDebug() << "[PHP] Not running...";
@@ -206,22 +217,23 @@ void Servers::stopPhp()
 
     QProcess *processPHP = getProcess("PHP");
 
-    // 1) processPhp->terminate(); will fail because WM_CLOSE message not handled
+    // 1) processPhp->terminate(); will fail because WM_CLOSE message is not handled
     // 2) By killing the process, we are crashing it!
-    //    The user will then get a "Process Crashed" Error MessageBox.
+    //    The user will then get a "Process Crashed" Error MessageBox from process donitoring.
     //    Therefore we need to disconnect signal/sender from method/receiver.
     //    The result is, that crashing the php daemon intentionally is not shown as error.
-    //disconnect(processPHP, SIGNAL(error(QProcess::ProcessError)), this, SLOT(showProcessError(QProcess::ProcessError)));
+    disconnect(processPHP, SIGNAL(error(QProcess::ProcessError)),
+               this, SLOT(showProcessError(QProcess::ProcessError)));
 
     // kill PHP daemon
     processPHP->kill();
     processPHP->waitForFinished();
 }
 
-void Servers::restartPhp()
+void Servers::restartPHP()
 {
-    stopPhp();
-    startPhp();
+    stopPHP();
+    startPHP();
 }
 
 /*
@@ -236,8 +248,10 @@ void Servers::startMariaDb()
     }
 
     // start
-    QString const startMariaDb = settings->get("paths/mariadb").toString() + MARIADB_EXEC;
+    QString const startMariaDb = getServer("MariaDb")->exe;
+
     qDebug() << "[MariaDB] Starting...\n" << startMariaDb;
+
     getServer("MariaDb")->process->start(startMariaDb);
 }
 
@@ -246,7 +260,8 @@ void Servers::stopMariaDb()
     qDebug() << "[MariaDB] Stopping...";
 
     // disconnect process monitoring, before crashing the process
-    disconnect(getProcess("MariaDb"), SIGNAL(error(QProcess::ProcessError)), this, SLOT(showProcessError(QProcess::ProcessError)));
+    disconnect(getProcess("MariaDb"), SIGNAL(error(QProcess::ProcessError)),
+               this, SLOT(showProcessError(QProcess::ProcessError)));
 
     getProcess("MariaDb")->kill();
     getProcess("MariaDb")->waitForFinished();
@@ -259,44 +274,44 @@ void Servers::restartMariaDb()
 }
 
 /*
- * MongoDB Actions - run, stop, restart
+ * MongoDb Actions - run, stop, restart
  */
 void Servers::startMongoDb()
 {
     // already running
     if(getProcessState("MongoDb") != QProcess::NotRunning) {
-        QMessageBox::warning(0, tr("MongoDB"), tr("MongoDB already running."));
+        QMessageBox::warning(0, tr("MongoDb"), tr("MongoDb already running."));
         return;
     }
 
     // if not installed, skip
-    if(!QFile().exists(settings->get("paths/mongodb").toString()+MONGODB_EXEC)) {
-        qDebug() << "[MongoDB] Is not installed. Skipping start command.";
+    if(!QFile().exists(getServer("MongoDb")->exe)) {
+        qDebug() << "[MongoDb] Is not installed. Skipping start command.";
         return;
     }
 
-    // mongodb doesn't start, when data dir is missing...
+    // MongoDb doesn't start, when data dir is missing...
     QString const mongoDbDataDir = qApp->applicationDirPath() + "/bin/mongodb/data/db";
     if(QDir().exists(qApp->applicationDirPath() + "/bin/mongodb") && !QDir().exists(mongoDbDataDir)) {
-        qDebug() << "[MongoDB] Creating Directory for Mongo's Database...\n" << mongoDbDataDir;
+        qDebug() << "[MongoDb] Creating Directory for Mongo's Database...\n" << mongoDbDataDir;
         QDir().mkpath(mongoDbDataDir);
     }
 
-    // mongodb doesn't start, when logfile is missing...
+    // MongoDb doesn't start, when logfile is missing...
     QFile f(qApp->applicationDirPath() + "/logs/mongodb.log");
     if(!f.exists()) {
-        qDebug() << "[MongoDB] Creating empty logfile...\n" << qApp->applicationDirPath() + "/logs/mongodb.log";
+        qDebug() << "[MongoDb] Creating empty logfile...\n" << qApp->applicationDirPath() + "/logs/mongodb.log";
         f.open(QIODevice::ReadWrite);
         f.close();
     }
 
     // build mongo start command
-    QString const mongoStartCommand = settings->get("paths/mongodb").toString()+MONGODB_EXEC
+    QString const mongoStartCommand = getServer("MongoDb")->exe
              + " --config " + qApp->applicationDirPath() + "/bin/mongodb/mongodb.conf"
              + " --dbpath " + qApp->applicationDirPath() + "/bin/mongodb/data/db"
              + " --logpath " + qApp->applicationDirPath() + "/logs/mongodb.log";
 
-    qDebug() << "[MongoDB] Starting...\n"<< mongoStartCommand;
+    qDebug() << "[MongoDb] Starting...\n"<< mongoStartCommand;
 
     // start
     getProcess("MongoDb")->start(mongoStartCommand);
@@ -305,21 +320,22 @@ void Servers::startMongoDb()
 void Servers::stopMongoDb()
 {
     // if not installed, skip
-    if(!QFile().exists(settings->get("paths/mongodb").toString()+MONGODB_EXEC)) {
-        qDebug() << "[MongoDB] Is not installed. Skipping stop command.";
+    if(!QFile().exists(getServer("MongoDb")->exe)) {
+        qDebug() << "[MongoDb] Is not installed. Skipping stop command.";
         return;
     }
 
-    // build mongo stop command
-    QString const mongoStopCommand = settings->get("paths/mongodb").toString() + "/mongo.exe"
+    // build mongo stop command based on CLI evaluation
+    QString const mongoStopCommand = getServer("MongoDb")->exe
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
-    qDebug() << "[MongoDB] Stopping...\n" << mongoStopCommand;
+    qDebug() << "[MongoDb] Stopping...\n" << mongoStopCommand;
 
     if(QProcess::execute(mongoStopCommand))
     {
         // disconnect process monitoring, if shutdown command successfully send
-        disconnect(getProcess("MongoDb"), SIGNAL(error(QProcess::ProcessError)), this, SLOT(showProcessError(QProcess::ProcessError)));
+        disconnect(getProcess("MongoDb"), SIGNAL(error(QProcess::ProcessError)),
+                   this, SLOT(showProcessError(QProcess::ProcessError)));
     }
 }
 
@@ -340,22 +356,24 @@ void Servers::startMemcached()
         return;
     }
 
+    QString const memcachedStartCommand = getServer("Memcached")->exe;
+
     // if not installed, skip
-    if(!QFile().exists(settings->get("paths/memcached").toString()+MEMCACHED_EXEC)) {
+    if(!QFile().exists(memcachedStartCommand)) {
         qDebug() << "[Memcached] Is not installed. Skipping start command.";
         return;
     }
 
     // start
-    qDebug() << "[Memcached] Starting...\n" << settings->get("paths/memcached").toString()+MEMCACHED_EXEC;
+    qDebug() << "[Memcached] Starting...\n" << memcachedStartCommand;
 
-    getProcess("Memcached")->start(settings->get("paths/memcached").toString()+MEMCACHED_EXEC);
+    getProcess("Memcached")->start(memcachedStartCommand);
 }
 
 void Servers::stopMemcached()
 {
     // if not installed, skip
-    if(!QFile().exists(settings->get("paths/memcached").toString()+MEMCACHED_EXEC)) {
+    if(!QFile().exists(getServer("Memcached")->exe)) {
         qDebug() << "[Memcached] Is not installed. Skipping stop command.";
         return;
     }
@@ -383,7 +401,11 @@ void Servers::restartMemcached()
  */
 void Servers::showProcessError(QProcess::ProcessError error)
 {
-    QMessageBox::warning(0, qApp->applicationName() + " - Error", " Error. " + getProcessErrorMessage(error));
+    QString name = sender()->objectName();
+    QString title = qApp->applicationName() + " - " + name + " Error";
+    QString msg =  name + " Error. " + getProcessErrorMessage(error);
+
+    QMessageBox::warning(0, title, msg);
 }
 
 QString Servers::getProcessErrorMessage(QProcess::ProcessError error){

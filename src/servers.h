@@ -16,6 +16,7 @@ public:
         QString workingDirectory;
         QStringList configFiles;
         QStringList logFiles;
+        QString exe;
         QMenu *trayMenu;
 
         // Process Monitoring
@@ -41,12 +42,13 @@ public:
         Server *getServer(const char *serverName) const;
         QProcess* getProcess(const char *serverName) const;
         QProcess::ProcessState getProcessState(const char *serverName) const;
+        QString getExecutable(QString &serverName) const;
 
 public slots:
 
         void showProcessError(QProcess::ProcessError error);
 
-        void mySlot(QAction *action);
+        void mapAction(QAction *action);
 
         // Nginx Action Slots
         void startNginx();
@@ -55,9 +57,9 @@ public slots:
         void restartNginx();
 
         // PHP Action Slots
-        void startPhp();
-        void stopPhp();
-        void restartPhp();
+        void startPHP();
+        void stopPHP();
+        void restartPHP();
 
         // MySQL Action Slots
         void startMariaDb();
@@ -79,15 +81,6 @@ private:
         QList<Server*> serversList;
 
         QString getProcessErrorMessage(QProcess::ProcessError);
-
-        // Executables
-        #define PHPCGI_EXEC "/php-cgi.exe"
-        #define NGINX_EXEC "/nginx.exe"
-        #define MARIADB_EXEC "/mysqld.exe"
-        #define MARIADB_CLIENT_EXEC "/mysql.exe"
-        #define MONGODB_EXEC "/mongod.exe"
-        #define MEMCACHED_EXEC "/memcached.exe"
-
 };
 
 #endif // SERVERS_H

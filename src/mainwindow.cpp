@@ -136,14 +136,14 @@ void MainWindow::createTrayIcon()
 
     // Connect Actions for Status Table - Column Action (Start)
     connect(ui->pushButton_StartNginx, SIGNAL(clicked()), servers, SLOT(startNginx()));
-    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), servers, SLOT(startPhp()));
+    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), servers, SLOT(startPHP()));
     connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), servers, SLOT(startMariaDb()));
     connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), servers, SLOT(startMongoDb()));
     connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached()));
 
     // Connect Actions for Status Table - Column Action (Stop)
     connect(ui->pushButton_StopNginx, SIGNAL(clicked()), servers, SLOT(stopNginx()));
-    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), servers, SLOT(stopPhp()));
+    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), servers, SLOT(stopPHP()));
     connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), servers, SLOT(stopMariaDb()));
     connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), servers, SLOT(stopMongoDb()));
     connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached()));

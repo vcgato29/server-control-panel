@@ -82,7 +82,7 @@ void Tray::startMonitoringDaemonProcesses()
     // the timer is used for monitoring the process state of each daemon
     timer = new QTimer(this);
     timer->setInterval(1000); // msec = 1sec
-
+/*
     foreach(Server *server, servers->servers()) {
 
         QProcess *process = new QProcess();
@@ -92,7 +92,7 @@ void Tray::startMonitoringDaemonProcesses()
         connect(process, SIGNAL(error(QProcess::ProcessError)), servers, SLOT(showProcessError(QProcess::ProcessError)));
 
         server->process = process;
-    }
+    }*/
 }
 
 void Tray::createTrayMenu()
@@ -134,7 +134,7 @@ void Tray::createTrayMenu()
     trayMenu->addAction(QIcon(":/action_stop"), tr("Stop All"), this, SLOT(stopAllDaemons()), QKeySequence());
     trayMenu->addSeparator();
 
-    // Submenus of the Tray Menu
+    // add all server submenus to the tray menu
     foreach(Server *server, servers->servers()) {
         trayMenu->addMenu(server->trayMenu);
     }
@@ -167,7 +167,7 @@ void Tray::autostartDaemons()
 {
     qDebug() << "[Daemons] Autostart...";
     if(settings->get("autostart/nginx").toBool()) servers->startNginx();
-    if(settings->get("autostart/php").toBool()) servers->startPhp();
+    if(settings->get("autostart/php").toBool()) servers->startPHP();
     if(settings->get("autostart/mariadb").toBool()) servers->startMariaDb();
     if(settings->get("autostart/mongodb").toBool()) servers->startMongoDb();
     if(settings->get("autostart/memcached").toBool()) servers->startMemcached();
@@ -179,7 +179,7 @@ void Tray::autostartDaemons()
 void Tray::startAllDaemons()
 {
     servers->startNginx();
-    servers->startPhp();
+    servers->startPHP();
     servers->startMariaDb();
     servers->startMongoDb();
     servers->startMemcached();
@@ -188,7 +188,7 @@ void Tray::startAllDaemons()
 void Tray::stopAllDaemons()
 {
     servers->stopMariaDb();
-    servers->stopPhp();
+    servers->stopPHP();
     servers->stopNginx();
     servers->stopMongoDb();
     servers->stopMemcached();
@@ -197,7 +197,7 @@ void Tray::stopAllDaemons()
 void Tray::restartAll()
 {
     servers->restartNginx();
-    servers->restartPhp();
+    servers->restartPHP();
     servers->restartMariaDb();
     servers->restartMongoDb();
     servers->restartMemcached();
@@ -248,7 +248,7 @@ void Tray::openNginxLogs()
     QDir dir(QDir::currentPath());
     QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("paths/logs").toString()));
     QProcess::startDetached("explorer", QStringList() << strDir);
-}*/
+}
 
 void Tray::openMariaDbClient()
 {
@@ -259,7 +259,7 @@ void Tray::openMariaDbClient()
     );
 }
 
-/*
+
 void Tray::openMariaDbConfig()
 {
     QDir dir(QDir::currentPath());
