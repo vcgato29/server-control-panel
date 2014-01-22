@@ -7,10 +7,6 @@
 #include <QDebug>
 #include <QProcess>
 
-#define TOKENPASTE(x, y) x ## y
-#define TOKENPASTE2(x, y) TOKENPASTE(x, y)
-#define DBGPRINT(fmt, ...) SLOT(printf(fmt, __VA_ARGS__))
-
 Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 {
     // build server objects
