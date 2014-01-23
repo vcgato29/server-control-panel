@@ -59,16 +59,12 @@ public slots:
         // General Action Slots
         void startAllDaemons();
         void stopAllDaemons();
-        void restartAll();
-
         void goToWebsiteHelp();
         void goToReportIssue();
         void goToWebinterface();
 
         // Config Action Slots
         void openHostManagerDialog();
-        //void openConfigurationDialog();
-        //void openAboutDialog();
 
         //void openNginxSites();
         //void openNginxConfig();
@@ -79,17 +75,12 @@ public slots:
         //void openMariaDbClient();
         //void openMariaDbConfig();
 
-        // Status Action Slots
-        void updateProcessStates();
-
 signals:
         // following signal is connected to MainWindow::setLabelStatusActive()
         void signalSetLabelStatusActive(QString label, bool enabled);
         void signalEnableToolsPushButtons(bool enabled);
 
 private:
-        QTimer* timer;
-
         void autostartDaemons();
 
         Settings *settings;
@@ -98,9 +89,6 @@ private:
         // Tray Menu
         void createTrayMenu();
 
-        QMenu* trayMenu;
-
-        void startMonitoringDaemonProcesses();
 };
 
 #endif // Tray_H

@@ -26,6 +26,7 @@
 #include "settings.h"
 #include "hostmanager/hostmanagerdialog.h"
 #include "servers.h"
+#include "mainwindow.h"
 
 // Global Qt includes
 #include <QApplication>
@@ -57,8 +58,6 @@ Tray::Tray(QApplication *parent) :
     // or create seperate popup?
     setToolTip("WPN-XM");
 
-    startMonitoringDaemonProcesses();
-
     createTrayMenu();
 
     // daemon autostart
@@ -77,24 +76,6 @@ Tray::~Tray()
     }
 }
 
-void Tray::startMonitoringDaemonProcesses()
-{
-    // the timer is used for monitoring the process state of each daemon
-    timer = new QTimer(this);
-    timer->setInterval(1000); // msec = 1sec
-/*
-    foreach(Server *server, servers->servers()) {
-
-        QProcess *process = new QProcess();
-        process->setWorkingDirectory(qApp->applicationDirPath() + "/" + server->workingDirectory);
-
-        connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), SLOT(updateProcessStates()));
-        connect(process, SIGNAL(error(QProcess::ProcessError)), servers, SLOT(showProcessError(QProcess::ProcessError)));
-
-        server->process = process;
-    }*/
-}
-
 void Tray::createTrayMenu()
 {
     QMenu *trayMenu = contextMenu();
@@ -105,6 +86,10 @@ void Tray::createTrayMenu()
         trayMenu = new QMenu;
         setContextMenu(trayMenu);
     }
+
+    // add title entry like for WPN-XM in KVirc style (background gray, bold, small font)
+    trayMenu->addAction("WPN-XM " APP_VERSION)->setFont(QFont("Arial", 8, QFont::Bold));
+    trayMenu->addSeparator();
 
     // Add local IPs to the tray menu
     // important note: this section needs "QT += network" in the .pro file
@@ -126,10 +111,7 @@ void Tray::createTrayMenu()
     }
     trayMenu->addSeparator();
 
-    // Build Tray Menu
-
-    // add title entry like for WPN-XM in KVirc style (background gray, bold, small font)
-    // trayMenu->addAction("WPN-XM SCP")->setFont(QFont("Arial", 8, QFont::Bold));
+    // start and stop all daemons; the connection to these actions is made from mainwindow
     trayMenu->addAction(QIcon(":/action_run"), tr("Start All"), this, SLOT(startAllDaemons()), QKeySequence());
     trayMenu->addAction(QIcon(":/action_stop"), tr("Stop All"), this, SLOT(stopAllDaemons()), QKeySequence());
     trayMenu->addSeparator();
@@ -145,7 +127,7 @@ void Tray::createTrayMenu()
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(":/report_bug"), tr("&Report Bug"), this, SLOT(goToReportIssue()), QKeySequence());
     trayMenu->addAction(QIcon(":/question"),tr("&Help"), this, SLOT(goToWebsiteHelp()), QKeySequence());
-    trayMenu->addAction(QIcon(":/quit"),tr("&Quit"), parent(), SLOT(quit()), QKeySequence());
+    trayMenu->addAction(QIcon(":/quit"),tr("&Quit"), qApp, SLOT(quit()), QKeySequence());
 }
 
 void Tray::goToWebinterface()
@@ -193,17 +175,6 @@ void Tray::stopAllDaemons()
     servers->stopMongoDb();
     servers->stopMemcached();
 }
-
-void Tray::restartAll()
-{
-    servers->restartNginx();
-    servers->restartPHP();
-    servers->restartMariaDb();
-    servers->restartMongoDb();
-    servers->restartMemcached();
-}
-
-
 /*
  * Config slots
  */
@@ -212,18 +183,6 @@ void Tray::openHostManagerDialog()
     HostsManagerDialog dlg;
     dlg.exec();
 }
-
-/*void Tray::openAboutDialog()
-{
-    //AboutDialog dlg;
-    //dlg.exec();
-}
-
-void Tray::openConfigurationDialog()
-{
-    //ConfigDialog dlg;
-    //dlg.exec();
-}*/
 
 /*
 void Tray::openNginxSites()
@@ -273,52 +232,3 @@ void Tray::openPhpConfig()
     QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("php/config").toString()));
     QProcess::startDetached("cmd", QStringList() << "/c" << "start "+strDir);
 }*/
-
-/*
- * State slots
- */
-void Tray::updateProcessStates()
-{
-     foreach(Server *server, servers->servers()) {
-
-         switch(server->process->state())
-         {
-             case QProcess::NotRunning:
-                 server->trayMenu->setIcon(QIcon(":/status_stop"));
-                 emit signalSetLabelStatusActive(server->name, false);
-                 break;
-             case QProcess::Running:
-                 server->trayMenu->setIcon(QIcon(":/status_run"));
-                 emit signalSetLabelStatusActive(server->name, true);
-                 break;
-             case QProcess::Starting:
-                 server->trayMenu->setIcon(QIcon(":/status_reload"));
-                 break;
-         }
-
-         if(server->process->state() == QProcess::Starting)
-         {
-             timer->start();
-         } else {
-             timer->stop();
-             //setIcon(QIcon(":/wpnxm"));
-         }
-
-         // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
-         if((server->name == "Nginx" && server->process->state() == QProcess::NotRunning)
-          or(server->name == "PHP"   && server->process->state() == QProcess::NotRunning))
-         {
-             emit signalEnableToolsPushButtons(false);
-         }
-
-         // if NGINX and PHP are running, enable PushButtons of Tools section
-         if((server->name == "Nginx" && server->process->state() == QProcess::Running)
-         and(server->name == "PHP"   && server->process->state() == QProcess::Running))
-         {
-             emit signalEnableToolsPushButtons(true);
-         }
-
-     }
-
-    return;
-}

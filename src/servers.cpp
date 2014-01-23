@@ -445,12 +445,8 @@ QString Servers::getProcessErrorMessage(QProcess::ProcessError error)
 /*
  * State slots
  */
-void Servers::updateProcessStates(QProcess::ProcessState state)
+void Servers::updateProcessStates()
 {
-    //qDebug() << state;
-    //qDebug() << sender()->objectName();
-    //sender()->dumpObjectInfo();
-
     Tray *tray = new Tray();
 
     foreach(Server *server, servers()) {

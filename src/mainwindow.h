@@ -57,14 +57,11 @@ public:
 
     QString parseVersionNumber(QString stringWithVersion);
 
-    // Process Monitoring
-    QProcess* processNginx;
-    QProcess* processPhp;
-    QProcess* processMariaDB;
-    QProcess* processMongoDB;
-    QProcess* processMemcached;
-
 public slots:
+
+    // General Action Slots of the MainWindow
+    void startAllDaemons();
+    void stopAllDaemons();
 
     void goToWebsite();
     void goToGoogleGroup();

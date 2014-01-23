@@ -117,8 +117,8 @@ void MainWindow::createTrayIcon()
     // instantiate and attach the tray icon to the system tray
     tray = new Tray(qApp);
 
-    // the following actions point to SLOTS in the trayIcon object
-    // therefore connections must be made, after constructing trayIcon
+    // the following actions point to SLOTS in the tray object
+    // therefore connections must be made, after instantiating Tray
 
     // handle clicks on the icon
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
@@ -133,24 +133,6 @@ void MainWindow::createTrayIcon()
     // then change the disabled/ enabled state of pushButtons too
     connect(tray, SIGNAL(signalEnableToolsPushButtons(bool)),
             this, SLOT(enableToolsPushButtons(bool)));
-
-    // Connect Actions for Status Table - Column Action (Start)
-    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), servers, SLOT(startNginx()));
-    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), servers, SLOT(startPHP()));
-    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), servers, SLOT(startMariaDb()));
-    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), servers, SLOT(startMongoDb()));
-    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached()));
-
-    // Connect Actions for Status Table - Column Action (Stop)
-    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), servers, SLOT(stopNginx()));
-    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), servers, SLOT(stopPHP()));
-    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), servers, SLOT(stopMariaDb()));
-    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), servers, SLOT(stopMongoDb()));
-    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached()));
-
-     // Connect Actions for Status Table - AllDaemons Start, Stop
-    connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), tray, SLOT(startAllDaemons()));
-    connect(ui->pushButton_AllDaemons_Stop, SIGNAL(clicked()), tray, SLOT(stopAllDaemons()));
 
     // finally: show the tray icon
     tray->show();
@@ -171,6 +153,24 @@ void MainWindow::createActions()
     // Its modified from "quit" to "close to tray" with a msgbox
     quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quitApplication()));
+
+    // Connect Actions for Status Table - Column Action (Start)
+    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), servers, SLOT(startNginx()));
+    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), servers, SLOT(startPHP()));
+    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), servers, SLOT(startMariaDb()));
+    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), servers, SLOT(startMongoDb()));
+    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached()));
+
+    // Connect Actions for Status Table - Column Action (Stop)
+    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), servers, SLOT(stopNginx()));
+    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), servers, SLOT(stopPHP()));
+    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), servers, SLOT(stopMariaDb()));
+    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), servers, SLOT(stopMongoDb()));
+    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached()));
+
+     // Connect Actions for Status Table - AllDaemons Start, Stop
+    connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), this, SLOT(startAllDaemons()));
+    connect(ui->pushButton_AllDaemons_Stop, SIGNAL(clicked()), this, SLOT(stopAllDaemons()));
 
     // PushButtons:: Website, Mailinglist, ReportBug, Donate
     connect(ui->pushButton_Website, SIGNAL(clicked()), this, SLOT(goToWebsite()));
@@ -277,9 +277,6 @@ void MainWindow::setVisible(bool visible)
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
-        //case QSystemTrayIcon::Trigger:
-        //case QSystemTrayIcon::MiddleClick:
-
         // Double click toggles dialog display
         case QSystemTrayIcon::DoubleClick:
             if( isVisible() )
@@ -333,7 +330,7 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
        allPushButtonsButtons[i]->setDisabled(true);
     }
 
-    // if tool directory exists, show pushButton
+    // if tool directory exists, show pushButtons in the Tools Groupbox
     if(QDir(getProjectFolder() + "/webinterface").exists()) { ui->pushButton_tools_phpinfo->setDisabled(false); }
     if(QDir(getProjectFolder() + "/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setDisabled(false); }
     if(QDir(getProjectFolder() + "/adminer").exists())      { ui->pushButton_tools_adminer->setDisabled(false); }
@@ -353,7 +350,7 @@ void MainWindow::quitApplication()
 {
     if(settings->get("global/stopdaemonsonquit").toBool()) {
         qDebug() << "[Daemons] Stopping on Quit...\n";
-        tray->stopAllDaemons();
+        stopAllDaemons();
     }
     qApp->quit();
 }
@@ -486,6 +483,27 @@ QString MainWindow::parseVersionNumber(QString stringWithVersion)
 //                 << ".\n";
 //        pos += regex.matchedLength();
 //    }
+}
+
+//*
+//* Action slots
+//*
+void MainWindow::startAllDaemons()
+{
+    servers->startNginx();
+    servers->startPHP();
+    servers->startMariaDb();
+    servers->startMongoDb();
+    servers->startMemcached();
+}
+
+void MainWindow::stopAllDaemons()
+{
+    servers->stopMariaDb();
+    servers->stopPHP();
+    servers->stopNginx();
+    servers->stopMongoDb();
+    servers->stopMemcached();
 }
 
 void MainWindow::goToWebsite()
@@ -835,7 +853,7 @@ void MainWindow::setDefaultSettings()
 
 void MainWindow::showOnlyInstalledDaemons()
 {
-    removeRow(ui->DaemonsGridLayout, ui->DaemonsGridLayout->rowCount()-1, true);
+    removeRow(ui->DaemonsGridLayout, ui->DaemonsGridLayout->rowCount(), true);
 
 }
 
