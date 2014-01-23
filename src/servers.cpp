@@ -29,7 +29,7 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 
         // monitor process state changes
         connect(process, SIGNAL(stateChanged(QProcess::ProcessState)),
-                this, SLOT(updateProcessStates(QProcess::ProcessState)));
+                this, SLOT(updateProcessStates()));
 
         // show process errors in a MessageBox
         connect(process, SIGNAL(error(QProcess::ProcessError)),
