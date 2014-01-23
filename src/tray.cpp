@@ -40,6 +40,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDebug>
+#include <QPixmap>
 
 #include <QtNetwork/QNetworkInterface>
 #include <QtNetwork/QNetworkAddressEntry>
@@ -52,7 +53,7 @@ Tray::Tray(QApplication *parent) :
   servers(new Servers)
 {
     // set Tray Icon
-    setIcon(QIcon(":/wpnxm"));
+    setIcon(QIcon(":/wpnxm.ico"));
 
     // @todo append status of the daemons to tooltip, e.g. "Nginx up, PHP up, MariaDB up"
     // or create seperate popup?
@@ -88,7 +89,7 @@ void Tray::createTrayMenu()
     }
 
     // add title entry like for WPN-XM in KVirc style (background gray, bold, small font)
-    trayMenu->addAction("WPN-XM " APP_VERSION)->setFont(QFont("Arial", 8, QFont::Bold));
+    trayMenu->addAction("WPN-XM " APP_VERSION)->setFont(QFont("Arial", 9, QFont::Bold));
     trayMenu->addSeparator();
 
     // Add local IPs to the tray menu
