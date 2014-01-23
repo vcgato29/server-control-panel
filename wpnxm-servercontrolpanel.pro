@@ -33,7 +33,7 @@ QMAKE_TARGET_COPYRIGHT = (c) Jens-André Koch
 
 CONFIG += qt #console warn-on static
 
-QT += network widgets
+QT += core network widgets
 
 # needed for "createShellLink", see ConfigurationDialog
 LIBS += -luuid -lole32
@@ -53,7 +53,8 @@ HEADERS += \
     src/configurationdialog.h \
     src/settings.h \
     src/splashscreen.h \
-    src/windowsapi.h
+    src/windowsapi.h \
+    src/servers.h
 
 SOURCES += \
     src/main.cpp \
@@ -66,7 +67,8 @@ SOURCES += \
     src/configurationdialog.cpp \
     src/settings.cpp \
     src/splashscreen.cpp \
-    src/windowsapi.cpp
+    src/windowsapi.cpp \
+    src/servers.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
