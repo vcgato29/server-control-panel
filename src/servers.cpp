@@ -1,5 +1,6 @@
 #include "servers.h"
 #include "settings.h"
+#include "tray.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -22,16 +23,17 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
         server->workingDirectory = settings->get("paths/" + server->name).toString();
         server->exe = getExecutable(server->name);
 
-        // the timer is used for monitoring the process state of each daemon
-        //timer = new QTimer(this);
-        //timer->setInterval(1000); // msec = 1sec
-
         QProcess *process = new QProcess();
         process->setObjectName(server->name);
         process->setWorkingDirectory(server->workingDirectory);
 
-        //connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), tray, SLOT(updateProcessStates()));
-        connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(showProcessError(QProcess::ProcessError)));
+        // monitor process state changes
+        connect(process, SIGNAL(stateChanged(QProcess::ProcessState)),
+                this, SLOT(updateProcessStates(QProcess::ProcessState)));
+
+        // show process errors in a MessageBox
+        connect(process, SIGNAL(error(QProcess::ProcessError)),
+                this, SLOT(showProcessError(QProcess::ProcessError)));
 
         server->process = process;
 
@@ -90,8 +92,12 @@ QString Servers::getExecutable(QString &serverName) const
 QStringList Servers::getListOfServerNames() const
 {
     // get daemons names from .ini's autostart group
-    Settings *settings = new Settings();
-    QStringList list = settings->getKeys("autostart");
+    //Settings *settings = new Settings();
+    //QStringList list = settings->getKeys("autostart");
+
+    QStringList list;
+    list << "nginx" << "php" << "mariadb" << "mongodb" << "memcached";
+
     return list;
 }
 
@@ -150,7 +156,7 @@ void Servers::startNginx()
 
 void Servers::stopNginx()
 {
-    QProcess *processStopNginx = getProcess("Nginx");
+    QProcess *process = getProcess("Nginx");
 
     // fast shutdown
     QString const stopNginx = getServer("Nginx")->exe
@@ -160,13 +166,13 @@ void Servers::stopNginx()
 
     qDebug() << "[Nginx] Stopping...\n" << stopNginx;
 
-    processStopNginx->start(stopNginx);
-    processStopNginx->waitForFinished();
+    process->start(stopNginx);
+    process->waitForFinished();
 }
 
 void Servers::reloadNginx()
 {
-    QProcess *processStopNginx = getProcess("Nginx");
+    QProcess *process = getProcess("Nginx");
 
     QString const reloadNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
@@ -175,8 +181,8 @@ void Servers::reloadNginx()
 
     qDebug() << "[Nginx] Reloading...\n" << reloadNginx;
 
-    processStopNginx->start(reloadNginx);
-    processStopNginx->waitForFinished();
+    process->start(reloadNginx);
+    process->waitForFinished();
 }
 
 void Servers::restartNginx()
@@ -215,19 +221,19 @@ void Servers::stopPHP()
         return;
     }
 
-    QProcess *processPHP = getProcess("PHP");
+    QProcess *process = getProcess("PHP");
 
     // 1) processPhp->terminate(); will fail because WM_CLOSE message is not handled
     // 2) By killing the process, we are crashing it!
     //    The user will then get a "Process Crashed" Error MessageBox from process donitoring.
     //    Therefore we need to disconnect signal/sender from method/receiver.
     //    The result is, that crashing the php daemon intentionally is not shown as error.
-    disconnect(processPHP, SIGNAL(error(QProcess::ProcessError)),
+    disconnect(process, SIGNAL(error(QProcess::ProcessError)),
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
     // kill PHP daemon
-    processPHP->kill();
-    processPHP->waitForFinished();
+    process->kill();
+    process->waitForFinished();
 }
 
 void Servers::restartPHP()
@@ -378,16 +384,16 @@ void Servers::stopMemcached()
         return;
     }
 
-    QProcess *processMemcached = getProcess("Memcached");
+    QProcess *process = getProcess("Memcached");
 
     // disconnect process monitoring, before crashing the process
-    disconnect(processMemcached, SIGNAL(error(QProcess::ProcessError)),
+    disconnect(process, SIGNAL(error(QProcess::ProcessError)),
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
     qDebug() << "[Memcached] Stopping...\n";
 
-    processMemcached->kill();
-    processMemcached->waitForFinished();
+    process->kill();
+    process->waitForFinished();
 }
 
 void Servers::restartMemcached()
@@ -434,4 +440,51 @@ QString Servers::getProcessErrorMessage(QProcess::ProcessError error)
     }
 
     return ret;
+}
+
+/*
+ * State slots
+ */
+void Servers::updateProcessStates(QProcess::ProcessState state)
+{
+    //qDebug() << state;
+    //qDebug() << sender()->objectName();
+    //sender()->dumpObjectInfo();
+
+    Tray *tray = new Tray();
+
+    foreach(Server *server, servers()) {
+
+         switch(server->process->state())
+         {
+             case QProcess::NotRunning:
+                 server->trayMenu->setIcon(QIcon(":/status_stop"));
+                 emit tray->signalSetLabelStatusActive(server->name, false);
+                 break;
+             case QProcess::Running:
+                 server->trayMenu->setIcon(QIcon(":/status_run"));
+                 emit tray->signalSetLabelStatusActive(server->name, true);
+                 break;
+             case QProcess::Starting:
+                 server->trayMenu->setIcon(QIcon(":/status_reload"));
+                 break;
+         }
+
+         // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
+         if((server->name == "Nginx" && server->process->state() == QProcess::NotRunning)
+          or(server->name == "PHP"   && server->process->state() == QProcess::NotRunning))
+         {
+             emit tray->signalEnableToolsPushButtons(false);
+         }
+
+         // if NGINX and PHP are running, enable PushButtons of Tools section
+         if((server->name == "Nginx" && server->process->state() == QProcess::Running)
+         and(server->name == "PHP"   && server->process->state() == QProcess::Running))
+         {
+             emit tray->signalEnableToolsPushButtons(true);
+         }
+
+     }
+
+    return;
 }

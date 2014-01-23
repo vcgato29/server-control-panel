@@ -21,9 +21,6 @@ public:
 
         // Process Monitoring
         QProcess *process;
-
-        //Process onStart;
-        //Process onStop;
 };
 
 class Servers : public QObject
@@ -48,6 +45,10 @@ public slots:
 
         void showProcessError(QProcess::ProcessError error);
 
+        // Status Action Slots
+        void updateProcessStates(QProcess::ProcessState state);
+
+        // slot action handling the clicks on daemon commands in the tray menu
         void mapAction(QAction *action);
 
         // Nginx Action Slots
@@ -81,6 +82,8 @@ private:
         QList<Server*> serversList;
 
         QString getProcessErrorMessage(QProcess::ProcessError);
+
+
 };
 
 #endif // SERVERS_H
