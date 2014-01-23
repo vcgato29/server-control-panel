@@ -40,7 +40,6 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDebug>
-#include <QPixmap>
 
 #include <QtNetwork/QNetworkInterface>
 #include <QtNetwork/QNetworkAddressEntry>

@@ -60,7 +60,7 @@ int main(int argc, char * argv[])
     app.setApplicationVersion(APP_VERSION);
     app.setOrganizationName("Jens-André Koch");
     app.setOrganizationDomain("http://wpn-xm.org/");
-    app.setWindowIcon(QIcon("wpnxm.ico"));
+    app.setWindowIcon(QIcon(":/wpnxm.ico"));
 
     // splash on
     #ifndef QT_DEBUG
