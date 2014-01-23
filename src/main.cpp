@@ -63,8 +63,10 @@ int main(int argc, char * argv[])
     app.setWindowIcon(QIcon(":/wpnxm"));
 
     // splash on
+    #ifndef QT_DEBUG
     SplashScreen splash(QPixmap(), Qt::WindowStaysOnTopHint);
     splash.show();
+    #endif
 
     // do not leave application, until Quit is clicked in the tray menu
     app.setQuitOnLastWindowClosed(false);
@@ -73,7 +75,9 @@ int main(int argc, char * argv[])
     mainWindow.show();
 
     // splash off
+    #ifndef QT_DEBUG
     splash.finish(&mainWindow);
+    #endif
 
     // enter the Qt Event loop here
     return app.exec();
