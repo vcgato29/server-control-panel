@@ -51,7 +51,7 @@ class Tray : public QSystemTrayIcon
         Q_OBJECT // Enables signals and slots
 
 public:       
-       explicit Tray(QApplication *parent = 0);
+       explicit Tray(QApplication *parent, Servers *servers, Settings *settings);
         ~Tray();
 
 public slots:
@@ -68,27 +68,15 @@ public slots:
 
         //void openNginxSites();
         //void openNginxConfig();
-        //void openNginxLogs();
-
         //void openPhpConfig();
-
         //void openMariaDbClient();
         //void openMariaDbConfig();
 
-signals:
-        // following signal is connected to MainWindow::setLabelStatusActive()
-        void signalSetLabelStatusActive(QString label, bool enabled);
-        void signalEnableToolsPushButtons(bool enabled);
-
 private:
-        void autostartDaemons();
-
         Settings *settings;
         Servers *servers;
 
-        // Tray Menu
         void createTrayMenu();
-
 };
 
 #endif // Tray_H

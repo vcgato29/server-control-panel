@@ -144,7 +144,7 @@ void Servers::startNginx()
         return;
     }
 
-    // start daemon
+    // http://wiki.nginx.org/CommandLine - start daemon
     QString const startNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
@@ -156,18 +156,14 @@ void Servers::startNginx()
 
 void Servers::stopNginx()
 {
-    QProcess *process = getProcess("Nginx");
-
-    // fast shutdown
+    // http://wiki.nginx.org/CommandLine - stop daemon
     QString const stopNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
             + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
             + " -s stop";
-
     qDebug() << "[Nginx] Stopping...\n" << stopNginx;
 
-    process->start(stopNginx);
-    process->waitForFinished();
+    QProcess::execute(stopNginx);
 }
 
 void Servers::reloadNginx()
@@ -182,7 +178,7 @@ void Servers::reloadNginx()
     qDebug() << "[Nginx] Reloading...\n" << reloadNginx;
 
     process->start(reloadNginx);
-    process->waitForFinished();
+    process->waitForFinished(1500);
 }
 
 void Servers::restartNginx()
@@ -217,7 +213,7 @@ void Servers::stopPHP()
     qDebug() << "[PHP] Stopping...";
 
     if(getProcessState("PHP") == QProcess::NotRunning) {
-        qDebug() << "[PHP] Not running...";
+        qDebug() << "[PHP] Not running... Skipping stop command.";
         return;
     }
 
@@ -233,7 +229,7 @@ void Servers::stopPHP()
 
     // kill PHP daemon
     process->kill();
-    process->waitForFinished();
+    process->waitForFinished(1500);
 }
 
 void Servers::restartPHP()
@@ -270,7 +266,7 @@ void Servers::stopMariaDb()
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
     getProcess("MariaDb")->kill();
-    getProcess("MariaDb")->waitForFinished();
+    getProcess("MariaDb")->waitForFinished(1500);
 }
 
 void Servers::restartMariaDb()
@@ -332,17 +328,18 @@ void Servers::stopMongoDb()
     }
 
     // build mongo stop command based on CLI evaluation
-    QString const mongoStopCommand = getServer("MongoDb")->exe
+    // mongodb is stopped via "mongo.exe --eval", not "mongodb.exe"
+    QString const mongoStopCommand = settings->get("paths/mongodb").toString() + "/mongo.exe"
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
     qDebug() << "[MongoDb] Stopping...\n" << mongoStopCommand;
 
-    if(QProcess::execute(mongoStopCommand))
-    {
-        // disconnect process monitoring, if shutdown command successfully send
-        disconnect(getProcess("MongoDb"), SIGNAL(error(QProcess::ProcessError)),
+    // disconnect process monitoring before sending shutdown
+    disconnect(getProcess("MongoDb"), SIGNAL(error(QProcess::ProcessError)),
                    this, SLOT(showProcessError(QProcess::ProcessError)));
-    }
+
+    getProcess("MongoDb")->execute(mongoStopCommand);
+    getProcess("MongoDb")->waitForFinished(1500);
 }
 
 void Servers::restartMongoDb()
@@ -393,7 +390,7 @@ void Servers::stopMemcached()
     qDebug() << "[Memcached] Stopping...\n";
 
     process->kill();
-    process->waitForFinished();
+    process->waitForFinished(1500);
 }
 
 void Servers::restartMemcached()
@@ -403,7 +400,7 @@ void Servers::restartMemcached()
 }
 
 /*
- * Error slots
+ * Process Error Slot
  */
 void Servers::showProcessError(QProcess::ProcessError error)
 {
@@ -443,43 +440,44 @@ QString Servers::getProcessErrorMessage(QProcess::ProcessError error)
 }
 
 /*
- * State slots
+ * Process State Slot
  */
 void Servers::updateProcessStates()
 {
-    Tray *tray = new Tray();
+    //qDebug() << "Sender: " << sender()->objectName();
+    //qDebug() << "State: " << newState;
+    //QString server = sender()->objectName();
 
     foreach(Server *server, servers()) {
 
-         switch(server->process->state())
-         {
-             case QProcess::NotRunning:
-                 server->trayMenu->setIcon(QIcon(":/status_stop"));
-                 emit tray->signalSetLabelStatusActive(server->name, false);
-                 break;
-             case QProcess::Running:
-                 server->trayMenu->setIcon(QIcon(":/status_run"));
-                 emit tray->signalSetLabelStatusActive(server->name, true);
-                 break;
-             case QProcess::Starting:
-                 server->trayMenu->setIcon(QIcon(":/status_reload"));
-                 break;
-         }
+        switch(server->process->state())
+        {
+            case QProcess::NotRunning:
+                server->trayMenu->setIcon(QIcon(":/status_stop"));
+                emit signalSetLabelStatusActive(server->name, false);
+                break;
+            case QProcess::Running:
+                server->trayMenu->setIcon(QIcon(":/status_run"));
+                emit signalSetLabelStatusActive(server->name, true);
+                break;
+            case QProcess::Starting:
+                server->trayMenu->setIcon(QIcon(":/status_reload"));
+                break;
+        }
 
          // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
          if((server->name == "Nginx" && server->process->state() == QProcess::NotRunning)
           or(server->name == "PHP"   && server->process->state() == QProcess::NotRunning))
          {
-             emit tray->signalEnableToolsPushButtons(false);
+             emit signalEnableToolsPushButtons(false);
          }
 
          // if NGINX and PHP are running, enable PushButtons of Tools section
          if((server->name == "Nginx" && server->process->state() == QProcess::Running)
          and(server->name == "PHP"   && server->process->state() == QProcess::Running))
          {
-             emit tray->signalEnableToolsPushButtons(true);
+             emit signalEnableToolsPushButtons(true);
          }
-
      }
 
     return;

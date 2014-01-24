@@ -111,6 +111,7 @@ private:
     void startMonitoringDaemonProcesses();
 
     void setDefaultSettings();
+    void autostartDaemons();
 
     void deleteChildWidgets(QLayoutItem *item);
     void removeRow(QGridLayout *layout, int row, bool deleteWidgets);

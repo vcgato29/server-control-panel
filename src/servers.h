@@ -37,7 +37,7 @@ public:
         QStringList getListOfServerNames() const;
         QString fixName(QString &serverName) const;
         Server *getServer(const char *serverName) const;
-        QProcess* getProcess(const char *serverName) const;
+        QProcess *getProcess(const char *serverName) const;
         QProcess::ProcessState getProcessState(const char *serverName) const;
         QString getExecutable(QString &serverName) const;
 
@@ -77,13 +77,15 @@ public slots:
         void stopMemcached();
         void restartMemcached();
 
-private:
+signals:
+        // following signal is connected to MainWindow::setLabelStatusActive()
+        void signalSetLabelStatusActive(QString label, bool enabled);
+        void signalEnableToolsPushButtons(bool enabled);
 
+private:
         QList<Server*> serversList;
 
         QString getProcessErrorMessage(QProcess::ProcessError);
-
-
 };
 
 #endif // SERVERS_H

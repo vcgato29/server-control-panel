@@ -46,11 +46,12 @@
 #include <QtNetwork/QHostAddress>
 
 // Constructor
-Tray::Tray(QApplication *parent) :
-  QSystemTrayIcon(parent),
-  settings(new Settings),
-  servers(new Servers)
+Tray::Tray(QApplication *parent, Servers *servers, Settings *settings) :
+  QSystemTrayIcon(parent)
 {
+    this->servers = servers;
+    this->settings = settings;
+
     // set Tray Icon
     setIcon(QIcon(":/wpnxm.ico"));
 
@@ -59,21 +60,6 @@ Tray::Tray(QApplication *parent) :
     setToolTip("WPN-XM");
 
     createTrayMenu();
-
-    // daemon autostart
-    if(settings->get("global/autostartdaemons").toBool()) {
-        autostartDaemons();
-    };
-}
-
-// Destructor
-Tray::~Tray()
-{
-    // stop all daemons, when quitting the tray application
-    if(settings->get("global/stopdaemonsonquit").toBool()) {
-        qDebug() << "[Daemons] Stopping All Daemons on Quit...";
-        stopAllDaemons();
-    }
 }
 
 void Tray::createTrayMenu()
@@ -94,20 +80,20 @@ void Tray::createTrayMenu()
     // Add local IPs to the tray menu
     // important note: this section needs "QT += network" in the .pro file
     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-    foreach(const QNetworkInterface &interface, interfaces) {
-
-            if(interface.flags().testFlag(QNetworkInterface::IsUp) &&
-               interface.flags().testFlag(QNetworkInterface::IsRunning) &&
-              !interface.flags().testFlag(QNetworkInterface::IsLoopBack))
-            {
-                foreach(const QNetworkAddressEntry &entry, interface.addressEntries()) {
-                        QHostAddress address = entry.ip();
-                        if(address.protocol() == QAbstractSocket::IPv4Protocol) {
-                            QAction *ipAction = trayMenu->addAction("IP: " + address.toString());
-                            ipAction->setFont(QFont("Arial", 9, QFont::Bold));
-                        }
+    foreach(const QNetworkInterface &interface, interfaces)
+    {
+        if(interface.flags().testFlag(QNetworkInterface::IsUp) &&
+           interface.flags().testFlag(QNetworkInterface::IsRunning) &&
+          !interface.flags().testFlag(QNetworkInterface::IsLoopBack))
+        {
+            foreach(const QNetworkAddressEntry &entry, interface.addressEntries()) {
+                QHostAddress address = entry.ip();
+                if(address.protocol() == QAbstractSocket::IPv4Protocol) {
+                    QAction *ipAction = trayMenu->addAction("IP: " + address.toString());
+                    ipAction->setFont(QFont("Arial", 9, QFont::Bold));
                 }
             }
+        }
     }
     trayMenu->addSeparator();
 
@@ -130,6 +116,12 @@ void Tray::createTrayMenu()
     trayMenu->addAction(QIcon(":/quit"),tr("&Quit"), qApp, SLOT(quit()), QKeySequence());
 }
 
+// Destructor
+Tray::~Tray()
+{
+
+}
+
 void Tray::goToWebinterface()
 {
     QDesktopServices::openUrl(QUrl("http://localhost/webinterface/"));
@@ -145,19 +137,10 @@ void Tray::goToWebsiteHelp()
     QDesktopServices::openUrl(QUrl("https://github.com/WPN-XM/WPN-XM/wiki/Using-the-Server-Control-Panel"));
 }
 
-void Tray::autostartDaemons()
-{
-    qDebug() << "[Daemons] Autostart...";
-    if(settings->get("autostart/nginx").toBool()) servers->startNginx();
-    if(settings->get("autostart/php").toBool()) servers->startPHP();
-    if(settings->get("autostart/mariadb").toBool()) servers->startMariaDb();
-    if(settings->get("autostart/mongodb").toBool()) servers->startMongoDb();
-    if(settings->get("autostart/memcached").toBool()) servers->startMemcached();
-}
+/*
+ * Action Slots
+ */
 
-//*
-//* Action slots
-//*
 void Tray::startAllDaemons()
 {
     servers->startNginx();
@@ -175,9 +158,7 @@ void Tray::stopAllDaemons()
     servers->stopMongoDb();
     servers->stopMemcached();
 }
-/*
- * Config slots
- */
+
 void Tray::openHostManagerDialog()
 {
     HostsManagerDialog dlg;
@@ -193,19 +174,12 @@ void Tray::openNginxSites()
     );
     // start as own process ( not as a child process), will live after Tray terminates
     QProcess::startDetached("explorer", QStringList() << strDir);
-}*/
-/*
+}
+
 void Tray::openNginxConfig()
 {
     QDir dir(QDir::currentPath());
     QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("nginx/config").toString()));
-    QProcess::startDetached("explorer", QStringList() << strDir);
-}
-
-void Tray::openNginxLogs()
-{
-    QDir dir(QDir::currentPath());
-    QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("paths/logs").toString()));
     QProcess::startDetached("explorer", QStringList() << strDir);
 }
 
@@ -217,7 +191,6 @@ void Tray::openMariaDbClient()
         settings->get("paths/mariadb").toString()
     );
 }
-
 
 void Tray::openMariaDbConfig()
 {

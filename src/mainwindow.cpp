@@ -45,8 +45,7 @@ class QCloseEvent;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    servers(new Servers)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -63,6 +62,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(APP_NAME_AND_VERSION);
 
     setDefaultSettings();
+
+    this->servers = new Servers();
 
     // inital state of status leds is disabled
     ui->label_Nginx_Status->setEnabled(false);
@@ -103,11 +104,22 @@ MainWindow::MainWindow(QWidget *parent) :
     showPushButtonsOnlyForInstalledTools();
     enableToolsPushButtons(false);
 
+    // daemon autostart
+    if(settings->get("global/autostartdaemons").toBool()) {
+        autostartDaemons();
+    };
+
     showOnlyInstalledDaemons();
 }
 
 MainWindow::~MainWindow()
 {
+    // stop all daemons, when quitting the tray application
+    if(settings->get("global/stopdaemonsonquit").toBool()) {
+        qDebug() << "[Daemons] Stopping All Daemons on Quit...";
+        stopAllDaemons();
+    }
+
     delete ui;
     delete tray;
 }
@@ -115,7 +127,7 @@ MainWindow::~MainWindow()
 void MainWindow::createTrayIcon()
 {
     // instantiate and attach the tray icon to the system tray
-    tray = new Tray(qApp);
+    tray = new Tray(qApp, servers, settings);
 
     // the following actions point to SLOTS in the tray object
     // therefore connections must be made, after instantiating Tray
@@ -126,12 +138,12 @@ void MainWindow::createTrayIcon()
 
     // Connect Actions for Status Table - Column Status
     // if process state of a daemon changes, then change the label status in UI::MainWindow too
-    connect(tray, SIGNAL(signalSetLabelStatusActive(QString, bool)),
+    connect(servers, SIGNAL(signalSetLabelStatusActive(QString, bool)),
             this, SLOT(setLabelStatusActive(QString, bool)));
 
     // Connect Action for, if process state of NGINX and PHP changes,
     // then change the disabled/ enabled state of pushButtons too
-    connect(tray, SIGNAL(signalEnableToolsPushButtons(bool)),
+    connect(servers, SIGNAL(signalEnableToolsPushButtons(bool)),
             this, SLOT(enableToolsPushButtons(bool)));
 
     // finally: show the tray icon
@@ -339,6 +351,7 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
 
 void MainWindow::setLabelStatusActive(QString label, bool enabled)
 {
+    label = label.toLower();
     if(label == "nginx")     { ui->label_Nginx_Status->setEnabled(enabled); }
     if(label == "php")       { ui->label_PHP_Status->setEnabled(enabled); }
     if(label == "mariadb")   { ui->label_MariaDb_Status->setEnabled(enabled); }
@@ -662,6 +675,16 @@ void MainWindow::openAboutDialog()
     about.setParent(this);
     about.setAutoFillBackground(true);
     about.exec();
+}
+
+void MainWindow::autostartDaemons()
+{
+    qDebug() << "[Daemons] Autostart...";
+    if(settings->get("autostart/nginx").toBool()) servers->startNginx();
+    if(settings->get("autostart/php").toBool()) servers->startPHP();
+    if(settings->get("autostart/mariadb").toBool()) servers->startMariaDb();
+    if(settings->get("autostart/mongodb").toBool()) servers->startMongoDb();
+    if(settings->get("autostart/memcached").toBool()) servers->startMemcached();
 }
 
 void MainWindow::checkAlreadyActiveDaemons()
