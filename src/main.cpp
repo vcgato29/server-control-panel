@@ -28,6 +28,9 @@
 #include "settings.h"
 #include "splashscreen.h"
 
+// for CLI text colors, see inlined Color() method
+#include "windows.h"
+
 // global QT includes
 #include <QtWidgets>
 #include <QtCore>
@@ -42,10 +45,10 @@ int main(int argc, char * argv[])
 
     // if CLI args are found, the application reacts as a console application
     if (argc > 1) { // first arg is the executable itself
-        QCoreApplication app(argc, argv);
-        QCoreApplication::setApplicationName(APP_NAME);
-        QCoreApplication::setApplicationVersion(APP_VERSION);
-        handleCommandLineArguments(app);
+        QApplication app(argc, argv);
+        QApplication::setApplicationName(APP_NAME);
+        QApplication::setApplicationVersion(APP_VERSION);
+        handleCommandLineArguments();
         return app.exec();
     }
 
@@ -108,12 +111,56 @@ void exitIfAlreadyRunning()
       }
 }
 
-void handleCommandLineArguments(QCoreApplication &app)
+static HANDLE hConsole;
+static WORD oldConsoleAttributes = 0;
+
+WORD GetConsoleTextAttribute(HANDLE hConsole) {
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    GetConsoleScreenBufferInfo(hConsole, &info);
+    return info.wAttributes;
+}
+
+static const char *qWinColoredMsg(int prefix, int color, const char *msg)
+{
+    if(hConsole == NULL) {
+        hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    }
+
+    if (!hConsole) {
+        return msg;
+    }
+
+    oldConsoleAttributes = GetConsoleTextAttribute(hConsole);
+
+    WORD attr = (oldConsoleAttributes & 0x0f0);
+
+    if (prefix)      attr |= FOREGROUND_INTENSITY;
+    if (color == 31) attr |= FOREGROUND_RED | FOREGROUND_INTENSITY;  // red
+    if (color == 32) attr |= FOREGROUND_GREEN;                       // green
+    if (color == 33) attr |= FOREGROUND_GREEN | FOREGROUND_RED;      // yellow
+    if (color == 34) attr |= FOREGROUND_BLUE;                        // blue
+    if (color == 35) attr |= FOREGROUND_BLUE | FOREGROUND_RED;       // purple
+    if (color == 36) attr |= FOREGROUND_BLUE | FOREGROUND_GREEN;     // cyan
+    if (color == 37) attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // white
+    if (color == 39) attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // reset
+
+    SetConsoleTextAttribute(hConsole, attr);
+    printf(msg);
+
+    SetConsoleTextAttribute(hConsole, oldConsoleAttributes);
+    return "";
+}
+
+void handleCommandLineArguments()
 {
     // lets support multiple cli options, each with different options
     // this should handle, e.g. "wpn-xm.exe --service nginx start"
 
     QCommandLineParser parser;
+
+    /**
+     * Definition of Command Line Arguments
+     */
 
     // -h, --help, -?
     QCommandLineOption helpOption(QStringList() << "h" << "help" << "?", "Prints this help message.");
@@ -124,28 +171,67 @@ void handleCommandLineArguments(QCoreApplication &app)
     parser.addOption(versionOption);
 
     // -s, --service
-    QCommandLineOption serviceOption(QStringList() << "s" << "service", "Execute a service.", "[daemon] [command]");
+    QCommandLineOption serviceOption(QStringList() << "s" << "service", "Install/Uninstall daemon as service.", "[daemon] [command]");
     parser.addOption(serviceOption);
 
-    // call parse() to find out the positional arguments.
+    // -d, --daemon
+    QCommandLineOption daemonOption(QStringList() << "d" << "daemon", "Execute a command on daemon.", "[daemon] [command]");
+    parser.addOption(daemonOption);
+
+    // --start
+    QCommandLineOption startOption("start", "Starts a daemon.", "[daemon/s]");
+    parser.addOption(startOption);
+
+    // --stop
+    QCommandLineOption stopOption("stop", "Stops a daemon.", "[daemon/s]");
+    parser.addOption(stopOption);
+
+    // --restart
+    QCommandLineOption restartOption("stop", "Restarts a daemon.", "[daemon/s]");
+    parser.addOption(restartOption);
+
+    /**
+     * Handling of Command Line Arguments
+     */
+
+    // find out the positional arguments.
     parser.parse(QCoreApplication::arguments());
     const QStringList args = parser.positionalArguments();
-    //qDebug() << args;
     const QString command = args.isEmpty() ? QString() : args.first();
-    //qDebug() << command;
+    qDebug() << "Arguments: " << args << " - " << "Command: " << command;
 
-    // at this point we already have "--service <daemon>", but not <command>//
+    // -h, --help, -?
+    if(parser.isSet(helpOption)) {
+        printHelpText();
+    }
+
+    // -v, --version
+    if(parser.isSet(versionOption)) {
+        printf("WPN-XM Server Stack " APP_VERSION " - Command Line Interface \n");
+        exit(0);
+    }
+
+    // -s, --service <daemon> <command>, where <command> is on|off
     if (parser.isSet(serviceOption)) {
 
-        // daemon is the service value
-        QString daemon = parser.value(serviceOption);
+    }
+
+    // -d, --daemon <daemon> <command>, where <command> is start|stop|restart
+    if (parser.isSet(daemonOption)) {
+
+        // at this point we already have "--daemon <daemon>", but not <command>//
+
+        // daemon is the value
+        QString daemon = parser.value(daemonOption);
 
         if(daemon.isEmpty()) {
             printHelpText(QString("Error: no <daemon> specified."));
         }
 
-        QStringList availableDaemons = QStringList() << "nginx" << "mariadb" << "mongodb";
-        if(!availableDaemons.contains(daemon)) {
+        Servers *servers = new Servers();
+
+        // check if daemon is whitelisted
+        if(!servers->getListOfServerNames().contains(daemon)) {
             printHelpText(
                 QString("Error: \"%1\" is not a valid <daemon>.")
                     .arg(daemon.toLocal8Bit().constData())
@@ -164,21 +250,89 @@ void handleCommandLineArguments(QCoreApplication &app)
             );
         }
 
-        executeDaemonCommand(daemon, command);
+        QString methodName = command + servers->fixName(daemon);
+
+        if(QMetaObject::invokeMethod(servers, methodName.toLocal8Bit().constData()))
+        {
+           exit(0);
+        }
+
+        printHelpText(
+           QString("Command not handled, yet! (daemon = %1) (command = %2) \n")
+              .arg(daemon.toLocal8Bit().constData(), command.toLocal8Bit().constData())
+        );
+        exit(0);
     }
 
-    if(parser.isSet(versionOption)) {
-        printf("WPN-XM Server Stack " APP_VERSION " - Command Line Interface \n");
-        app.exit(0);
+    // --start
+    if (parser.isSet(startOption)) {
+        execDaemons("start", startOption, args, parser);
     }
 
-    if(parser.isSet(helpOption)) {
-        printHelpText();
+    // --stop
+    if (parser.isSet(stopOption)) {
+        execDaemons("stop", stopOption, args, parser);
+    }
+
+    // --restart
+    if (parser.isSet(restartOption)) {
+        execDaemons("stop", restartOption, args, parser);
     }
 
     //if(parser.unknownOptionNames().count() > 1) {
         printHelpText(QString("Error: Unknown option."));
     //}
+}
+
+/**
+ * @brief execDaemons - executes "command" on multiple daemons
+ * @param command "start", "stop", "restart"
+ * @param clioption
+ * @param args
+ */
+void execDaemons(const QString &command, QCommandLineOption &clioption, QStringList args, QCommandLineParser &parser)
+{
+    // the value of the key "--start|--stop|--restart" is the first daemon
+    QString daemon = parser.value(clioption);
+
+    if(daemon.isEmpty()) {
+        printf("%s", qWinColoredMsg(1, 31, "test"));
+
+        //cliColor(YELLOW);
+        printHelpText(QString("Error: no <daemon> specified."));
+
+        qWinColoredMsg(1, 33, "xxx");
+    }
+
+    // ok, add first daemon to the list
+    QStringList daemons;
+    daemons << daemon;
+
+    // add the others args
+    if(!args.isEmpty()) {
+        daemons << args;
+    }
+
+    Servers *servers = new Servers();
+
+    for (int i = 0; i < daemons.size(); ++i)
+    {
+        QString daemon = daemons.at(i);
+
+        // check if daemon is whitelisted
+        if(!servers->getListOfServerNames().contains(daemon)) {
+            printHelpText(
+                QString("Error: \"%1\" is not a valid <daemon>.")
+                    .arg(daemon.toLocal8Bit().constData())
+            );
+        }
+
+        QString methodName = command + servers->fixName(daemon);
+
+        QMetaObject::invokeMethod(servers, methodName.toLocal8Bit().constData());
+    }
+
+    exit(0);
 }
 
 void printHelpText(const QString &errorMessage)
@@ -209,45 +363,4 @@ void printHelpText(const QString &errorMessage)
    );
 
    exit(0);
-}
-
-void executeDaemonCommand(const QString &daemon, const QString &command)
-{
-    // instantiate and attach the tray icon to the system tray
-    Servers *servers = new Servers();
-
-    if(daemon == "nginx") {
-        if(command == "start") { servers->startNginx(); }
-        if(command == "stop") { }
-        if(command == "restart") { }
-    }
-
-    if(daemon == "mariadb") {
-        if(command == "start") { }
-        if(command == "stop") { }
-        if(command == "restart") { }
-    }
-
-    if(daemon == "php") {
-        if(command == "start") { }
-        if(command == "stop") { }
-        if(command == "restart") { }
-    }
-
-    if(daemon == "mongodb") {
-        if(command == "start") { }
-        if(command == "stop") { }
-        if(command == "restart") { }
-    }
-
-    if(daemon == "memcached") {
-        if(command == "start") { }
-        if(command == "stop") { }
-        if(command == "restart") { }
-    }
-
-    printHelpText(
-       QString("Command not handled, yet! (daemon = %1) (command = %2) \n")
-          .arg(daemon.toLocal8Bit().constData(), command.toLocal8Bit().constData())
-    );
 }

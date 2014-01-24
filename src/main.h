@@ -28,9 +28,28 @@
 #include <QtWidgets>
 
 void exitIfAlreadyRunning();
-void handleCommandLineArguments(QCoreApplication &app);
+void handleCommandLineArguments();
 void printHelpText(const QString &errorMessage = QString());
-void executeDaemonCommand(const QString &daemon, const QString &command);
+void execDaemons(const QString &command, QCommandLineOption &clioption, QStringList args, QCommandLineParser &parser);
+
+enum COLORS {
+    BLACK = 0,
+    BLUE = FOREGROUND_BLUE,
+    GREEN = FOREGROUND_GREEN,
+    CYAN = FOREGROUND_GREEN | FOREGROUND_BLUE,
+    RED = FOREGROUND_RED,
+    MAGENTA = FOREGROUND_RED | FOREGROUND_BLUE,
+    BROWN = FOREGROUND_RED | FOREGROUND_GREEN,
+    LIGHTGRAY = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+    DARKGRAY = FOREGROUND_INTENSITY,
+    LIGHTBLUE = FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+    LIGHTGREEN = FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+    LIGHTCYAN = FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+    LIGHTRED = FOREGROUND_RED | FOREGROUND_INTENSITY,
+    LIGHTMAGENTA = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+    YELLOW = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+    WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+};
 
 class Main : public QObject
 {
@@ -38,11 +57,6 @@ class Main : public QObject
 
 public:
     explicit Main(QObject *parent = 0);
-
-signals:
-
-public slots:
-
 };
 
 #endif // MAIN_H
