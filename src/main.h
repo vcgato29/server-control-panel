@@ -28,9 +28,6 @@
 #include <QtWidgets>
 
 void exitIfAlreadyRunning();
-void handleCommandLineArguments();
-void printHelpText(QString errorMessage = QString());
-void execDaemons(const QString &command, QCommandLineOption &clioption, QStringList args, QCommandLineParser &parser);
 
 class Main : public QObject
 {
