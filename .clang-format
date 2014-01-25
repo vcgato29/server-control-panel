@@ -1,0 +1,11 @@
+# A complete list of style options can be found at:
+# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+# Google C++ Style Guide
+# http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+#
+# Marry QtCreator with clang-format
+# https://gist.github.com/Uflex/7086827#file-clang-format_config-md
+---
+BasedOnStyle: Google
+...
