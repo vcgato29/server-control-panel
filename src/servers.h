@@ -46,7 +46,7 @@ public slots:
         void showProcessError(QProcess::ProcessError error);
 
         // Status Action Slots
-        void updateProcessStates();
+        void updateProcessStates(QProcess::ProcessState state);
 
         // slot action handling the clicks on daemon commands in the tray menu
         void mapAction(QAction *action);

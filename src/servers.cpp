@@ -29,7 +29,7 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 
         // monitor process state changes
         connect(process, SIGNAL(stateChanged(QProcess::ProcessState)),
-                this, SLOT(updateProcessStates()));
+                this, SLOT(updateProcessStates(QProcess::ProcessState)));
 
         // show process errors in a MessageBox
         connect(process, SIGNAL(error(QProcess::ProcessError)),
@@ -442,43 +442,38 @@ QString Servers::getProcessErrorMessage(QProcess::ProcessError error)
 /*
  * Process State Slot
  */
-void Servers::updateProcessStates()
+void Servers::updateProcessStates(QProcess::ProcessState state)
 {
     //qDebug() << "Sender: " << sender()->objectName();
     //qDebug() << "State: " << newState;
-    //QString server = sender()->objectName();
+    QString serverName = sender()->objectName();
+    Server *server = getServer(serverName.toLocal8Bit().constData());
 
-    foreach(Server *server, servers()) {
+    switch(state)
+    {
+        case QProcess::NotRunning:
+            server->trayMenu->setIcon(QIcon(":/status_stop"));
+            emit signalSetLabelStatusActive(serverName, false);
+            // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
+            if((serverName == "Nginx") or (serverName == "PHP")) {
+                qDebug() << "Signal: turn off - Tools Pushbuttons";
+                emit signalEnableToolsPushButtons(false);
+            }
+            break;
+        case QProcess::Running:
+            server->trayMenu->setIcon(QIcon(":/status_run"));
+            emit signalSetLabelStatusActive(serverName, true);
+            break;
+        case QProcess::Starting:
+            server->trayMenu->setIcon(QIcon(":/status_reload"));
+            break;
+    }
 
-        switch(server->process->state())
-        {
-            case QProcess::NotRunning:
-                server->trayMenu->setIcon(QIcon(":/status_stop"));
-                emit signalSetLabelStatusActive(server->name, false);
-                break;
-            case QProcess::Running:
-                server->trayMenu->setIcon(QIcon(":/status_run"));
-                emit signalSetLabelStatusActive(server->name, true);
-                break;
-            case QProcess::Starting:
-                server->trayMenu->setIcon(QIcon(":/status_reload"));
-                break;
-        }
-
-         // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
-         if((server->name == "Nginx" && server->process->state() == QProcess::NotRunning)
-          or(server->name == "PHP"   && server->process->state() == QProcess::NotRunning))
-         {
-             emit signalEnableToolsPushButtons(false);
-         }
-
-         // if NGINX and PHP are running, enable PushButtons of Tools section
-         if((server->name == "Nginx" && server->process->state() == QProcess::Running)
-         and(server->name == "PHP"   && server->process->state() == QProcess::Running))
-         {
-             emit signalEnableToolsPushButtons(true);
-         }
-     }
+    // if NGINX and PHP are running, enable PushButtons of Tools section
+    if((getProcessState("Nginx") == QProcess::Running) and (getProcessState("PHP") == QProcess::Running)) {
+        qDebug() << "Signal: turn on - Tools Pushbuttons";
+        emit signalEnableToolsPushButtons(true);
+    }
 
     return;
 }
