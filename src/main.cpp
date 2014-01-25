@@ -135,20 +135,47 @@ static const char *qWinColoredMsg(int prefix, int color, const char *msg)
     WORD attr = (oldConsoleAttributes & 0x0f0);
 
     if (prefix)      attr |= FOREGROUND_INTENSITY;
-    if (color == 31) attr |= FOREGROUND_RED | FOREGROUND_INTENSITY;  // red
+    if (color == 0)  attr |= 0;                                      // black
+    if (color == 31) attr |= FOREGROUND_RED;                         // red
     if (color == 32) attr |= FOREGROUND_GREEN;                       // green
     if (color == 33) attr |= FOREGROUND_GREEN | FOREGROUND_RED;      // yellow
     if (color == 34) attr |= FOREGROUND_BLUE;                        // blue
-    if (color == 35) attr |= FOREGROUND_BLUE | FOREGROUND_RED;       // purple
+    if (color == 35) attr |= FOREGROUND_BLUE | FOREGROUND_RED;       // purple/magenta
     if (color == 36) attr |= FOREGROUND_BLUE | FOREGROUND_GREEN;     // cyan
     if (color == 37) attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // white
-    if (color == 39) attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // reset
 
     SetConsoleTextAttribute(hConsole, attr);
     printf(msg);
 
     SetConsoleTextAttribute(hConsole, oldConsoleAttributes);
     return "";
+}
+
+// sorry, i don't like color numbers
+void colorPrint(QString msg, QString colorName = "gray")
+{
+    int prefix = 0;
+    int color = 0;
+
+    if(colorName == "black")        { prefix = 0; color= 0;  }
+    if(colorName == "darkred")      { prefix = 0; color= 31; }
+    if(colorName == "green")        { prefix = 0; color= 32; }
+    if(colorName == "yellow")       { prefix = 0; color= 33; }
+    if(colorName == "blue")         { prefix = 0; color= 34; }
+    if(colorName == "magenta")      { prefix = 0; color= 35; }
+    if(colorName == "cyan")         { prefix = 0; color= 36; }
+    if(colorName == "white")        { prefix = 0; color= 37; }
+    if(colorName == "gray")         { prefix = 0; color= 37; } // white = gray
+
+    if(colorName == "red")          { prefix = 1; color= 31; }
+    if(colorName == "lightgreen")   { prefix = 1; color= 32; }
+    if(colorName == "lightyellow")  { prefix = 1; color= 33; }
+    if(colorName == "lightblue")    { prefix = 1; color= 34; }
+    if(colorName == "lightmagenta") { prefix = 1; color= 35; }
+    if(colorName == "lightcyan")    { prefix = 1; color= 36; }
+    if(colorName == "brightwhite")  { prefix = 1; color= 37; }
+
+    qWinColoredMsg(prefix, color, msg.toLocal8Bit().constData());
 }
 
 void handleCommandLineArguments()
@@ -207,7 +234,7 @@ void handleCommandLineArguments()
 
     // -v, --version
     if(parser.isSet(versionOption)) {
-        printf("WPN-XM Server Stack " APP_VERSION " - Command Line Interface \n");
+        colorPrint("WPN-XM Server Stack " APP_VERSION "\n", "brightwhite");
         exit(0);
     }
 
@@ -296,12 +323,23 @@ void execDaemons(const QString &command, QCommandLineOption &clioption, QStringL
     QString daemon = parser.value(clioption);
 
     if(daemon.isEmpty()) {
-        printf("%s", qWinColoredMsg(1, 31, "test"));
+        colorPrint("31test", "red");
+        printf("%s/n", qWinColoredMsg(0, 31, "31test"));
+        printf("%s/n", qWinColoredMsg(1, 32, "33test"));
+        printf("%s/n", qWinColoredMsg(0, 32, "33test"));
+        printf("%s/n", qWinColoredMsg(1, 33, "33test"));
+        printf("%s/n", qWinColoredMsg(0, 33, "33test"));
+        printf("%s/n", qWinColoredMsg(1, 34, "34test"));
+        printf("%s/n", qWinColoredMsg(0, 34, "34test"));
+        printf("%s/n", qWinColoredMsg(1, 35, "35test"));
+        printf("%s/n", qWinColoredMsg(0, 35, "35test"));
+        printf("%s/n", qWinColoredMsg(1, 36, "35test"));
+        printf("%s/n", qWinColoredMsg(0, 36, "35test"));
+        printf("%s/n", qWinColoredMsg(1, 37, "35test"));
+        printf("%s/n", qWinColoredMsg(0, 37, "35test"));
 
         //cliColor(YELLOW);
         printHelpText(QString("Error: no <daemon> specified."));
-
-        qWinColoredMsg(1, 33, "xxx");
     }
 
     // ok, add first daemon to the list
@@ -335,32 +373,56 @@ void execDaemons(const QString &command, QCommandLineOption &clioption, QStringL
     exit(0);
 }
 
-void printHelpText(const QString &errorMessage)
+void printHelpText(QString errorMessage)
 {
-    QString helpText = "\n"
-        "WPN-XM Server Stack " APP_VERSION " - Command Line Interface \n"
-        "\n"
-        "Usage: " + QCoreApplication::arguments().at(0) + " [option] \n"
-        "\n"
-        "Example: " + QCoreApplication::arguments().at(0) + " --service nginx start \n"
-        "\n"
-        "Options: \n"
+    colorPrint("WPN-XM Server Stack " APP_VERSION "\n\n", "brightwhite");
+
+    if(!errorMessage.isEmpty()) {
+        colorPrint(errorMessage.append("\n\n").toLocal8Bit().constData(), "red");
+    }
+
+    colorPrint("Usage: ", "green");
+    QString usage = QCoreApplication::arguments().at(0) + " [option] [args] \n\n";
+    colorPrint(usage);
+
+    colorPrint("Options: \n", "green");
+    QString options =
         " -v, --version                        Prints the version. \n"
         " -h, --help                           Prints this help message. \n"
-        " -s, --service <daemon> <command>     Executes <command> on <daemon>. \n"
-        "\n"
-        "Arguments: \n"
+        " -s, --service <daemon> <command>     Executes <command> on <daemon>. \n\n";
+    colorPrint(options);
+
+    colorPrint("Arguments: \n", "green");
+    QString arguments =
         " <daemon>:  The name of a daemon, e.g. nginx, mariadb, memcached, mongodb. \n"
-        " <command>: The command to execute, e.g. start, stop, restart. \n"
-        "\n"
-        "Info :\n"
-        " Ports specified in \"wpn-xm.ini\" will be used. \n"
-        "\n";
+        " <command>: The command to execute, e.g. start, stop, restart. \n\n";
+    colorPrint(arguments);
 
-   printf("%s\n%s\n",
-          errorMessage.toLocal8Bit().constData(),
-          helpText.toLocal8Bit().constData()
-   );
+    colorPrint("Example: ", "green");
+    QString example = QCoreApplication::arguments().at(0) + " --service nginx start \n\n";
+    colorPrint(example);
 
-   exit(0);
+    //colorPrint("Info: \n", "green");
+    //QString info = " Ports specified in \"wpn-xm.ini\" will be used. \n";
+    //colorPrint(info);
+
+    exit(0);
+}
+
+void colorTest()
+{
+    printf("%s/n", qWinColoredMsg(1, 31, "1-31"));
+    printf("%s/n", qWinColoredMsg(0, 31, "0-31"));
+    printf("%s/n", qWinColoredMsg(1, 32, "1-33"));
+    printf("%s/n", qWinColoredMsg(0, 32, "0-33"));
+    printf("%s/n", qWinColoredMsg(1, 33, "1-33"));
+    printf("%s/n", qWinColoredMsg(0, 33, "0-33"));
+    printf("%s/n", qWinColoredMsg(1, 34, "1-34"));
+    printf("%s/n", qWinColoredMsg(0, 34, "0-34"));
+    printf("%s/n", qWinColoredMsg(1, 35, "1-35"));
+    printf("%s/n", qWinColoredMsg(0, 35, "0-35"));
+    printf("%s/n", qWinColoredMsg(1, 36, "1-35"));
+    printf("%s/n", qWinColoredMsg(0, 36, "0-36"));
+    printf("%s/n", qWinColoredMsg(1, 37, "1-37"));
+    printf("%s/n", qWinColoredMsg(0, 37, "0-37"));
 }
