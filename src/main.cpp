@@ -51,6 +51,22 @@ int main(int argc, char * argv[])
     // else run as a normal QtGUI application
     QApplication app(argc, argv);
 
+    /*
+     * On windows an application is either a GUI application or Console application.
+     * This is application is a console application. It's compiled with "CONFIG += CONSOLE".
+     * When the app is executed without command line args, it will start a console in GUI mode.
+     * We close this console immediately after starting the GUI.
+     * That results in a short console flickering.
+     * It's annoying - but feel free to contribute a better solution.
+     * Rules: - one executable; - not embedded exe, - not the devenv.com solution
+     * Your turn...
+     * :)
+     *
+     * For more information, see:
+     * https://github.com/WPN-XM/WPN-XM/issues/39
+     */
+    FreeConsole();
+
     // Single Instance Check
     exitIfAlreadyRunning();
 

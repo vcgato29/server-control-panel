@@ -54,7 +54,8 @@ HEADERS += \
     src/settings.h \
     src/splashscreen.h \
     src/windowsapi.h \
-    src/servers.h
+    src/servers.h \
+    src/cli.h
 
 SOURCES += \
     src/main.cpp \
@@ -68,7 +69,8 @@ SOURCES += \
     src/settings.cpp \
     src/splashscreen.cpp \
     src/windowsapi.cpp \
-    src/servers.cpp
+    src/servers.cpp \
+    src/cli.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
