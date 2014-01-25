@@ -240,7 +240,7 @@ void handleCommandLineArguments()
 
     // -s, --service <daemon> <command>, where <command> is on|off
     if (parser.isSet(serviceOption)) {
-
+        // @todo install / uninstall daemon as service from CLI
     }
 
     // -d, --daemon <daemon> <command>, where <command> is start|stop|restart
@@ -291,17 +291,17 @@ void handleCommandLineArguments()
         exit(0);
     }
 
-    // --start
+    // --start <daemons>
     if (parser.isSet(startOption)) {
         execDaemons("start", startOption, args, parser);
     }
 
-    // --stop
+    // --stop <daemons>
     if (parser.isSet(stopOption)) {
         execDaemons("stop", stopOption, args, parser);
     }
 
-    // --restart
+    // --restart <daemons>
     if (parser.isSet(restartOption)) {
         execDaemons("stop", restartOption, args, parser);
     }
@@ -323,22 +323,6 @@ void execDaemons(const QString &command, QCommandLineOption &clioption, QStringL
     QString daemon = parser.value(clioption);
 
     if(daemon.isEmpty()) {
-        colorPrint("31test", "red");
-        printf("%s/n", qWinColoredMsg(0, 31, "31test"));
-        printf("%s/n", qWinColoredMsg(1, 32, "33test"));
-        printf("%s/n", qWinColoredMsg(0, 32, "33test"));
-        printf("%s/n", qWinColoredMsg(1, 33, "33test"));
-        printf("%s/n", qWinColoredMsg(0, 33, "33test"));
-        printf("%s/n", qWinColoredMsg(1, 34, "34test"));
-        printf("%s/n", qWinColoredMsg(0, 34, "34test"));
-        printf("%s/n", qWinColoredMsg(1, 35, "35test"));
-        printf("%s/n", qWinColoredMsg(0, 35, "35test"));
-        printf("%s/n", qWinColoredMsg(1, 36, "35test"));
-        printf("%s/n", qWinColoredMsg(0, 36, "35test"));
-        printf("%s/n", qWinColoredMsg(1, 37, "35test"));
-        printf("%s/n", qWinColoredMsg(0, 37, "35test"));
-
-        //cliColor(YELLOW);
         printHelpText(QString("Error: no <daemon> specified."));
     }
 
@@ -387,24 +371,29 @@ void printHelpText(QString errorMessage)
 
     colorPrint("Options: \n", "green");
     QString options =
-        " -v, --version                        Prints the version. \n"
-        " -h, --help                           Prints this help message. \n"
-        " -s, --service <daemon> <command>     Executes <command> on <daemon>. \n\n";
+        "  -v, --version                        Prints the version. \n"
+        "  -h, --help                           Prints this help message. \n"
+        "  -d, --daemon <daemon> <command>      Executes <command> on <daemon>. \n"
+        "      --start <daemons>                Starts one or more <daemons>. \n"
+        "      --stop <daemons>                 Stops one or more <daemons>. \n"
+        "      --restart <daemons>              Restarts one or more <daemons>. \n\n";
     colorPrint(options);
 
     colorPrint("Arguments: \n", "green");
     QString arguments =
-        " <daemon>:  The name of a daemon, e.g. nginx, mariadb, memcached, mongodb. \n"
-        " <command>: The command to execute, e.g. start, stop, restart. \n\n";
+        "  <daemon>:  The name of a daemon, e.g. nginx, mariadb, memcached, mongodb. \n"
+        "  <command>: The command to execute, e.g. start, stop, restart. \n\n";
     colorPrint(arguments);
 
-    colorPrint("Example: ", "green");
-    QString example = QCoreApplication::arguments().at(0) + " --service nginx start \n\n";
+    colorPrint("Examples: \n", "green");
+    QString example =
+            "  " + QCoreApplication::arguments().at(0) + " --daemon nginx start \n"
+            "  " + QCoreApplication::arguments().at(0) + " --start nginx php mariadb \n\n";
     colorPrint(example);
 
-    //colorPrint("Info: \n", "green");
-    //QString info = " Ports specified in \"wpn-xm.ini\" will be used. \n";
-    //colorPrint(info);
+    colorPrint("Info: \n", "green");
+    QString info = "  Ports specified in \"wpn-xm.ini\" will be used. \n";
+    colorPrint(info);
 
     exit(0);
 }
