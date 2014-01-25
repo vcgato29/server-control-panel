@@ -359,7 +359,10 @@ void execDaemons(const QString &command, QCommandLineOption &clioption, QStringL
 
 void printHelpText(QString errorMessage)
 {
-    colorPrint("WPN-XM Server Stack " APP_VERSION "\n\n", "brightwhite");
+    colorPrint("WPN-XM Server Stack " APP_VERSION "\n", "brightwhite");
+
+    QString year = QDate::currentDate().toString("yyyy");
+    colorPrint("Copyright (c) " + year + " Jens-Andre Koch. All rights reserved.\n\n");
 
     if(!errorMessage.isEmpty()) {
         colorPrint(errorMessage.append("\n\n").toLocal8Bit().constData(), "red");
