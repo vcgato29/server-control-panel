@@ -63,7 +63,7 @@
   </widget>
   <widget class="QCheckBox" name="checkbox_clearLogsOnStart">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>

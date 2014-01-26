@@ -131,6 +131,42 @@ QProcess::ProcessState Servers::getProcessState(const char *serverName) const
     return getProcess(serverName)->state();
 }
 
+bool Servers::truncateFile(const QString &file) const
+{
+    QFile f(file);
+
+    if(f.exists())
+    {
+        f.open(QFile::WriteOnly|QFile::Truncate);
+        f.close();
+        return true;
+    }
+    f.close();
+    return false;
+}
+
+void Servers::clearLogs(const QString &serverName) const
+{
+    if(settings->get("global/clearlogsonstart").toBool()) {
+
+        QString dirLogs = settings->get("paths/logs").toString();
+        QString logfile = "";
+
+        if(serverName == "Nginx") {
+            truncateFile(dirLogs + "/access.log");
+            truncateFile(dirLogs + "/error.log");
+        }
+
+        if(serverName == "PHP")        { logfile = dirLogs + "/php_error.log";}
+        if(serverName == "MariaDb")    { logfile = dirLogs + "/mariadb_error.log";}
+        if(serverName == "MongoDb")    { logfile = dirLogs + "/mongodb.log";}
+
+        truncateFile(logfile);
+
+        qDebug() << "[" << serverName << "] Cleared logs...\n";
+    }
+}
+
 // Server "Start - Stop - Restart" Methods
 
 /*
@@ -143,6 +179,8 @@ void Servers::startNginx()
         QMessageBox::warning(0, tr("Nginx"), tr("Nginx already running."));
         return;
     }
+
+    clearLogs("Nginx");
 
     // http://wiki.nginx.org/CommandLine - start daemon
     QString const startNginx = getServer("Nginx")->exe
@@ -198,6 +236,8 @@ void Servers::startPHP()
         return;
     }
 
+    clearLogs("PHP");
+
     // start daemon
     QString const startPHP = getServer("PHP")->exe
             + " -b " + settings->get("php/fastcgi-host").toString()
@@ -249,6 +289,8 @@ void Servers::startMariaDb()
         return;
     }
 
+    clearLogs("MariaDb");
+
     // start
     QString const startMariaDb = getServer("MariaDb")->exe;
 
@@ -285,6 +327,8 @@ void Servers::startMongoDb()
         QMessageBox::warning(0, tr("MongoDb"), tr("MongoDb already running."));
         return;
     }
+
+    clearLogs("MongoDb");
 
     // if not installed, skip
     if(!QFile().exists(getServer("MongoDb")->exe)) {

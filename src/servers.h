@@ -41,6 +41,9 @@ public:
         QProcess::ProcessState getProcessState(const char *serverName) const;
         QString getExecutable(QString &serverName) const;
 
+        bool truncateFile(const QString &file) const;
+        void clearLogs(const QString &serverName) const;
+
 public slots:
 
         void showProcessError(QProcess::ProcessError error);
