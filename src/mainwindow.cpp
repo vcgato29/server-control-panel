@@ -40,6 +40,7 @@
 #include <QDialogButtonBox>
 #include <QCheckbox>
 #include <QDesktopWidget>
+#include <QDate>
 
 class QCloseEvent;
 
@@ -654,6 +655,8 @@ void MainWindow::openHelpDialog()
 
 void MainWindow::openAboutDialog()
 {
+    QString year = QDate::currentDate().toString("yyyy");
+
     QMessageBox about(this);
     about.setWindowTitle(tr("About"));
     about.setText(
@@ -665,7 +668,7 @@ void MainWindow::openAboutDialog()
             "<tr><td colspan=2>&nbsp;&nbsp;</td></tr>"
             "<tr><td align=center><b>Website</b></td><td><a href=\"http://wpn-xm.org/\">http://wpn-xm.org/</a><br></td></tr>"
             "<tr><td align=center><b>License</b></td><td>GNU/GPL version 3, or any later version.<br></td></tr>"
-            "<tr><td align=center><b>Author(s)</b></td><td>Jens-André Koch (C) 2011 - onwards, <br>Yann Le Moigne (C) 2010.<br></td></tr>"
+            "<tr><td align=center><b>Author(s)</b></td><td>Jens-André Koch (C) 2011 - ").append(year).append(", <br>Yann Le Moigne (C) 2010.<br></td></tr>"
             "<tr><td align=center><b>Github</b></td><td>WPN-XM is developed on Github.<br><a href=\"https://github.com/WPN-XM/WPN-XM/\">https://github.com/WPN-XM/WPN-XM/</a><br></td></tr>"
             "<tr><td align=center><b>Icons</b></td><td>We are using Yusukue Kamiyamane's Fugue Icon Set.<br><a href=\"http://p.yusukekamiyamane.com/\">http://p.yusukekamiyamane.com/</a><br></td></tr>"
             "<tr><td align=center><b>+1?</b></td><td>If you like using WPN-XM, consider supporting it:<br><a href=\"http://wpn-xm.org/#donate\">http://wpn-xm.org/#donate</a><br></td></tr>"
