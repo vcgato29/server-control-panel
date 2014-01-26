@@ -921,7 +921,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="text">
-      <string>PHPMyAdmin</string>
+      <string>phpMyAdmin</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_tools_phpinfo">
@@ -1040,7 +1040,7 @@ p, li { white-space: pre-wrap; }
         <string>Webinterface</string>
        </property>
        <property name="icon">
-        <iconset resource="resources/resources.qrc">
+        <iconset>
          <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
        </property>
       </widget>
