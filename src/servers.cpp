@@ -20,7 +20,7 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
         server->icon = QIcon(":/status_stop");
         server->configFiles = QStringList() << "a" << "b";
         server->logFiles = QStringList() << "a" << "b";
-        server->workingDirectory = settings->get("paths/" + server->name).toString();
+        server->workingDirectory = settings->get("paths/" + daemonName).toString();
         server->exe = getExecutable(server->name);
 
         QProcess *process = new QProcess();
