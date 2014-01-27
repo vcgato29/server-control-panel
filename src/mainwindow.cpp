@@ -268,7 +268,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
             msgbox.setCheckBox(checkbox);
             msgbox.exec();
 
-            settings->set("global/donotaskagainclosetotray", int(msgbox.checkBox()->checkState()));
+            settings->set("global/donotaskagainclosetotray", int(msgbox.checkBox()->isChecked()));
         }
 
         // hide mainwindow
