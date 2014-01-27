@@ -46,12 +46,11 @@ public:
 
     void set(const QString &key, const QVariant &value);
 
-private:
-
     /// Returns defaults file's full path and name.
     QString file() const;
 
-    QSettings* settings;
+private:
+    QSettings *settings;
 };
 
 #endif // SETTINGS_H

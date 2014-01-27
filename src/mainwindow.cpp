@@ -829,6 +829,10 @@ void MainWindow::checkAlreadyActiveDaemons()
 
 void MainWindow::setDefaultSettings()
 {
+    // if the INI is not existing yet, set defaults, they will be written to file
+    // if the INI exists, do not set the defaults but read them from file
+    if(false == QFile(settings->file()).exists()) {
+
     // The MainWindow position. Default value is screen center.
     //QPoint center = QApplication::desktop()->screenGeometry().center();
     //settings->set("mainwindow/position", center);
@@ -875,6 +879,7 @@ void MainWindow::setDefaultSettings()
     settings->set("mongodb/port",           27015);
 
     qDebug() << "[Settings] Loaded Defaults...\n";
+    }
 }
 
 void MainWindow::showOnlyInstalledDaemons()
