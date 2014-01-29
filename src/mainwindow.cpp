@@ -129,6 +129,8 @@ void MainWindow::createTrayIcon()
 {
     // instantiate and attach the tray icon to the system tray
     tray = new Tray(qApp, servers, settings);
+    tray->setIcon(QIcon(":/wpnxm"));
+    tray->show();
 
     // the following actions point to SLOTS in the tray object
     // therefore connections must be made, after instantiating Tray

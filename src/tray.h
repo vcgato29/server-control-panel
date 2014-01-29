@@ -52,7 +52,6 @@ class Tray : public QSystemTrayIcon
 
 public:       
        explicit Tray(QApplication *parent, Servers *servers, Settings *settings);
-        ~Tray();
 
 public slots:
 

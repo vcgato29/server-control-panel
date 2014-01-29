@@ -47,15 +47,10 @@
 
 // Constructor
 Tray::Tray(QApplication *parent, Servers *servers, Settings *settings) :
-  QSystemTrayIcon(parent)
+  QSystemTrayIcon(QIcon(":/wpnxm.png"), parent)
 {
     this->servers = servers;
     this->settings = settings;
-
-    // set Tray Icon
-    setIcon(QIcon(":/wpnxm.ico"));
-
-    setToolTip("WPN-XM");
 
     createTrayMenu();
 }
@@ -70,6 +65,15 @@ void Tray::createTrayMenu()
         trayMenu = new QMenu;
         setContextMenu(trayMenu);
     }
+
+    trayMenu->setToolTip("WPN-XM");
+
+    // set tray menu icon
+    trayMenu->setIcon(QIcon(QPixmap(":/wpnxm.png")));
+
+    setIcon(QIcon(QPixmap(":/wpnxm.png")));
+    show();
+    setVisible(true);
 
     // add title entry like for WPN-XM in KVirc style (background gray, bold, small font)
     trayMenu->addAction("WPN-XM " APP_VERSION)->setFont(QFont("Arial", 9, QFont::Bold));
@@ -114,11 +118,6 @@ void Tray::createTrayMenu()
     trayMenu->addAction(QIcon(":/quit"),tr("&Quit"), qApp, SLOT(quit()), QKeySequence());
 }
 
-// Destructor
-Tray::~Tray()
-{
-
-}
 
 void Tray::goToWebinterface()
 {

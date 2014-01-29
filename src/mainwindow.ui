@@ -1040,7 +1040,7 @@ p, li { white-space: pre-wrap; }
         <string>Webinterface</string>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
        </property>
       </widget>
@@ -1173,7 +1173,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Button">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1256,7 +1256,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Base">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1276,7 +1276,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Window">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1343,7 +1343,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Button">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1426,7 +1426,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Base">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1446,7 +1446,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Window">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1513,7 +1513,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Button">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1596,7 +1596,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Base">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1616,7 +1616,7 @@ p, li { white-space: pre-wrap; }
         </colorrole>
         <colorrole role="Window">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>27</red>
@@ -1677,6 +1677,7 @@ p, li { white-space: pre-wrap; }
       <font>
        <pointsize>-1</pointsize>
        <weight>75</weight>
+       <italic>false</italic>
        <bold>true</bold>
       </font>
      </property>
@@ -1687,25 +1688,25 @@ p, li { white-space: pre-wrap; }
       <string notr="true">QPushButton
 {
     color: #fff;
-   	background-color: qlineargradient(spread:pad, x1:0, y1:0.0113636, x2:0, y2:1, stop:0.05 rgba(27, 198, 0, 255), stop:1 rgba(40, 130, 0, 255));
+   	background-color: qlineargradient(spread:pad, x1:0, y1:0.1, x2:0, y2:1, stop:0.05 rgba(27, 198, 0, 255), stop:1 rgba(40, 130, 0, 255));
        border-width: 1px;
     border-color: #1e1e1e;
     border-style: solid;
    	border-radius: 4;
 	border-color: #000;
-	cursor:pointer;
 	color:#fff;
     font-size:bold;
-	text-shadow:0px 1px 0px #810e05;
     padding: 3px;
+    font: Arial;
     font-size: 12px;
+    font-weight: bold; 
     padding-left: 5px;
     padding-right: 5px;
 }
 
 QPushButton:pressed
 {
-   background-color: qlineargradient(spread:pad, x1:0, y1:0.0113636, x2:0, y2:1, stop:0.05  rgba(40, 130, 0, 255), stop:1 rgba(27, 198, 0, 255));
+   background-color: qlineargradient(spread:pad, x1:0, y1:0.1, x2:0, y2:1, stop:0.05  rgba(40, 130, 0, 255), stop:1 rgba(27, 198, 0, 255));
 }
 </string>
      </property>
@@ -1739,7 +1740,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Button">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -1822,7 +1823,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Base">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -1842,7 +1843,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Window">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -1909,7 +1910,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Button">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -1992,7 +1993,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Base">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -2012,7 +2013,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Window">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -2079,7 +2080,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Button">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -2162,7 +2163,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Base">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -2182,7 +2183,7 @@ QPushButton:pressed
         </colorrole>
         <colorrole role="Window">
          <brush brushstyle="LinearGradientPattern">
-          <gradient startx="0.000000000000000" starty="0.011363600000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
+          <gradient startx="0.000000000000000" starty="0.100000000000000" endx="0.000000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
            <gradientstop position="0.050000000000000">
             <color alpha="255">
              <red>245</red>
@@ -2243,10 +2244,7 @@ QPushButton:pressed
       <font>
        <pointsize>-1</pointsize>
        <weight>75</weight>
-       <italic>false</italic>
        <bold>true</bold>
-       <underline>false</underline>
-       <strikeout>false</strikeout>
       </font>
      </property>
      <property name="styleSheet">
@@ -2254,26 +2252,25 @@ QPushButton:pressed
 {
     color: #b1b1b1;
 
-	background-color: qlineargradient(spread:pad, x1:0, y1:0.0113636, x2:0, y2:1, stop:0.05 #f52c1e, stop:1 #c91c10);
+	background-color: qlineargradient(spread:pad, x1:0, y1:0.1, x2:0, y2:1, stop:0.05 #f52c1e, stop:1 #c91c10);
 
     border-width: 1px;
     border-color: #1e1e1e;
     border-style: solid;
    	border-radius: 4px;
 	border-color: #000;
-	cursor:pointer;
 	color:#fff;
     font-size:bold;
-	text-shadow:0px 1px 0px #810e05;
     padding: 3px;
     font-size: 12px;
+    font-weight: bold;
     padding-left: 5px;
     padding-right: 5px;
 }
 
 QPushButton:pressed
 {
-    	background-color: qlineargradient(spread:pad, x1:0, y1:0.0113636, x2:0, y2:1, stop:0.05 #c91c10, stop:1 #f52c1e);
+    	background-color: qlineargradient(spread:pad, x1:0, y1:0.1, x2:0, y2:1, stop:0.05 #c91c10, stop:1 #f52c1e);
 }</string>
      </property>
      <property name="text">

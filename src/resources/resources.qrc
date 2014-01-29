@@ -25,5 +25,6 @@
         <file alias="key">key-solid.png</file>
         <file alias="tick">tick.png</file>
         <file alias="cross">cross.png</file>
+        <file alias="wpnxm">wpnxm.png</file>
     </qresource>
 </RCC>
