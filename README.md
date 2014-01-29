@@ -1,11 +1,11 @@
 WPN-XM Server Control Panel
 ===========================
 
-The WPN-XM Server Control Panel is a Tray Application written in Qt.
+The WPN-XM Server Control Panel is a Tray Application written in Qt v5.2+.
 
 ## Build Dependencies
 
-* Qt >= 5
+* Qt >= 5.2
 
 ### Downloading Qt
 
@@ -57,6 +57,8 @@ You have to build the libraries to be able to link successfully.
 ### 1 The "/build" directory must contain the following files:
 
 * \platforms\qwindows.dll
+* \plugins\imageformats\qico.dll
+* \plugins\imageformats\qwbmp.dll
 * \icudt51.dll
 * \icuin51.dll
 * \icuuc51.dll
