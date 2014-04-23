@@ -72,6 +72,8 @@ You have to build the libraries to be able to link successfully.
 * \wpn-xm.exe
 * \wpn-xm.ini (auto-created, if not existant)
 
+For deployment use the [Qt v5.2.2 Minimal Deployment Kit](https://github.com/jakoch/qt-mini-deploy/tree/master/5.2.2).
+
 ### 2 Run environment
 
 The run environment should include paths to Qt libraries.
