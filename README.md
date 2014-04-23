@@ -1,11 +1,11 @@
 WPN-XM Server Control Panel
 ===========================
 
-The WPN-XM Server Control Panel is a Tray Application written in Qt.
+The WPN-XM Server Control Panel is a Tray Application written in Qt v5.2+.
 
 ## Build Dependencies
 
-* Qt >= 5
+* Qt >= 5.2
 
 ### Downloading Qt
 
@@ -15,15 +15,15 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 
 * Qt Online Installer
 
-  http://download.qt-project.org/official_releases/online_installers/1.5/qt-windows-opensource-1.5.0-x86-online.exe
+  http://download.qt-project.org/official_releases/online_installers/qt-opensource-windows-x86-1.5.0-2-online.exe
 
-* Qt 5.2.0 for Windows 32-bit (MinGW 4.8, OpenGL, 689 MB)
+* Qt 5.2.0 for Windows 32-bit
 
-  http://download.qt-project.org/official_releases/qt/5.2/5.2.0/qt-windows-opensource-5.2.0-mingw48_opengl-x86-offline.exe
+  http://download.qt-project.org/official_releases/qt/5.2/5.2.1/qt-opensource-windows-x86-mingw48_opengl-5.2.1.exe
 
-* Qt Creator 3.0.0 for Windows (66 MB)
+* Qt Creator
 
-  http://download.qt-project.org/official_releases/qtcreator/3.0/3.0.0/qt-creator-opensource-windows-x86-3.0.0.exe
+  http://download.qt-project.org/official_releases/qtcreator/3.1/3.1.0/qt-creator-opensource-windows-x86-3.1.0.exe
 
 ### Installation Steps and Requirements for Qt
 
@@ -57,9 +57,11 @@ You have to build the libraries to be able to link successfully.
 ### 1 The "/build" directory must contain the following files:
 
 * \platforms\qwindows.dll
-* \icudt51.dll
-* \icuin51.dll
-* \icuuc51.dll
+* \plugins\imageformats\qico.dll
+* \plugins\imageformats\qwbmp.dll
+* ~~\icudt51.dll~~
+* ~~\icuin51.dll~~
+* ~~\icuuc51.dll~~
 * \libgcc_s_dw2-1.dll
 * \libstdc++-6.dll
 * \libwinphtread-1.dll
@@ -69,6 +71,8 @@ You have to build the libraries to be able to link successfully.
 * \Qt5Widgets.dll
 * \wpn-xm.exe
 * \wpn-xm.ini (auto-created, if not existant)
+
+For deployment use the [Qt v5.2.2 Minimal Deployment Kit](https://github.com/jakoch/qt-mini-deploy/tree/master/5.2.2).
 
 ### 2 Run environment
 
