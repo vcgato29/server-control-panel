@@ -59,9 +59,9 @@ You have to build the libraries to be able to link successfully.
 * \platforms\qwindows.dll
 * \plugins\imageformats\qico.dll
 * \plugins\imageformats\qwbmp.dll
-* \icudt51.dll
-* \icuin51.dll
-* \icuuc51.dll
+* ~~\icudt51.dll~~
+* ~~\icuin51.dll~~
+* ~~\icuuc51.dll~~
 * \libgcc_s_dw2-1.dll
 * \libstdc++-6.dll
 * \libwinphtread-1.dll
