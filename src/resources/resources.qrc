@@ -26,5 +26,7 @@
         <file alias="tick">tick.png</file>
         <file alias="cross">cross.png</file>
         <file alias="wpnxm">wpnxm.png</file>
+        <file alias="status_run_big">bullet_ball_green.png</file>
+        <file alias="status_stop_big">bullet_ball_grey.png</file>
     </qresource>
 </RCC>

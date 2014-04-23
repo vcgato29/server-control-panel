@@ -44,7 +44,7 @@
        <x>10</x>
        <y>10</y>
        <width>458</width>
-       <height>195</height>
+       <height>227</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="DaemonsGridLayout" rowstretch="0,0,0,0,0,0" columnstretch="0,0,0,0,0,0,0,0,0">
@@ -57,6 +57,32 @@
       <property name="spacing">
        <number>10</number>
       </property>
+      <item row="3" column="6">
+       <widget class="QPushButton" name="pushButton_ShowLog_MariaDb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>31</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Open MariaDB Error Log</string>
+        </property>
+        <property name="text">
+         <string notr="true"/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/report--exclamation.png</normaloff>:/report--exclamation.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="5">
        <widget class="QPushButton" name="pushButton_ShowLog_NginxAccess">
         <property name="maximumSize">
@@ -86,7 +112,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
+         <pixmap resource="resources/resources.qrc">:/status_run_big</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -363,22 +389,6 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_Nginx_Status">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="4">
        <widget class="QPushButton" name="pushButton_ConfigurePHP">
         <property name="enabled">
@@ -500,7 +510,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
+         <pixmap resource="resources/resources.qrc">:/status_run_big</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -521,32 +531,6 @@ p, li { white-space: pre-wrap; }
         <property name="icon">
          <iconset resource="resources/resources.qrc">
           <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="6">
-       <widget class="QPushButton" name="pushButton_ShowLog_MariaDb">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>31</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Open MariaDB Error Log</string>
-        </property>
-        <property name="text">
-         <string notr="true"/>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/report--exclamation.png</normaloff>:/report--exclamation.png</iconset>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -775,7 +759,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources/resources.qrc">:/status_run</pixmap>
+         <pixmap resource="resources/resources.qrc">:/status_run_big</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -835,6 +819,22 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="flat">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_Nginx_Status">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources/resources.qrc">:/status_run_big</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
