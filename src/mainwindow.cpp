@@ -73,8 +73,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_Memcached_Status->setEnabled(false);
     ui->label_MongoDb_Status->setEnabled(false);
 
-    checkAlreadyActiveDaemons();
-
     createActions();
 
     // The tray icon is an instance of the QSystemTrayIcon class.
@@ -87,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     createTrayIcon();
+
+    checkAlreadyActiveDaemons();
 
     // fetch version numbers from the daemons and set label texts
     ui->label_Nginx_Version->setText( getNginxVersion() );
@@ -103,7 +103,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_Memcached_Port->setText(  settings->get("memcached/port").toString() ); // 11211
 
     showPushButtonsOnlyForInstalledTools();
-    enableToolsPushButtons(false);
+
+    if(ui->label_Nginx_Status->isEnabled() && ui->label_PHP_Status->isEnabled()) {
+      enableToolsPushButtons(true);
+    } else {
+      enableToolsPushButtons(false);
+    }
 
     // daemon autostart
     if(settings->get("global/autostartdaemons").toBool()) {
@@ -356,9 +361,9 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
 {
     label = label.toLower();
     if(label == "nginx")     { ui->label_Nginx_Status->setEnabled(enabled); }
-    if(label == "php")       { ui->label_PHP_Status->setEnabled(enabled); }
+    if(label == "php" || label == "php-cgi") { ui->label_PHP_Status->setEnabled(enabled); }
     if(label == "mariadb")   { ui->label_MariaDb_Status->setEnabled(enabled); }
-    if(label == "mongodb")   { ui->label_MongoDb_Status->setEnabled(enabled); }
+    if(label == "mongodb" || label == "mysqld")   { ui->label_MongoDb_Status->setEnabled(enabled); }
     if(label == "memcached") { ui->label_Memcached_Status->setEnabled(enabled); }
 }
 
@@ -791,10 +796,13 @@ void MainWindow::checkAlreadyActiveDaemons()
         connect(ShutdownButton, SIGNAL(clicked()), dlg, SLOT(accept()));
         connect(ContinueButton, SIGNAL(clicked()), dlg, SLOT(reject()));
 
+        // show modal window
+        int dialogCode = dlg->exec();
+
         // fire modal window event loop and wait for button clicks
         // if shutdown was clicked (accept), execute shutdowns
         // if continue was clicked (reject), do nothing and proceed to mainwindow
-        if(dlg->exec() == QDialog::Accepted)
+        if(dialogCode == QDialog::Accepted)
         {
             // fetch all checkboxes
             QList<QCheckBox *> allCheckBoxes = dlg->findChildren<QCheckBox *>();
@@ -817,6 +825,24 @@ void MainWindow::checkAlreadyActiveDaemons()
                delete cb;
             }
         }
+
+        // if continue was clicked (reject), do update status indicators in mainwindow and tray
+        if(dialogCode == QDialog::Rejected)
+        {
+            int c = processesFoundList.size();
+            for(int i = 0; i < c; ++i) {
+                QString procname = processesFoundList.at(i);
+                QString servername = this->servers->fixName(procname).toLocal8Bit().constData();
+
+                // set indicator in main window
+                setLabelStatusActive(servername, true);
+
+                // set indicator in tray menu
+                Server *server = this->servers->getServer(servername.toLocal8Bit().constData());
+                server->trayMenu->setIcon(QIcon(":/status_run"));
+            }
+        }
+
         delete vbox;
         delete labelA;
         delete labelB;

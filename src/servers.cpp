@@ -67,13 +67,19 @@ void Servers::mapAction(QAction *action) {
     QMetaObject::invokeMethod(this, action->objectName().toLocal8Bit().constData() );
 }
 
+/**
+ * @brief Servers::fixName
+ * translates lowercase server and process names to internally used camel-cased label names
+ * @param serverName
+ * @return
+ */
 QString Servers::fixName(QString &serverName) const
 {
     if(serverName == "nginx") { return "Nginx"; }
     if(serverName == "memcached") { return "Memcached"; }
     if(serverName == "mongodb") { return "MongoDb"; }
-    if(serverName == "mariadb") { return "MariaDb"; }
-    if(serverName == "php") { return "PHP"; }
+    if(serverName == "mariadb" or serverName == "mysqld") { return "MariaDb"; }
+    if(serverName == "php" or serverName == "php-cgi") { return "PHP"; }
     return QString();
 }
 
