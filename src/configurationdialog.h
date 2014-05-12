@@ -34,53 +34,57 @@ class QCheckBox;
 QT_END_NAMESPACE
 
 namespace Ui {
-    class ConfigurationDialog;
+class ConfigurationDialog;
 }
 
-class ConfigurationDialog : public QDialog
-{
-    Q_OBJECT
+class ConfigurationDialog : public QDialog {
+  Q_OBJECT
 
-public:
-    explicit ConfigurationDialog(QWidget *parent = 0);
-    ~ConfigurationDialog();
+ public:
+  explicit ConfigurationDialog(QWidget* parent = 0);
+  ~ConfigurationDialog();
 
-    void setRunOnStartUp(bool run = true);
-    bool runOnStartUp() const;
+  void setRunOnStartUp(bool run = true);
+  bool runOnStartUp() const;
 
-    void setAutostartDaemons(bool run = true);
-    bool runAutostartDaemons() const;
+  void setAutostartDaemons(bool run = true);
+  bool runAutostartDaemons() const;
 
-    void setClearLogsOnStart(bool run = true);
-    bool runClearLogsOnStart() const;
+  void setClearLogsOnStart(bool run = true);
+  bool runClearLogsOnStart() const;
 
-    void setStopDaemonsOnQuit(bool run = true);
-    bool stopDaemonsOnQuit() const;
+  void setStopDaemonsOnQuit(bool run = true);
+  bool stopDaemonsOnQuit() const;
 
-private slots:
-    void toggleAutostartDaemonCheckboxes(bool run = true);
-    void onClickedButtonBoxOk();
+  void fileOpen();
+
+ private slots:
+  void toggleAutostartDaemonCheckboxes(bool run = true);
+  void onClickedButtonBoxOk();
+
+  void on_toolButton_SelectEditor_clicked();
+  void on_toolButton_ResetEditor_clicked();
 
 private:
-    Ui::ConfigurationDialog *ui;
+  Ui::ConfigurationDialog* ui;
 
-    Settings *settings;
+  Settings* settings;
 
-    QCheckBox *checkbox_runOnStartUp;
-    QCheckBox *checkbox_autostartDaemons;
-    QCheckBox *checkbox_clearLogsOnStart;
-    QCheckBox *checkbox_stopDaemonsOnQuit;
+  QCheckBox* checkbox_runOnStartUp;
+  QCheckBox* checkbox_autostartDaemons;
+  QCheckBox* checkbox_clearLogsOnStart;
+  QCheckBox* checkbox_stopDaemonsOnQuit;
 
-    QCheckBox *checkbox_autostartMariaDb;
-    QCheckBox *checkbox_autostartMongoDb;
-    QCheckBox *checkbox_autostartPHP;
-    QCheckBox *checkbox_autostartNginx;
-    QCheckBox *checkbox_autostartMemcached;
+  QCheckBox* checkbox_autostartMariaDb;
+  QCheckBox* checkbox_autostartMongoDb;
+  QCheckBox* checkbox_autostartPHP;
+  QCheckBox* checkbox_autostartNginx;
+  QCheckBox* checkbox_autostartMemcached;
 
-    void readSettings();
-    void writeSettings();
-    void toggleRunOnStartup();
-
+  void readSettings();
+  void writeSettings();
+  void toggleRunOnStartup();
+  void populateOpenWithDropdown();
 };
 
-#endif // CONFIGURATIONDIALOG_H
+#endif  // CONFIGURATIONDIALOG_H

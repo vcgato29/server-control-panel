@@ -351,20 +351,20 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
     }
 
     // if tool directory exists, show pushButtons in the Tools Groupbox
-    if(QDir(getProjectFolder() + "/webinterface").exists()) { ui->pushButton_tools_phpinfo->setDisabled(false); }
-    if(QDir(getProjectFolder() + "/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setDisabled(false); }
-    if(QDir(getProjectFolder() + "/adminer").exists())      { ui->pushButton_tools_adminer->setDisabled(false); }
-    if(QDir(getProjectFolder() + "/webgrind").exists())     { ui->pushButton_tools_webgrind->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/tools/webinterface").exists()) { ui->pushButton_tools_phpinfo->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/tools/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/tools/adminer").exists())      { ui->pushButton_tools_adminer->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/tools/webgrind").exists())     { ui->pushButton_tools_webgrind->setDisabled(false); }
 }
 
 void MainWindow::setLabelStatusActive(QString label, bool enabled)
 {
     label = label.toLower();
-    if(label == "nginx")     { ui->label_Nginx_Status->setEnabled(enabled); }
-    if(label == "php" || label == "php-cgi") { ui->label_PHP_Status->setEnabled(enabled); }
-    if(label == "mariadb")   { ui->label_MariaDb_Status->setEnabled(enabled); }
-    if(label == "mongodb" || label == "mysqld")   { ui->label_MongoDb_Status->setEnabled(enabled); }
-    if(label == "memcached") { ui->label_Memcached_Status->setEnabled(enabled); }
+    if(label == "nginx")                        { ui->label_Nginx_Status->setEnabled(enabled); }
+    if(label == "php" || label == "php-cgi")    { ui->label_PHP_Status->setEnabled(enabled); }
+    if(label == "mariadb")                      { ui->label_MariaDb_Status->setEnabled(enabled); }
+    if(label == "mongodb" || label == "mysqld") { ui->label_MongoDb_Status->setEnabled(enabled); }
+    if(label == "memcached")                    { ui->label_Memcached_Status->setEnabled(enabled); }
 }
 
 void MainWindow::quitApplication()
@@ -638,7 +638,7 @@ void MainWindow::openLog()
     QString name = button->objectName();
     name.replace("pushButton_ShowLog_", "");
 
-    QString logs = settings->get("paths/logs").toString();
+    QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
 
     QString logfile = "";
 
@@ -648,11 +648,24 @@ void MainWindow::openLog()
     if(name == "MariaDb")    { logfile = logs + "/mariadb_error.log";}
     if(name == "MongoDb")    { logfile = logs + "/mongodb.log";}
 
+    //QString logfile = QDir(logs).filePath("anotherdir/file.txt");
+
     if(!QFile().exists(logfile)) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
     } else {
+       QDesktopServices::setUrlHandler("file", this, "execEditor");
+
+       // if no UrlHandler is set, this executes the OS-dependend scheme handler
        QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
     }
+}
+
+void MainWindow::execEditor(QUrl logfile)
+{
+    QProcess *process = new QProcess(this);
+    QString program = settings->get("global/editor").toString();
+    qDebug() << logfile.toLocalFile();
+    process->start(program, QStringList() << logfile.toLocalFile());
 }
 
 void MainWindow::openHelpDialog()
@@ -870,11 +883,12 @@ void MainWindow::setDefaultSettings()
     //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
     //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
-    settings->set("global/runonstartup",      0);
-    settings->set("global/autostartdaemons",  0);
-    settings->set("global/stopdaemonsonquit", 1);
-    settings->set("global/clearlogsonstart",  0);
+    settings->set("global/runonstartup",             0);
+    settings->set("global/autostartdaemons",         0);
+    settings->set("global/stopdaemonsonquit",        1);
+    settings->set("global/clearlogsonstart",         0);
     settings->set("global/donotaskagainclosetotray", 0);
+    settings->get("global/editor",                   "notepad.exe");
 
     settings->set("paths/logs",             "./logs");
     settings->set("paths/php",              "./bin/php");

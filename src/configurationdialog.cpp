@@ -27,6 +27,7 @@
 
 #include <QStandardPaths>
 #include <QFile>
+#include <QFileDialog>
 
 #include "windowsapi.h"
 
@@ -40,6 +41,8 @@ ConfigurationDialog::ConfigurationDialog(QWidget *parent) :
     readSettings();
 
     toggleAutostartDaemonCheckboxes(ui->checkbox_autostartDaemons->isChecked());
+
+    //populateOpenWithDropdown();
 
     connect(ui->checkbox_autostartDaemons, SIGNAL(clicked(bool)),
             this, SLOT(toggleAutostartDaemonCheckboxes(bool)));
@@ -68,6 +71,8 @@ void ConfigurationDialog::readSettings()
    ui->checkbox_clearLogsOnStart->setChecked(settings->get("global/clearlogsonstart", false).toBool());
 
    ui->checkbox_stopDaemonsOnQuit->setChecked(settings->get("global/stopdaemonsonquit", false).toBool());
+
+   ui->lineEdit_SelectedEditor->setText(settings->get("global/editor", QVariant(QString("notepad.exe")) ).toString());
 }
 
 void ConfigurationDialog::writeSettings()
@@ -86,6 +91,8 @@ void ConfigurationDialog::writeSettings()
 
     settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
     settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
+
+    settings->set("global/editor",            QString(ui->lineEdit_SelectedEditor->text()));
 }
 
 void ConfigurationDialog::onClickedButtonBoxOk()
@@ -148,9 +155,8 @@ void ConfigurationDialog::toggleRunOnStartup()
 {
     // Windows %APPDATA% = Roaming ... Programs\Startup
     QString startupDir = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + "\\Startup";
-    qDebug() << startupDir;
 
-     if(ui->checkbox_runOnStartUp->isChecked() == true) {
+    if(ui->checkbox_runOnStartUp->isChecked() == true) {
         // Add WPN-XM SCP shortcut to the Windows Autostart folder.
         // In Windows terminology shortcuts are "shell links".
         //using WindowsAPI::CreateShellLink;
@@ -160,8 +166,64 @@ void ConfigurationDialog::toggleRunOnStartup()
             qApp->applicationDirPath(), // working dir
             startupDir + "\\WPN-XM Server Control Panel.lnk" // filepath of shortcut
         );
-     } else {
+    } else {
         // remove link
         QFile::remove(startupDir+"\\WPN-XM Server Control Panel.lnk");
-     }
+    }
+}
+
+void ConfigurationDialog::populateOpenWithDropdown()
+{
+    // editor default values
+    QStringList editors = (QStringList() << "editor" << "Wordpad");
+
+    QStringList knownEditorsLinkList;
+    knownEditorsLinkList << "Notepad++.lnk" << "UltraEdit.lnk" << "Notepad2.lnk" << "Sublime Text 2.lnk";
+
+    //QStringList knownEditorsExeList;
+    //knownEditorsExeList << "notepad++.exe" << "ultraedit.exe" << "notepad2.exe" << "sublime_text.exe";
+
+    //knownFilesList << "C:\Program Files\TortoiseGit\bin\notepad2.exe"
+
+    QDirIterator dirIt("c:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs", QDirIterator::Subdirectories);
+    while (dirIt.hasNext()) {
+        dirIt.next();
+        QFileInfo file = QFileInfo(dirIt.filePath());
+        if (file.isFile() && file.suffix() == "lnk" && knownEditorsLinkList.contains(dirIt.fileName())) {
+           editors << file.baseName();
+        }
+    }
+
+    //ui->comboBox_openWith->addItems(editors);
+
+    //qDebug() << //ui->comboBox_openWith->itemData(ui->comboBox_openWith->currentIndex());
+
+    // set value from config
+    //combo->setCurrentIndex(combo->findData(currValue));
+    //connect(this , SIGNAL(currentIndexChanged(int)),this,SLOT(handleSelectionChanged(int)));
+
+    //QStringList fileName = QFileDialog::getOpenFileNames(this, tr("Open File"),"/path/to/file/",tr("Mp3 Files (*.mp3)"));
+    //ui->listWidget->addItems(fileName);
+}
+
+void ConfigurationDialog::fileOpen()
+{
+    QString programFilesPath(getenv("PROGRAMFILES"));
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select Editor..."),
+            programFilesPath, tr("Executables (*.exe);;All Files (*)"));
+
+    fileName = QDir::toNativeSeparators(fileName); // not needed, but better looking
+
+    ui->lineEdit_SelectedEditor->setText(fileName);
+}
+
+void ConfigurationDialog::on_toolButton_SelectEditor_clicked()
+{
+    ConfigurationDialog::fileOpen();
+}
+
+void ConfigurationDialog::on_toolButton_ResetEditor_clicked()
+{
+    ui->lineEdit_SelectedEditor->setText("notepad.exe");
 }

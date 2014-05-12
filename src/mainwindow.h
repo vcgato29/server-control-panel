@@ -127,6 +127,7 @@ private slots:
 
      // when tray icon is activated
      void iconActivated(QSystemTrayIcon::ActivationReason reason);
+     void execEditor(QUrl logfile);
 
 protected:
     void closeEvent(QCloseEvent *event);
