@@ -265,11 +265,16 @@ void Servers::stopPHP()
 
     QProcess *process = getProcess("PHP");
 
-    // 1) processPhp->terminate(); will fail because WM_CLOSE message is not handled
-    // 2) By killing the process, we are crashing it!
-    //    The user will then get a "Process Crashed" Error MessageBox from process donitoring.
-    //    Therefore we need to disconnect signal/sender from method/receiver.
-    //    The result is, that crashing the php daemon intentionally is not shown as error.
+    /**
+     * There are two ways to kill the PHP daemon:
+     * 1) processPhp->terminate();
+     *    This will fail, because the WM_CLOSE message is not handled.
+     * 2) By killing the process with kill(). So we are crashing it!
+     *
+     * But before we kill/crash the PHP daemon intentionally, we need to disconnect
+     * the QProcess Error Monitoring (signal/sender from method/receiver),
+     * else a "Process Crashed" Error MessageBox would appear.
+     */
     disconnect(process, SIGNAL(error(QProcess::ProcessError)),
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
