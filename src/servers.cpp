@@ -12,15 +12,15 @@
 Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 {
     // build server objects
-    foreach(QString daemonName, getListOfServerNames())
+    foreach(QString serverName, getListOfServerNamesInstalled())
     {
         Server *server = new Server();
 
-        server->name = fixName(daemonName);
+        server->name = fixName(serverName);
         server->icon = QIcon(":/status_stop");
         server->configFiles = QStringList() << "a" << "b";
         server->logFiles = QStringList() << "a" << "b";
-        server->workingDirectory = settings->get("paths/" + daemonName).toString();
+        server->workingDirectory = settings->get("paths/" + serverName).toString();
         server->exe = getExecutable(server->name);
 
         QProcess *process = new QProcess();
@@ -80,6 +80,8 @@ QString Servers::fixName(QString &serverName) const
     if(serverName == "mongodb") { return "MongoDb"; }
     if(serverName == "mariadb" or serverName == "mysqld") { return "MariaDb"; }
     if(serverName == "php" or serverName == "php-cgi") { return "PHP"; }
+    if(serverName == "postgresql") { return "PostgreSQL"; }
+
     return QString();
 }
 
@@ -92,6 +94,8 @@ QString Servers::getExecutable(QString &serverName) const
     if(s == "mongodb")   { exe = "mongod.exe"; }
     if(s == "mariadb")   { exe = "mysqld.exe"; }
     if(s == "php")       { exe = "php-cgi.exe"; }
+    if(s == "postgresql"){ exe = "pg_ctl.exe"; }
+
     return settings->get("paths/" + serverName).toString() + "/" + exe;
 }
 
@@ -102,8 +106,23 @@ QStringList Servers::getListOfServerNames() const
     //QStringList list = settings->getKeys("autostart");
 
     QStringList list;
-    list << "nginx" << "php" << "mariadb" << "mongodb" << "memcached";
+    list << "nginx" << "php" << "mariadb" << "mongodb" << "memcached" << "postgresql";
 
+    return list;
+}
+
+QStringList Servers::getListOfServerNamesInstalled()
+{
+    QStringList list;
+    foreach(QString serverName, getListOfServerNames()) {
+        if(serverName == "nginx" || serverName == "php" || serverName == "mariadb") {
+            continue;
+        }
+        if(QFile().exists(getExecutable(serverName))) {
+            qDebug() << "[" + serverName + "] is not installed.";
+            list << serverName;
+        }
+    }
     return list;
 }
 
@@ -166,6 +185,7 @@ void Servers::clearLogs(const QString &serverName) const
         if(serverName == "PHP")        { logfile = dirLogs + "/php_error.log";}
         if(serverName == "MariaDb")    { logfile = dirLogs + "/mariadb_error.log";}
         if(serverName == "MongoDb")    { logfile = dirLogs + "/mongodb.log";}
+        if(serverName == "PostgreSQL") { logfile = dirLogs + "/postgresql.log";}
 
         truncateFile(logfile);
 
@@ -229,6 +249,56 @@ void Servers::restartNginx()
 {
     stopNginx();
     startNginx();
+}
+
+/*
+ * PostgreSQL  Actions: run, stop, restart
+ */
+void Servers::startPostgreSQL()
+{
+    // already running
+    if(getProcessState("Postgresql") != QProcess::NotRunning) {
+        QMessageBox::warning(0, tr("PostgreSQL"), tr("PostgreSQL is already running."));
+        return;
+    }
+
+    // if not installed, skip
+    /*if(!QFile().exists(getServer("Postgresql")->exe)) {
+        qDebug() << "[Postgresql] Is not installed. Skipping start command.";
+        return;
+    }*/
+
+    clearLogs("PostgreSQL");
+
+    // start daemon
+    QString const startCmd = getServer("Postgresql")->exe
+            + " -D " + qApp->applicationDirPath() + "/bin/pgsql/data"
+            + " -L " + qApp->applicationDirPath() + "/logs/postgresql.log"
+            + " start";
+
+    qDebug() << "[PostgreSQL] Starting...\n" << startCmd;
+
+    getProcess("Postgresql")->start(startCmd);
+}
+
+void Servers::stopPostgreSQL()
+{
+    qDebug() << "[PostgreSQL] Stopping...";
+
+    // disconnect process monitoring, before crashing the process
+    disconnect(getProcess("Postgresql"), SIGNAL(error(QProcess::ProcessError)),
+               this, SLOT(showProcessError(QProcess::ProcessError)));
+
+    QString stopCommand = getServer("Postgresql")->exe + " stop";
+
+    getProcess("Postgresql")->execute(stopCommand);
+    getProcess("Postgresql")->waitForFinished(1500);
+}
+
+void Servers::restartPostgreSQL()
+{
+    stopPostgreSQL();
+    startPostgreSQL();
 }
 
 /*
@@ -509,7 +579,8 @@ void Servers::updateProcessStates(QProcess::ProcessState state)
         case QProcess::NotRunning:
             server->trayMenu->setIcon(QIcon(":/status_stop"));
             emit signalSetLabelStatusActive(serverName, false);
-            // if NGINX or PHP are not running, disable PushButtons of Tools section, because target URL not available
+            // if NGINX or PHP are not running, disable PushButtons of Tools section,
+            // because target URL is not available
             if((serverName == "Nginx") or (serverName == "PHP")) {
                 qDebug() << "Signal: turn off - Tools Pushbuttons";
                 emit signalEnableToolsPushButtons(false);
@@ -525,8 +596,8 @@ void Servers::updateProcessStates(QProcess::ProcessState state)
     }
 
     // if NGINX and PHP are running, enable PushButtons of Tools section
-    if((getProcessState("Nginx") == QProcess::Running) and (getProcessState("PHP") == QProcess::Running)) {
-        qDebug() << "Signal: turn on - Tools Pushbuttons";
+    if((getProcessState("Nginx") == QProcess::Running) && (getProcessState("PHP") == QProcess::Running)) {
+        qDebug() << "Signal: Enable Tools Pushbuttons";
         emit signalEnableToolsPushButtons(true);
     }
 

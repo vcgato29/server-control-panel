@@ -35,6 +35,7 @@ public:
 
         QList<Server*> servers() const;
         QStringList getListOfServerNames() const;
+        QStringList getListOfServerNamesInstalled();
         QString fixName(QString &serverName) const;
         Server *getServer(const char *serverName) const;
         QProcess *getProcess(const char *serverName) const;
@@ -79,6 +80,11 @@ public slots:
         void startMemcached();
         void stopMemcached();
         void restartMemcached();
+
+        // PostgreSQL Action Slots
+        void startPostgreSQL();
+        void stopPostgreSQL();
+        void restartPostgreSQL();
 
 signals:
         // following signal is connected to MainWindow::setLabelStatusActive()
