@@ -71,10 +71,6 @@ void Tray::createTrayMenu()
     // set tray menu icon
     trayMenu->setIcon(QIcon(QPixmap(":/wpnxm.png")));
 
-    setIcon(QIcon(QPixmap(":/wpnxm.png")));
-    show();
-    setVisible(true);
-
     // add title entry like for WPN-XM in KVirc style (background gray, bold, small font)
     trayMenu->addAction("WPN-XM " APP_VERSION)->setFont(QFont("Arial", 9, QFont::Bold));
     trayMenu->addSeparator();
@@ -97,6 +93,7 @@ void Tray::createTrayMenu()
             }
         }
     }
+
     trayMenu->addSeparator();
 
     // start and stop all daemons; the connection to these actions is made from mainwindow
@@ -121,7 +118,7 @@ void Tray::createTrayMenu()
 
 void Tray::goToWebinterface()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/"));
 }
 
 void Tray::goToReportIssue()
