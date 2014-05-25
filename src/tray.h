@@ -48,12 +48,12 @@ QT_END_NAMESPACE
 */
 class Tray : public QSystemTrayIcon
 {
-        Q_OBJECT // Enables signals and slots
+    Q_OBJECT
 
-public:       
-       explicit Tray(QApplication *parent, Servers *servers, Settings *settings);
+    public:
+        explicit Tray(QApplication *parent, Servers *servers, Settings *settings);
 
-public slots:
+    public slots:
 
         // General Action Slots
         void startAllDaemons();
@@ -71,11 +71,11 @@ public slots:
         //void openMariaDbClient();
         //void openMariaDbConfig();
 
-private:
+    private:
         Settings *settings;
         Servers *servers;
 
-        void createTrayMenu();
+    void createTrayMenu();
 };
 
 #endif // Tray_H
