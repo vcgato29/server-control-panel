@@ -706,6 +706,7 @@ void MainWindow::autostartDaemons()
     if(settings->get("autostart/mariadb").toBool()) servers->startMariaDb();
     if(settings->get("autostart/mongodb").toBool()) servers->startMongoDb();
     if(settings->get("autostart/memcached").toBool()) servers->startMemcached();
+    if(settings->get("autostart/postgresql").toBool()) servers->startPostgreSQL();
 }
 
 void MainWindow::checkPorts()
