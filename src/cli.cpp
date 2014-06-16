@@ -105,7 +105,7 @@ void CLI::handleCommandLineArguments()
             );
         }
 
-        QString methodName = command + servers->fixName(daemon);
+        QString methodName = command + servers->getCamelCasedServerName(daemon);
 
         if(QMetaObject::invokeMethod(servers, methodName.toLocal8Bit().constData()))
         {
@@ -177,7 +177,7 @@ void CLI::execDaemons(const QString &command, QCommandLineOption &clioption, QSt
             );
         }
 
-        QString methodName = command + servers->fixName(daemon);
+        QString methodName = command + servers->getCamelCasedServerName(daemon);
 
         QMetaObject::invokeMethod(servers, methodName.toLocal8Bit().constData());
     }

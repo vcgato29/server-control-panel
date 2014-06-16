@@ -36,14 +36,14 @@ public:
         QList<Server*> servers() const;
         QStringList getListOfServerNames() const;
         QStringList getListOfServerNamesInstalled();
-        QString fixName(QString &serverName) const;
+        QString getCamelCasedServerName(QString &serverName) const;
         Server *getServer(const char *serverName) const;
         QProcess *getProcess(const char *serverName) const;
         QProcess::ProcessState getProcessState(const char *serverName) const;
         QString getExecutable(QString &serverName) const;
 
         bool truncateFile(const QString &file) const;
-        void clearLogs(const QString &serverName) const;
+        void clearLogFile(const QString &serverName) const;
 
 public slots:
 
@@ -92,7 +92,7 @@ signals:
         void signalEnableToolsPushButtons(bool enabled);
 
 private:
-        QList<Server*> serversList;
+        QList<Server *> serverList;
 
         QString getProcessErrorMessage(QProcess::ProcessError);
 };

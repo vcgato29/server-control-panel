@@ -54,6 +54,7 @@ public:
     QString getMariaVersion();
     QString getMongoVersion();
     QString getMemcachedVersion();
+    QString getPostgresqlVersion();
 
     QString parseVersionNumber(QString stringWithVersion);
 
@@ -106,6 +107,7 @@ private:
     QAction *quitAction;
 
     void checkAlreadyActiveDaemons();
+    void checkPorts();
     void createActions();
     void createTrayIcon();
     void startMonitoringDaemonProcesses();
@@ -113,15 +115,13 @@ private:
     void setDefaultSettings();
     void autostartDaemons();
 
-    void deleteChildWidgets(QLayoutItem *item);
-    void removeRow(QGridLayout *layout, int row, bool deleteWidgets);
-    void remove(QGridLayout *layout, int row, int column, bool deleteWidgets);
-    void showOnlyInstalledDaemons();
-
+    void renderInstalledDaemons();
 
     // Returns full path to project folder (appPath + www).
     QString getProjectFolder() const;
     void showPushButtonsOnlyForInstalledTools();
+
+    QString getVersion(QString server);
 
 private slots:
 

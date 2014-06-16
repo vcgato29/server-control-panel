@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>340</height>
+    <height>361</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>300</y>
+     <y>320</y>
      <width>361</width>
      <height>41</height>
     </rect>
@@ -39,7 +39,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>70</y>
+     <y>90</y>
      <width>91</width>
      <height>102</height>
     </rect>
@@ -115,21 +115,31 @@
      <x>20</x>
      <y>20</y>
      <width>268</width>
-     <height>42</height>
+     <height>65</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="1" column="0">
+    <item row="0" column="0">
+     <widget class="QCheckBox" name="checkbox_runOnStartUp">
+      <property name="text">
+       <string>Start WPN-XM SCP with Windows?</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
      <widget class="QCheckBox" name="checkbox_autostartDaemons">
       <property name="text">
        <string>Start these daemons, when starting WPN-XM SCP:</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QCheckBox" name="checkbox_runOnStartUp">
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="checkbox_startMinimized">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="text">
-       <string>Start WPN-XM SCP with Windows?</string>
+       <string>Start minimized to Tray?</string>
       </property>
      </widget>
     </item>
@@ -139,9 +149,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>180</y>
+     <y>200</y>
      <width>281</width>
-     <height>42</height>
+     <height>65</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
@@ -167,11 +177,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>230</y>
+     <y>270</y>
      <width>298</width>
      <height>53</height>
     </rect>

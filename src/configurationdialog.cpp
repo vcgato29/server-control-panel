@@ -61,6 +61,7 @@ void ConfigurationDialog::readSettings()
 
    ui->checkbox_runOnStartUp->setChecked(settings->get("global/runonstartup", false).toBool());
    ui->checkbox_autostartDaemons->setChecked(settings->get("global/autostartdaemons", false).toBool());
+   ui->checkbox_startMinimized->setChecked(settings->get("global/startminimized", false).toBool());
 
    ui->checkbox_autostartPHP->setChecked(settings->get("autostart/php", true).toBool());
    ui->checkbox_autostartNginx->setChecked(settings->get("autostart/nginx", true).toBool());
@@ -82,6 +83,7 @@ void ConfigurationDialog::writeSettings()
 
     settings->set("global/runonstartup",      int(ui->checkbox_runOnStartUp->isChecked()));
     settings->set("global/autostartdaemons",  int(ui->checkbox_autostartDaemons->isChecked()));
+    settings->set("global/startminimized",    int(ui->checkbox_startMinimized->isChecked()));
 
     settings->set("autostart/nginx",          int(ui->checkbox_autostartNginx->isChecked()));
     settings->set("autostart/php",            int(ui->checkbox_autostartPHP->isChecked()));

@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QTimer>
+#include <QDebug>
 
 Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 {
@@ -16,7 +17,7 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
     {
         Server *server = new Server();
 
-        server->name = fixName(serverName);
+        server->name = getCamelCasedServerName(serverName);
         server->icon = QIcon(":/status_stop");
         server->configFiles = QStringList() << "a" << "b";
         server->logFiles = QStringList() << "a" << "b";
@@ -59,7 +60,9 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 
         server->trayMenu = menu;
 
-        serversList << server;
+        serverList << server;
+
+        qDebug() << "[" + serverName + "] was added to TrayMenu and ServersList.";
     }
 }
 
@@ -68,12 +71,12 @@ void Servers::mapAction(QAction *action) {
 }
 
 /**
- * @brief Servers::fixName
+ * @brief Servers::getCamelCasedServerName
  * translates lowercase server and process names to internally used camel-cased label names
  * @param serverName
  * @return
  */
-QString Servers::fixName(QString &serverName) const
+QString Servers::getCamelCasedServerName(QString &serverName) const
 {
     if(serverName == "nginx") { return "Nginx"; }
     if(serverName == "memcached") { return "Memcached"; }
@@ -116,11 +119,13 @@ QStringList Servers::getListOfServerNamesInstalled()
     QStringList list;
     foreach(QString serverName, getListOfServerNames()) {
         if(serverName == "nginx" || serverName == "php" || serverName == "mariadb") {
-            continue;
+            list << serverName;
         }
         if(QFile().exists(getExecutable(serverName))) {
-            qDebug() << "[" + serverName + "] is not installed.";
+            qDebug() << "[" + serverName + "] is installed.";
             list << serverName;
+        } else {
+            qDebug() << "[" + serverName + "] is not installed.";
         }
     }
     return list;
@@ -128,14 +133,15 @@ QStringList Servers::getListOfServerNamesInstalled()
 
 QList<Server*> Servers::servers() const
 {
-    return serversList;
+    return serverList;
 }
 
 Server* Servers::getServer(const char *serverName) const
 {
      QString name = QString(serverName).toLocal8Bit().constData();
 
-     foreach(Server *server, serversList) {
+     foreach(Server *server, serverList) {
+         //qDebug() << server->name;
          if(server->name == name)
              return server;
      }
@@ -160,8 +166,7 @@ bool Servers::truncateFile(const QString &file) const
 {
     QFile f(file);
 
-    if(f.exists())
-    {
+    if(f.exists()) {
         f.open(QFile::WriteOnly|QFile::Truncate);
         f.close();
         return true;
@@ -170,7 +175,7 @@ bool Servers::truncateFile(const QString &file) const
     return false;
 }
 
-void Servers::clearLogs(const QString &serverName) const
+void Servers::clearLogFile(const QString &serverName) const
 {
     if(settings->get("global/clearlogsonstart").toBool()) {
 
@@ -206,7 +211,7 @@ void Servers::startNginx()
         return;
     }
 
-    clearLogs("Nginx");
+    clearLogFile("Nginx");
 
     // http://wiki.nginx.org/CommandLine - start daemon
     QString const startNginx = getServer("Nginx")->exe
@@ -262,13 +267,7 @@ void Servers::startPostgreSQL()
         return;
     }
 
-    // if not installed, skip
-    /*if(!QFile().exists(getServer("Postgresql")->exe)) {
-        qDebug() << "[Postgresql] Is not installed. Skipping start command.";
-        return;
-    }*/
-
-    clearLogs("PostgreSQL");
+    clearLogFile("PostgreSQL");
 
     // start daemon
     QString const startCmd = getServer("Postgresql")->exe
@@ -312,7 +311,7 @@ void Servers::startPHP()
         return;
     }
 
-    clearLogs("PHP");
+    clearLogFile("PHP");
 
     // start daemon
     QString const startPHP = getServer("PHP")->exe
@@ -327,6 +326,12 @@ void Servers::startPHP()
 void Servers::stopPHP()
 {
     qDebug() << "[PHP] Stopping...";
+
+    // if not installed, skip
+    if(!QFile().exists(getServer("PHP")->exe)) {
+        qDebug() << "[PHP] Is not installed. Skipping stop command.";
+        return;
+    }
 
     if(getProcessState("PHP") == QProcess::NotRunning) {
         qDebug() << "[PHP] Not running... Skipping stop command.";
@@ -365,12 +370,12 @@ void Servers::restartPHP()
 void Servers::startMariaDb()
 {
     // already running
-    if(getServer("MariaDb")->process->state() != QProcess::NotRunning) {
+    if(getProcessState("MariaDb") != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("MariaDB"), tr("MariaDB already running."));
         return;
     }
 
-    clearLogs("MariaDb");
+    clearLogFile("MariaDb");
 
     // start
     QString const startMariaDb = getServer("MariaDb")->exe;
@@ -384,12 +389,20 @@ void Servers::stopMariaDb()
 {
     qDebug() << "[MariaDB] Stopping...";
 
+    // if not installed, skip
+    if(!QFile().exists(getServer("MariaDb")->exe)) {
+        qDebug() << "[MariaDb] Is not installed. Skipping stop command.";
+        return;
+    }
+
+    QProcess *process = getProcess("MariaDb");
+
     // disconnect process monitoring, before crashing the process
-    disconnect(getProcess("MariaDb"), SIGNAL(error(QProcess::ProcessError)),
+    disconnect(process, SIGNAL(error(QProcess::ProcessError)),
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
-    getProcess("MariaDb")->kill();
-    getProcess("MariaDb")->waitForFinished(1500);
+    process->kill();
+    process->waitForFinished(1500);
 }
 
 void Servers::restartMariaDb()
@@ -409,7 +422,7 @@ void Servers::startMongoDb()
         return;
     }
 
-    clearLogs("MongoDb");
+    clearLogFile("MongoDb");
 
     // if not installed, skip
     if(!QFile().exists(getServer("MongoDb")->exe)) {
@@ -454,7 +467,7 @@ void Servers::stopMongoDb()
 
     // build mongo stop command based on CLI evaluation
     // mongodb is stopped via "mongo.exe --eval", not "mongodb.exe"
-    QString const mongoStopCommand = settings->get("paths/mongodb").toString() + "/mongo.exe"
+    QString const mongoStopCommand = getServer("MongoDb")->exe
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
     qDebug() << "[MongoDb] Stopping...\n" << mongoStopCommand;

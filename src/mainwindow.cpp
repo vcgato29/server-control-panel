@@ -50,31 +50,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // move window to the top
-    setFocus();
-    setWindowState( windowState() & ( ~Qt::WindowMinimized | Qt::WindowActive | Qt::WindowMaximized ) );
-
-    // disable Maximize functionality
-    setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
-    setFixedWidth(620); // @todo: these values need to be adjusted, when the daemons list is automatically resized
-    setFixedHeight(380);
-
-    // overrides the window title defined in mainwindow.ui
-    setWindowTitle(APP_NAME_AND_VERSION);
-
-    setDefaultSettings();
-
-    this->servers = new Servers();
-
-    // inital state of status leds is disabled
-    ui->label_Nginx_Status->setEnabled(false);
-    ui->label_PHP_Status->setEnabled(false);
-    ui->label_MariaDb_Status->setEnabled(false);
-    ui->label_Memcached_Status->setEnabled(false);
-    ui->label_MongoDb_Status->setEnabled(false);
-
-    createActions();
-
     // The tray icon is an instance of the QSystemTrayIcon class.
     // To check whether a system tray is present on the user's desktop,
     // we call the static QSystemTrayIcon::isSystemTrayAvailable() function.
@@ -84,38 +59,49 @@ MainWindow::MainWindow(QWidget *parent) :
         QApplication::exit(1);
     }
 
+    setDefaultSettings();
+
+    // overrides the window title defined in mainwindow.ui
+    setWindowTitle(APP_NAME_AND_VERSION);
+
+    // start minimized to tray
+    if(settings->get("global/startminimized").toBool()) {
+        setWindowState( Qt::WindowMinimized );
+    } else {
+        // maximize and move window to the top
+        setFocus();
+        setWindowState( windowState() & ( ~Qt::WindowMinimized | Qt::WindowActive | Qt::WindowMaximized ) );
+    }
+
+    // disable Maximize button functionality
+    setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
+
+    this->servers = new Servers();
+
     createTrayIcon();
 
     checkAlreadyActiveDaemons();
 
-    // fetch version numbers from the daemons and set label texts
-    ui->label_Nginx_Version->setText( getNginxVersion() );
-    ui->label_PHP_Version->setText( getPHPVersion() );
-    ui->label_MariaDb_Version->setText( getMariaVersion() );
-    ui->label_MongoDB_Version->setText( getMongoVersion() );
-    ui->label_Memcached_Version->setText( getMemcachedVersion() );
-
-    // fetch ports and set label texts
-    ui->label_Nginx_Port->setText(      settings->get("nginx/port").toString() ); // 80
-    ui->label_PHP_Port->setText(        settings->get("php/fastcgi-port").toString() ); // 9100
-    ui->label_MariaDb_Port->setText(    settings->get("mariadb/port").toString()); // 3306
-    ui->label_MongoDB_Port->setText(    settings->get("mongodb/port").toString()); // 27015
-    ui->label_Memcached_Port->setText(  settings->get("memcached/port").toString() ); // 11211
-
     showPushButtonsOnlyForInstalledTools();
-
-    if(ui->label_Nginx_Status->isEnabled() && ui->label_PHP_Status->isEnabled()) {
-      enableToolsPushButtons(true);
-    } else {
-      enableToolsPushButtons(false);
-    }
 
     // daemon autostart
     if(settings->get("global/autostartdaemons").toBool()) {
         autostartDaemons();
     };
 
-    showOnlyInstalledDaemons();
+    renderInstalledDaemons();
+
+    createActions();
+
+    if(ui->centralWidget->findChild<QLabel*>("label_Nginx_Status")->isEnabled() &&
+       ui->centralWidget->findChild<QLabel*>("label_PHP_Status")->isEnabled()) {
+      enableToolsPushButtons(true);
+    } else {
+      enableToolsPushButtons(false);
+    }
+
+    // set window size fixed
+    setFixedSize(width(), height());
 }
 
 MainWindow::~MainWindow()
@@ -135,7 +121,6 @@ void MainWindow::createTrayIcon()
     // instantiate and attach the tray icon to the system tray
     tray = new Tray(qApp, servers, settings);
     tray->setIcon(QIcon(":/wpnxm"));
-    tray->show();
 
     // the following actions point to SLOTS in the tray object
     // therefore connections must be made, after instantiating Tray
@@ -175,20 +160,24 @@ void MainWindow::createActions()
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quitApplication()));
 
     // Connect Actions for Status Table - Column Action (Start)
-    connect(ui->pushButton_StartNginx, SIGNAL(clicked()), servers, SLOT(startNginx()));
-    connect(ui->pushButton_StartPHP, SIGNAL(clicked()), servers, SLOT(startPHP()));
-    connect(ui->pushButton_StartMariaDb, SIGNAL(clicked()), servers, SLOT(startMariaDb()));
-    connect(ui->pushButton_StartMongoDb, SIGNAL(clicked()), servers, SLOT(startMongoDb()));
-    connect(ui->pushButton_StartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Start_Nginx"), SIGNAL(clicked()), servers, SLOT(startNginx()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Start_PHP"), SIGNAL(clicked()), servers, SLOT(startPHP()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Start_MariaDb"), SIGNAL(clicked()), servers, SLOT(startMariaDb()));
+    QPushButton *buttonStartMongoDb =  ui->centralWidget->findChild<QPushButton*>("pushButton_Start_MongoDb");
+    if(buttonStartMongoDb != 0) { connect(buttonStartMongoDb, SIGNAL(clicked()), servers, SLOT(startMongoDb())); }
+    QPushButton *buttonStartMemcached =  ui->centralWidget->findChild<QPushButton*>("pushButton_Start_Memcached");
+    if(buttonStartMemcached != 0) { connect(buttonStartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached())); }
 
     // Connect Actions for Status Table - Column Action (Stop)
-    connect(ui->pushButton_StopNginx, SIGNAL(clicked()), servers, SLOT(stopNginx()));
-    connect(ui->pushButton_StopPHP, SIGNAL(clicked()), servers, SLOT(stopPHP()));
-    connect(ui->pushButton_StopMariaDb, SIGNAL(clicked()), servers, SLOT(stopMariaDb()));
-    connect(ui->pushButton_StopMongoDb, SIGNAL(clicked()), servers, SLOT(stopMongoDb()));
-    connect(ui->pushButton_StopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_Nginx"), SIGNAL(clicked()), servers, SLOT(stopNginx()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_PHP"), SIGNAL(clicked()), servers, SLOT(stopPHP()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_MariaDb"), SIGNAL(clicked()), servers, SLOT(stopMariaDb()));
+    QPushButton *buttonStopMongoDb =  ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_MongoDb");
+    if(buttonStopMongoDb != 0) { connect(buttonStopMongoDb, SIGNAL(clicked()), servers, SLOT(stopMongoDb())); }
+    QPushButton *buttonStopMemcached =  ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_Memcached");
+    if(buttonStopMemcached != 0) { connect(buttonStopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached())); }
 
-     // Connect Actions for Status Table - AllDaemons Start, Stop
+    // Connect Actions for Status Table - AllDaemons Start, Stop
     connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), this, SLOT(startAllDaemons()));
     connect(ui->pushButton_AllDaemons_Stop, SIGNAL(clicked()), this, SLOT(stopAllDaemons()));
 
@@ -217,17 +206,9 @@ void MainWindow::createActions()
     connect(ui->pushButton_OpenProjects_Explorer, SIGNAL(clicked()), this, SLOT(openProjectFolderInExplorer()));
 
     // Actions - Status Table (Config)
-    connect(ui->pushButton_ConfigureNginx, SIGNAL(clicked()), this, SLOT(openConfigurationDialogNginx()));
-    connect(ui->pushButton_ConfigurePHP, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
-    connect(ui->pushButton_ConfigureMariaDb, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
-
-    // Actions - Status Table (Logs)
-    connect(ui->pushButton_ShowLog_NginxAccess, SIGNAL(clicked()), this, SLOT(openLog()));
-    connect(ui->pushButton_ShowLog_NginxError, SIGNAL(clicked()), this, SLOT(openLog()));
-    connect(ui->pushButton_ShowLog_PHP, SIGNAL(clicked()), this, SLOT(openLog()));
-    connect(ui->pushButton_ShowLog_MongoDb, SIGNAL(clicked()), this, SLOT(openLog()));
-    connect(ui->pushButton_ShowLog_MariaDb, SIGNAL(clicked()), this, SLOT(openLog()));
-
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_Nginx"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogNginx()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PHP"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MariaDb"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -333,10 +314,14 @@ void MainWindow::enableToolsPushButtons(bool enabled)
     ui->pushButton_Webinterface->setEnabled(enabled);
 
     // webinterface configuration is only available, when nginx+php running
-    ui->pushButton_ConfigureMariaDb->setEnabled(enabled);
-    ui->pushButton_ConfigureMongoDb->setEnabled(enabled);
-    ui->pushButton_ConfigureNginx->setEnabled(enabled);
-    ui->pushButton_ConfigurePHP->setEnabled(enabled);
+    // disable "pushButton_Configure_*"
+    QList<QPushButton *> allConfigurePushButtonsButtons = ui->centralWidget->findChildren<QPushButton *>(QRegExp("^pushButton_Configure_\\w$"));
+
+    // set all PushButtons enabled/disabled
+    for(int i = 0; i < allConfigurePushButtonsButtons.size(); ++i)
+    {
+        allConfigurePushButtonsButtons[i]->setEnabled(enabled);
+    }
 }
 
 void MainWindow::showPushButtonsOnlyForInstalledTools()
@@ -347,7 +332,7 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
     // set all PushButtons invisible
     for(int i = 0; i < allPushButtonsButtons.size(); ++i)
     {
-       allPushButtonsButtons[i]->setDisabled(true);
+        allPushButtonsButtons[i]->setDisabled(true);
     }
 
     // if tool directory exists, show pushButtons in the Tools Groupbox
@@ -360,11 +345,12 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
 void MainWindow::setLabelStatusActive(QString label, bool enabled)
 {
     label = label.toLower();
-    if(label == "nginx")                        { ui->label_Nginx_Status->setEnabled(enabled); }
-    if(label == "php" || label == "php-cgi")    { ui->label_PHP_Status->setEnabled(enabled); }
-    if(label == "mariadb")                      { ui->label_MariaDb_Status->setEnabled(enabled); }
-    if(label == "mongodb" || label == "mysqld") { ui->label_MongoDb_Status->setEnabled(enabled); }
-    if(label == "memcached")                    { ui->label_Memcached_Status->setEnabled(enabled); }
+    if(label == "nginx")                        { ui->centralWidget->findChild<QLabel*>("label_Nginx_Status")->setEnabled(enabled); }
+    if(label == "php" || label == "php-cgi")    { ui->centralWidget->findChild<QLabel*>("label_PHP_Status")->setEnabled(enabled); }
+    if(label == "mariadb")                      { ui->centralWidget->findChild<QLabel*>("label_MariaDb_Status")->setEnabled(enabled); }
+    if(label == "mongodb" || label == "mysqld") { ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->setEnabled(enabled); }
+    if(label == "memcached")                    { ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->setEnabled(enabled); }
+    if(label == "postgresql")                   { ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->setEnabled(enabled); }
 }
 
 void MainWindow::quitApplication()
@@ -462,6 +448,23 @@ QString MainWindow::getMongoVersion()
     return parseVersionNumber(p_stdout.mid(3)); //21
 }
 
+QString MainWindow::getPostgresqlVersion()
+{
+    QProcess process;
+    process.start("./bin/pgsql/pgsql -V");
+
+    if (!process.waitForFinished()) {
+        qDebug() << "[PostgreSQL] Version failed:" << process.errorString();
+        return "";
+    }
+
+    QByteArray p_stdout = process.readAll();
+
+    qDebug() << "[PostgreSQL] Version: \n" << p_stdout;
+
+    return parseVersionNumber(p_stdout.mid(2)); //10
+}
+
 QString MainWindow::getMemcachedVersion()
 {
     QProcess processMemcached;
@@ -549,32 +552,31 @@ void MainWindow::goToDonate()
 
 void MainWindow::openToolPHPInfo()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=phpinfo"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=phpinfo"));
 }
 
 void MainWindow::openToolPHPMyAdmin()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/phpmyadmin/"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/phpmyadmin/"));
 }
 
 void MainWindow::openToolWebgrind()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/webgrind/"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webgrind/"));
 }
 
 void MainWindow::openToolAdminer()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/adminer/"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/adminer/"));
 }
 
 void MainWindow::openWebinterface()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/"));
 }
 
 void MainWindow::openProjectFolderInBrowser()
 {
-    // @todo open only, when Nginx and PHP are running...
     QDesktopServices::openUrl(QUrl("http://localhost"));
 }
 
@@ -606,49 +608,45 @@ void MainWindow::openConfigurationDialog()
 void MainWindow::openConfigurationDialogNginx()
 {
     // Open Configuration Dialog - Tab for Nginx
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#nginx"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#nginx"));
 }
 
 void MainWindow::openConfigurationDialogPHP()
 {
     // Open Configuration Dialog - Tab for PHP
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#php"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#php"));
 }
 
 void MainWindow::openConfigurationDialogMariaDb()
 {
     // Open Configuration Dialog - Tab for MariaDb
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#mariadb"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#mariadb"));
 }
 
 void MainWindow::openConfigurationDialogMongoDb()
 {
     // Open Configuration Dialog - Tab for MongoDb
-    QDesktopServices::openUrl(QUrl("http://localhost/webinterface/index.php?page=config#mongodb"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#mongodb"));
 }
 
 void MainWindow::openLog()
 {
     // we have a incoming SIGNAL object to this SLOT
-    // lets determine the object name, e.g. pushButton_ShowLog_NginxAccess
-    // and then reduce to the log filename
+    // we use the object name, e.g. pushButton_ShowLog_Nginx or pushButton_ShowErrorLog_Nginx
+    // to map the log file
 
-    QPushButton *button = (QPushButton *)sender();
-    //qDebug() << "Sender : " << button->objectName();
-    QString name = button->objectName();
-    name.replace("pushButton_ShowLog_", "");
+    QPushButton *button = (QPushButton *)sender();    
+    QString obj = button->objectName();
+    //qDebug() << "Sender : " << obj;
 
     QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
-
     QString logfile = "";
 
-    if(name == "NginxAccess"){ logfile = logs + "/access.log";}
-    if(name == "NginxError") { logfile = logs + "/error.log";}
-    if(name == "PHP")        { logfile = logs + "/php_error.log";}
-    if(name == "MariaDb")    { logfile = logs + "/mariadb_error.log";}
-    if(name == "MongoDb")    { logfile = logs + "/mongodb.log";}
-
-    //QString logfile = QDir(logs).filePath("anotherdir/file.txt");
+    if(obj == "pushButton_ShowLog_Nginx")      { logfile = logs + "/access.log";}
+    if(obj == "pushButton_ShowErrorLog_Nginx") { logfile = logs + "/error.log";}
+    if(obj == "pushButton_ShowLog_PHP")        { logfile = logs + "/php_error.log";}
+    if(obj == "pushButton_ShowLog_MariaDb")    { logfile = logs + "/mariadb_error.log";}
+    if(obj == "pushButton_ShowLog_MongoDb")    { logfile = logs + "/mongodb.log";}
 
     if(!QFile().exists(logfile)) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
@@ -710,8 +708,28 @@ void MainWindow::autostartDaemons()
     if(settings->get("autostart/memcached").toBool()) servers->startMemcached();
 }
 
+void MainWindow::checkPorts()
+{
+    // check for ports, which are already in use
+    // based on "netstat -abno | grep "80\|8080\|443""
+    // port and service name identification
+
+    QProcess process;
+    process.setReadChannel(QProcess::StandardOutput);
+    process.setReadChannelMode(QProcess::MergedChannels);
+    process.start("cmd", QStringList() << "/c netstat -abno");
+    process.waitForFinished();
+
+    QByteArray servicesByteArray = process.readAll();
+    QStringList strLines = QString(servicesByteArray).split("\n", QString::SkipEmptyParts);
+
+    qDebug() << strLines;
+}
+
 void MainWindow::checkAlreadyActiveDaemons()
 {
+    checkPorts();
+
     // Check list of active processes for
     // apache, nginx, mysql, php-cgi, memcached
     // and report, if processes are already running.
@@ -720,7 +738,7 @@ void MainWindow::checkAlreadyActiveDaemons()
     // Provide a modal dialog with checkboxes for all running processes
     // The user might then select the processes to Leave Running or Shutdown.
 
-    // a) fetch processes via tasklist stdout
+    // fetch processes via tasklist stdout
     QProcess process;
     process.setReadChannel(QProcess::StandardOutput);
     process.setReadChannelMode(QProcess::MergedChannels);
@@ -732,7 +750,7 @@ void MainWindow::checkAlreadyActiveDaemons()
     //qDebug() << "Read" << processList.length() << "bytes";
     //qDebug() << processList;
 
-    // b) define processes to look for
+    // define processes to look for
     QStringList processesToSearch;
     processesToSearch << "nginx"
                       << "apache"
@@ -742,12 +760,12 @@ void MainWindow::checkAlreadyActiveDaemons()
                       << "mongod"
                       << "pg_ctl"; // postgresql
 
-    // c) init a list for found processes
+    // init a list for found processes
     QStringList processesFoundList;
 
-    // d) foreach processesToSearch take a look in the processList
+    // foreach processesToSearch take a look in the processList
     for (int i = 0; i < processesToSearch.size(); ++i)
-    {
+    {        
         //qDebug() << "Searching for process: " << processesToSearch.at(i).toLocal8Bit().constData() << endl;
 
         if(processList.contains( processesToSearch.at(i).toLatin1().constData() ))
@@ -845,7 +863,7 @@ void MainWindow::checkAlreadyActiveDaemons()
             int c = processesFoundList.size();
             for(int i = 0; i < c; ++i) {
                 QString procname = processesFoundList.at(i);
-                QString servername = this->servers->fixName(procname).toLocal8Bit().constData();
+                QString servername = this->servers->getCamelCasedServerName(procname).toLocal8Bit().constData();
 
                 // set indicator in main window
                 setLabelStatusActive(servername, true);
@@ -885,10 +903,12 @@ void MainWindow::setDefaultSettings()
 
     settings->set("global/runonstartup",             0);
     settings->set("global/autostartdaemons",         0);
+    settings->set("global/startminimized",           0);
     settings->set("global/stopdaemonsonquit",        1);
     settings->set("global/clearlogsonstart",         0);
     settings->set("global/donotaskagainclosetotray", 0);
-    settings->get("global/editor",                   "notepad.exe");
+    settings->set("global/editor",                   "notepad.exe");
+    //settings->set("global/showballooninfos",         0);
 
     settings->set("paths/logs",             "./logs");
     settings->set("paths/php",              "./bin/php");
@@ -896,12 +916,14 @@ void MainWindow::setDefaultSettings()
     settings->set("paths/memcached",        "./bin/memcached");
     settings->set("paths/mariadb",          "./bin/mariadb/bin");
     settings->set("paths/nginx",            "./bin/nginx");
+    settings->set("paths/postgresql",       "./bin/pgsql/bin");
 
     settings->set("autostart/nginx",        1);
     settings->set("autostart/php",          1);
     settings->set("autostart/mariadb",      1);
     settings->set("autostart/mongodb",      0);
     settings->set("autostart/memcached",    0);
+    settings->set("autostart/postgresql",   0);
 
     settings->set("php/config",             "./bin/php/php.ini");
     settings->set("php/fastcgi-host",       "localhost");
@@ -920,76 +942,219 @@ void MainWindow::setDefaultSettings()
     settings->set("mongodb/config",         "./bin/mongodb/mongodb.conf");
     settings->set("mongodb/port",           27015);
 
+    //settings->set("updater/mode",         "manual");
+    //settings->set("updater/interval",     "1w");
+
     qDebug() << "[Settings] Loaded Defaults...\n";
     }
 }
 
-void MainWindow::showOnlyInstalledDaemons()
+void MainWindow::renderInstalledDaemons()
 {
-    removeRow(ui->DaemonsGridLayout, ui->DaemonsGridLayout->rowCount(), true);
+    QFont font1;
+    font1.setBold(true);
+    font1.setWeight(75);
 
-}
+    QGroupBox *DaemonStatusGroupBox = new QGroupBox(ui->centralWidget);
+    DaemonStatusGroupBox->setObjectName(QStringLiteral("DaemonStatusGroupBox"));
+    DaemonStatusGroupBox->setEnabled(true);
+    DaemonStatusGroupBox->setGeometry(QRect(10, 70, 471, 121));
+    DaemonStatusGroupBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Maximum);
+    DaemonStatusGroupBox->setMinimumSize(QSize(0, 121));
+    DaemonStatusGroupBox->setBaseSize(QSize(471, 100));
+    DaemonStatusGroupBox->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+    DaemonStatusGroupBox->setFlat(false);
 
-/**
- * Helper function. Deletes all child widgets of the given layout @a item.
- */
-void MainWindow::deleteChildWidgets(QLayoutItem *item) {
-    if (item->layout()) {
-        // Process all child items recursively.
-        for (int i = 0; i < item->layout()->count(); i++) {
-            deleteChildWidgets(item->layout()->itemAt(i));
-        }
+    QGridLayout *DaemonsGridLayout = new QGridLayout(DaemonStatusGroupBox);
+    DaemonsGridLayout->setSpacing(10);
+    DaemonsGridLayout->setObjectName(QStringLiteral("DaemonsGridLayout"));
+    DaemonsGridLayout->setSizeConstraint(QLayout::SetMinimumSize);
+
+    QLabel* label_Status = new QLabel();
+    label_Status->setText(QApplication::translate("MainWindow", "Status", 0));
+    label_Status->setAlignment(Qt::AlignCenter);
+    label_Status->setFont(font1);
+    label_Status->setEnabled(false);
+    DaemonsGridLayout->addWidget(label_Status, 1, 0);
+
+    QLabel* label_Port = new QLabel();
+    label_Port->setText(QApplication::translate("MainWindow", "Port", 0));
+    label_Port->setAlignment(Qt::AlignCenter);
+    label_Port->setFont(font1);
+    label_Port->setEnabled(false);
+    DaemonsGridLayout->addWidget(label_Port, 1, 1);
+
+    QLabel* label_Daemon = new QLabel();
+    label_Daemon->setText(QApplication::translate("MainWindow", "Daemon", 0));
+    label_Daemon->setAlignment(Qt::AlignCenter);
+    label_Daemon->setFont(font1);
+    label_Daemon->setEnabled(false);
+    DaemonsGridLayout->addWidget(label_Daemon, 1, 2);
+
+    QLabel* label_Version = new QLabel();
+    label_Version->setText(QApplication::translate("MainWindow", "Version", 0));
+    label_Version->setAlignment(Qt::AlignCenter);
+    label_Version->setFont(font1);
+    label_Version->setEnabled(false);
+    DaemonsGridLayout->addWidget(label_Version, 1, 3);
+
+    QLabel* label_Config = new QLabel();
+    label_Config->setText(QApplication::translate("MainWindow", "Config", 0));
+    label_Config->setAlignment(Qt::AlignCenter);
+    label_Config->setFont(font1);
+    label_Config->setEnabled(false);
+    DaemonsGridLayout->addWidget(label_Config, 1, 4);
+
+    QLabel* label_Logs = new QLabel();
+    label_Logs->setText(QApplication::translate("MainWindow", "Logs", 0));
+    label_Logs->setAlignment(Qt::AlignCenter);
+    label_Logs->setFont(font1);
+    label_Logs->setEnabled(false);
+    DaemonsGridLayout->addWidget(label_Logs, 1, 5, 1, 2); // two columns
+
+    QLabel* label_Actions = new QLabel();
+    label_Actions->setText(QApplication::translate("MainWindow", "Actions", 0));
+    label_Actions->setAlignment(Qt::AlignCenter);
+    label_Actions->setFont(font1);
+    label_Actions->setEnabled(false);
+    DaemonsGridLayout->addWidget(label_Actions, 1, 7, 1, 2); // two columns
+
+    QIcon iconConfig;
+    iconConfig.addFile(QStringLiteral(":/gear.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+    QIcon iconLog;
+    iconLog.addFile(QStringLiteral(":/report.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+    QIcon iconErrorLog;
+    iconErrorLog.addFile(QStringLiteral(":/report--exclamation.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+    QIcon iconStop;
+    iconStop.addFile(QStringLiteral(":/action_stop"), QSize(), QIcon::Normal, QIcon::Off);
+
+    QIcon iconStart;
+    iconStart.addFile(QStringLiteral(":/action_run"), QSize(), QIcon::Normal, QIcon::Off);
+
+    int rowCounter = 2;
+
+    //foreach(QString server, servers->getListOfServerNames())
+    foreach(QString server, servers->getListOfServerNamesInstalled())
+    {
+        QByteArray serverName = this->servers->getCamelCasedServerName(server).toLocal8Bit();
+
+        // The DaemonsGrid has the following columns:
+        //
+        // Status | Port | Daemon | Version | Config | Logs (2) | Actions (2)
+
+        // Status
+        QLabel* labelStatus = new QLabel();
+        labelStatus->setObjectName(QString("label_" + serverName + "_Status"));
+        labelStatus->setPixmap(QPixmap(QString::fromUtf8(":/status_run_big")));
+        labelStatus->setAlignment(Qt::AlignCenter);
+        labelStatus->setEnabled(false); // inital state of status leds is disabled
+        DaemonsGridLayout->addWidget(labelStatus, rowCounter, 0);
+
+        // Port
+        QLabel* labelPort = new QLabel();
+        labelPort->setObjectName(QString("label_"+server+"_Port"));
+        labelPort->setText( settings->get(server+"/port").toString() );
+        labelPort->setAlignment(Qt::AlignCenter);
+        DaemonsGridLayout->addWidget(labelPort, rowCounter, 1);
+
+        // Daemon
+        QLabel* labelDaemon = new QLabel();
+        labelDaemon->setObjectName(QString("label_" + serverName + "_Name"));
+        labelDaemon->setAlignment(Qt::AlignCenter);
+        labelDaemon->setText(QApplication::translate(
+            "MainWindow",
+            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+            "<html><head><meta name=\"qrichtext\" content=\"1\" />\n"
+            "<style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head>\n"
+            "<body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"           
+            "<span style=\" font-size:10pt; font-weight:600;\">" + serverName + "</span></body></html>", 0));
+        DaemonsGridLayout->addWidget(labelDaemon, rowCounter, 2);
+
+        // Version
+        QLabel* labelVersion = new QLabel();
+        labelVersion->setObjectName(QString("label_" + serverName + "_Version"));
+        labelVersion->setAlignment(Qt::AlignCenter);
+        labelVersion->setText(getVersion(server));
+        DaemonsGridLayout->addWidget(labelVersion, rowCounter, 3);
+
+        // Config
+        QPushButton* pushButton_Configure = new QPushButton();
+        pushButton_Configure->setObjectName(QString("pushButton_Configure_"+ serverName +""));
+        pushButton_Configure->setIcon(iconConfig);
+        pushButton_Configure->setFlat(true);
+        DaemonsGridLayout->addWidget(pushButton_Configure, rowCounter, 4);
+
+        // Logs
+        QPushButton* pushButton_ShowLog = new QPushButton();
+        pushButton_ShowLog->setObjectName(QString("pushButton_ShowLog_" + serverName + ""));
+        pushButton_ShowLog->setIcon(iconLog);
+        pushButton_ShowLog->setFlat(true);
+        pushButton_ShowLog->setToolTip(QApplication::translate(
+            "MainWindow", "Open "+ serverName +" Log", 0)
+        );        
+        DaemonsGridLayout->addWidget(pushButton_ShowLog, rowCounter, 5);
+        connect(pushButton_ShowLog, SIGNAL(clicked()), this, SLOT(openLog()));
+
+        QPushButton* pushButton_ShowErrorLog = new QPushButton();
+        pushButton_ShowErrorLog->setObjectName(QString("pushButton_ShowErrorLog_"+ serverName +""));
+        pushButton_ShowErrorLog->setIcon(iconErrorLog);
+        pushButton_ShowErrorLog->setFlat(true);
+        pushButton_ShowErrorLog->setToolTip(QApplication::translate(
+            "MainWindow", "Open "+ serverName +" Error Log", 0)
+        );
+        DaemonsGridLayout->addWidget(pushButton_ShowErrorLog, rowCounter, 6);
+
+        // Actions
+        QPushButton* pushButton_Stop = new QPushButton();
+        pushButton_Stop->setObjectName(QString("pushButton_Stop_"+ serverName +""));
+
+        pushButton_Stop->setIcon(iconStop);
+        pushButton_Stop->setFlat(true);
+        pushButton_Stop->setToolTip(QApplication::translate(
+            "MainWindow", "Stop "+ serverName +"", 0)
+        );
+        DaemonsGridLayout->addWidget(pushButton_Stop, rowCounter, 7);
+
+        QPushButton* pushButton_Start = new QPushButton();
+        pushButton_Start->setObjectName(QString("pushButton_Start_"+ serverName +""));
+        pushButton_Start->setIcon(iconStart);
+        pushButton_Start->setFlat(true);
+        pushButton_Start->setToolTip(QApplication::translate(
+            "MainWindow", "Start "+ serverName +"", 0)
+        );
+        DaemonsGridLayout->addWidget(pushButton_Start, rowCounter, 8);
+
+        rowCounter++;
     }
-    delete item->widget();
-}
 
-/**
- * Helper function. Removes all layout items within the given @a layout
- * which either span the given @a row or @a column. If @a deleteWidgets
- * is true, all concerned child widgets become not only removed from the
- * layout, but also deleted.
- */
-void MainWindow::remove(QGridLayout *layout, int row, int column, bool deleteWidgets) {
-    // We avoid usage of QGridLayout::itemAtPosition() here to improve performance.
-    for (int i = layout->count() - 1; i >= 0; i--) {
-        int r, c, rs, cs;
-        layout->getItemPosition(i, &r, &c, &rs, &cs);
-        if ((r <= row && r + rs - 1 >= row) || (c <= column && c + cs - 1 >= column)) {
-            // This layout item is subject to deletion.
-            QLayoutItem *item = layout->takeAt(i);
-            if (deleteWidgets) {
-                deleteChildWidgets(item);
-            }
-            delete item;
-        }
+    // lets get the height of the DaemonsGridLayout to move the following element
+
+    QRect fgeo = DaemonStatusGroupBox->frameGeometry();
+    QSize size = DaemonStatusGroupBox->sizeHint();
+
+    // (top left corner y) + (dynamic height y) + 10
+    int newToolsGroupBoxY = fgeo.y() + size.height() + 10;
+
+    QRect geo = ui->AllDaemonsStartStopGroupBox->geometry();
+
+    if(geo.y() < newToolsGroupBoxY) {
+        ui->ToolsGroupBox->move(QPoint(ui->ToolsGroupBox->x(), newToolsGroupBoxY));
+        ui->OpenProjectFolderGroupBox->move(QPoint(ui->OpenProjectFolderGroupBox->x(), newToolsGroupBoxY));
     }
 }
 
+QString MainWindow::getVersion(QString server)
+{
+    QString s = server.toLower();
+    if(s == "nginx")     { return getNginxVersion(); }
+    if(s == "memcached") { return getMemcachedVersion(); }
+    if(s == "mongodb")   { return getMongoVersion(); }
+    if(s == "mariadb")   { return getMariaVersion(); }
+    if(s == "php")       { return getPHPVersion(); }
+    if(s == "postgresql"){ return getPostgresqlVersion(); }
 
-/**
- * Removes all layout items on the given @a row from the given grid
- * @a layout. If @a deleteWidgets is true, all concerned child widgets
- * become not only removed from the layout, but also deleted. Note that
- * this function doesn't actually remove the row itself from the grid
- * layout, as this isn't possible (i.e. the rowCount() and row indices
- * will stay the same after this function has been called).
- */
-void MainWindow::removeRow(QGridLayout *layout, int row, bool deleteWidgets) {
-    remove(layout, row, -1, deleteWidgets);
-    layout->setRowMinimumHeight(row, 0);
-    layout->setRowStretch(row, 0);
+    return "The function for fetching the version for " + s + "is not implemented, yet.";
 }
-
-/**
- * Removes all layout items on the given @a column from the given grid
- * @a layout. If @a deleteWidgets is true, all concerned child widgets
- * become not only removed from the layout, but also deleted. Note that
- * this function doesn't actually remove the column itself from the grid
- * layout, as this isn't possible (i.e. the columnCount() and column
- * indices will stay the same after this function has been called).
- */
-/*void MainWindow::removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
-    remove(layout, -1, column, deleteWidgets);
-    layout->setColumnMinimumWidth(column, 0);
-    layout->setColumnStretch(column, 0);
-}*/
