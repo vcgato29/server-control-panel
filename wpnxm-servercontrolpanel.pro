@@ -29,7 +29,7 @@ VERSION = 1.20.30.40
 QMAKE_TARGET_COMPANY = Koch Softwaresystemtechnik
 QMAKE_TARGET_PRODUCT = WPN-XM Server Control Panel
 QMAKE_TARGET_DESCRIPTION = WPN-XM SCP Tray Application.
-QMAKE_TARGET_COPYRIGHT = (c) Jens-André Koch
+QMAKE_TARGET_COPYRIGHT = Copyright (c) Jens-André Koch.
 
 CONFIG += qt console #warn-on #static
 
