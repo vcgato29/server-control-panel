@@ -11,6 +11,7 @@ class Server: public QObject
     Q_OBJECT
 
 public:
+        QString lowercaseName;
         QString name;
         QIcon icon;
         QString workingDirectory;
@@ -41,6 +42,8 @@ public:
         QProcess *getProcess(const char *serverName) const;
         QProcess::ProcessState getProcessState(const char *serverName) const;
         QString getExecutable(QString &serverName) const;
+
+        QStringList getLogFiles(QString &serverName) const;
 
         bool truncateFile(const QString &file) const;
         void clearLogFile(const QString &serverName) const;

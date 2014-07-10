@@ -17,10 +17,11 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
     {
         Server *server = new Server();
 
+        server->lowercaseName = serverName;
         server->name = getCamelCasedServerName(serverName);
         server->icon = QIcon(":/status_stop");
         server->configFiles = QStringList() << "a" << "b";
-        server->logFiles = QStringList() << "a" << "b";
+        server->logFiles = getLogFiles(serverName);
         server->workingDirectory = settings->get("paths/" + serverName).toString();
         server->exe = getExecutable(server->name);
 
@@ -88,6 +89,23 @@ QString Servers::getCamelCasedServerName(QString &serverName) const
     return QString();
 }
 
+QStringList Servers::getLogFiles(QString &serverName) const
+{
+    QString s = serverName.toLower();
+    QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
+
+    QStringList logfiles;
+
+    if(s == "nginx")     { logfiles << logs + "/error.log" << logs + "/access.log"; }
+    if(s == "memcached") { logfiles << ""; }
+    if(s == "mongodb")   { logfiles << logs + "/mongodb.log"; }
+    if(s == "mariadb")   { logfiles << logs + "/mariadb_error.log"; }
+    if(s == "php")       { logfiles << logs + "/php_error.log"; }
+    if(s == "postgresql"){ logfiles << logs + "/pgsql.log"; }
+
+    return logfiles;
+}
+
 QString Servers::getExecutable(QString &serverName) const
 {
     QString s = serverName.toLower();
@@ -118,10 +136,8 @@ QStringList Servers::getListOfServerNamesInstalled()
 {
     QStringList list;
     foreach(QString serverName, getListOfServerNames()) {
-        if(serverName == "nginx" || serverName == "php" || serverName == "mariadb") {
-            list << serverName;
-        }
-        if(QFile().exists(getExecutable(serverName))) {
+        if(serverName == "nginx" || serverName == "php" || serverName == "mariadb"
+        || QFile().exists(getExecutable(serverName))) {
             qDebug() << "[" + serverName + "] is installed.";
             list << serverName;
         } else {
