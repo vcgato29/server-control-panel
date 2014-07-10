@@ -41,7 +41,7 @@
      <x>40</x>
      <y>90</y>
      <width>91</width>
-     <height>102</height>
+     <height>101</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="autostartDaemonsFormLayout">
@@ -151,7 +151,7 @@
      <x>20</x>
      <y>200</y>
      <width>281</width>
-     <height>65</height>
+     <height>41</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
@@ -181,7 +181,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>270</y>
+     <y>250</y>
      <width>298</width>
      <height>53</height>
     </rect>

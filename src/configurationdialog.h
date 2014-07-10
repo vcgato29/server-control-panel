@@ -84,7 +84,6 @@ private:
   void readSettings();
   void writeSettings();
   void toggleRunOnStartup();
-  void populateOpenWithDropdown();
 };
 
 #endif  // CONFIGURATIONDIALOG_H

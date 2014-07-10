@@ -174,40 +174,6 @@ void ConfigurationDialog::toggleRunOnStartup()
     }
 }
 
-void ConfigurationDialog::populateOpenWithDropdown()
-{
-    // editor default values
-    QStringList editors = (QStringList() << "editor" << "Wordpad");
-
-    QStringList knownEditorsLinkList;
-    knownEditorsLinkList << "Notepad++.lnk" << "UltraEdit.lnk" << "Notepad2.lnk" << "Sublime Text 2.lnk";
-
-    //QStringList knownEditorsExeList;
-    //knownEditorsExeList << "notepad++.exe" << "ultraedit.exe" << "notepad2.exe" << "sublime_text.exe";
-
-    //knownFilesList << "C:\Program Files\TortoiseGit\bin\notepad2.exe"
-
-    QDirIterator dirIt("c:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs", QDirIterator::Subdirectories);
-    while (dirIt.hasNext()) {
-        dirIt.next();
-        QFileInfo file = QFileInfo(dirIt.filePath());
-        if (file.isFile() && file.suffix() == "lnk" && knownEditorsLinkList.contains(dirIt.fileName())) {
-           editors << file.baseName();
-        }
-    }
-
-    //ui->comboBox_openWith->addItems(editors);
-
-    //qDebug() << //ui->comboBox_openWith->itemData(ui->comboBox_openWith->currentIndex());
-
-    // set value from config
-    //combo->setCurrentIndex(combo->findData(currValue));
-    //connect(this , SIGNAL(currentIndexChanged(int)),this,SLOT(handleSelectionChanged(int)));
-
-    //QStringList fileName = QFileDialog::getOpenFileNames(this, tr("Open File"),"/path/to/file/",tr("Mp3 Files (*.mp3)"));
-    //ui->listWidget->addItems(fileName);
-}
-
 void ConfigurationDialog::fileOpen()
 {
     QString programFilesPath(getenv("PROGRAMFILES"));
