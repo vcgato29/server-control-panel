@@ -123,11 +123,13 @@ private:
 
     QString getVersion(QString server);
 
+    void getLogfile(QString key);
+
 private slots:
 
      // when tray icon is activated
      void iconActivated(QSystemTrayIcon::ActivationReason reason);
-     void execEditor(QUrl logfile);
+     //void execEditor(QUrl logfile);
 
 protected:
     void closeEvent(QCloseEvent *event);

@@ -101,6 +101,9 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // set window size fixed
+    //qDebug() << ui->ToolsGroupBox->geometry();
+    //qDebug() << ui->ToolsGroupBox->frameGeometry();
+    //qDebug() << height();
     setFixedSize(width(), height());
 }
 
@@ -582,13 +585,10 @@ void MainWindow::openProjectFolderInBrowser()
 
 void MainWindow::openProjectFolderInExplorer()
 {
-    if(QDir(getProjectFolder()).exists())
-    {
+    if(QDir(getProjectFolder()).exists()) {
         // exec explorer with path to projects
         QDesktopServices::openUrl(QUrl("file:///" + getProjectFolder(), QUrl::TolerantMode));
-    }
-    else
-    {
+    } else {
         QMessageBox::warning(this, tr("Warning"), tr("The projects folder was not found."));
     }
 }
@@ -642,11 +642,11 @@ void MainWindow::openLog()
     QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
     QString logfile = "";
 
-    if(obj == "pushButton_ShowLog_Nginx")      { logfile = logs + "/access.log";}
-    if(obj == "pushButton_ShowErrorLog_Nginx") { logfile = logs + "/error.log";}
-    if(obj == "pushButton_ShowLog_PHP")        { logfile = logs + "/php_error.log";}
-    if(obj == "pushButton_ShowLog_MariaDb")    { logfile = logs + "/mariadb_error.log";}
-    if(obj == "pushButton_ShowLog_MongoDb")    { logfile = logs + "/mongodb.log";}
+    if(obj == "pushButton_ShowLog_Nginx")        { logfile = logs + "/access.log";}
+    if(obj == "pushButton_ShowErrorLog_Nginx")   { logfile = logs + "/error.log";}
+    if(obj == "pushButton_ShowErrorLog_PHP")     { logfile = logs + "/php_error.log";}
+    if(obj == "pushButton_ShowErrorLog_MariaDb") { logfile = logs + "/mariadb_error.log";}
+    if(obj == "pushButton_ShowLog_MongoDb")      { logfile = logs + "/mongodb.log";}
 
     if(!QFile().exists(logfile)) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
@@ -657,14 +657,14 @@ void MainWindow::openLog()
        QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
     }
 }
-
+/*
 void MainWindow::execEditor(QUrl logfile)
 {
     QProcess *process = new QProcess(this);
     QString program = settings->get("global/editor").toString();
     qDebug() << logfile.toLocalFile();
     process->start(program, QStringList() << logfile.toLocalFile());
-}
+}*/
 
 void MainWindow::openHelpDialog()
 {
@@ -893,60 +893,60 @@ void MainWindow::setDefaultSettings()
     // if the INI exists, do not set the defaults but read them from file
     if(false == QFile(settings->file()).exists()) {
 
-    // The MainWindow position. Default value is screen center.
-    //QPoint center = QApplication::desktop()->screenGeometry().center();
-    //settings->set("mainwindow/position", center);
+        // The MainWindow position. Default value is screen center.
+        //QPoint center = QApplication::desktop()->screenGeometry().center();
+        //settings->set("mainwindow/position", center);
 
-    //QMap<QString, QVariant> languages;
-    //languages[str::sLanguageEnglishTitle] = str::sLanguageEnglishKey;
-    //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
-    //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
+        //QMap<QString, QVariant> languages;
+        //languages[str::sLanguageEnglishTitle] = str::sLanguageEnglishKey;
+        //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
+        //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
-    settings->set("global/runonstartup",             0);
-    settings->set("global/autostartdaemons",         0);
-    settings->set("global/startminimized",           0);
-    settings->set("global/stopdaemonsonquit",        1);
-    settings->set("global/clearlogsonstart",         0);
-    settings->set("global/donotaskagainclosetotray", 0);
-    settings->set("global/editor",                   "notepad.exe");
-    //settings->set("global/showballooninfos",         0);
+        settings->set("global/runonstartup",             0);
+        settings->set("global/autostartdaemons",         0);
+        settings->set("global/startminimized",           0);
+        settings->set("global/stopdaemonsonquit",        1);
+        settings->set("global/clearlogsonstart",         0);
+        settings->set("global/donotaskagainclosetotray", 0);
+        settings->set("global/editor",                   "notepad.exe");
+        //settings->set("global/showballooninfos",         0);
 
-    settings->set("paths/logs",             "./logs");
-    settings->set("paths/php",              "./bin/php");
-    settings->set("paths/mongodb",          "./bin/mongodb/bin");
-    settings->set("paths/memcached",        "./bin/memcached");
-    settings->set("paths/mariadb",          "./bin/mariadb/bin");
-    settings->set("paths/nginx",            "./bin/nginx");
-    settings->set("paths/postgresql",       "./bin/pgsql/bin");
+        settings->set("paths/logs",             "./logs");
+        settings->set("paths/php",              "./bin/php");
+        settings->set("paths/nginx",            "./bin/nginx");
+        settings->set("paths/mariadb",          "./bin/mariadb/bin");
+        settings->set("paths/mongodb",          "./bin/mongodb/bin");
+        settings->set("paths/memcached",        "./bin/memcached");
+        settings->set("paths/postgresql",       "./bin/pgsql/bin");
 
-    settings->set("autostart/nginx",        1);
-    settings->set("autostart/php",          1);
-    settings->set("autostart/mariadb",      1);
-    settings->set("autostart/mongodb",      0);
-    settings->set("autostart/memcached",    0);
-    settings->set("autostart/postgresql",   0);
+        settings->set("autostart/nginx",        1);
+        settings->set("autostart/php",          1);
+        settings->set("autostart/mariadb",      1);
+        settings->set("autostart/mongodb",      0);
+        settings->set("autostart/memcached",    0);
+        settings->set("autostart/postgresql",   0);
 
-    settings->set("php/config",             "./bin/php/php.ini");
-    settings->set("php/fastcgi-host",       "localhost");
-    settings->set("php/fastcgi-port",       9100);
+        settings->set("php/config",             "./bin/php/php.ini");
+        settings->set("php/fastcgi-host",       "localhost");
+        settings->set("php/fastcgi-port",       9100);
 
-    settings->set("nginx/config",           "./bin/nginx/conf/nginx.conf");
-    settings->set("nginx/sites",            "./www");
-    settings->set("nginx/port",             80);
+        settings->set("nginx/config",           "./bin/nginx/conf/nginx.conf");
+        settings->set("nginx/sites",            "./www");
+        settings->set("nginx/port",             80);
 
-    settings->set("mariadb/config",         "./bin/mariadb/my.ini");
-    settings->set("mariadb/port",           3306);
-    settings->set("mariadb/password",       "");
+        settings->set("mariadb/config",         "./bin/mariadb/my.ini");
+        settings->set("mariadb/port",           3306);
+        settings->set("mariadb/password",       "");
 
-    settings->set("memcached/port",         11211);
+        settings->set("memcached/port",         11211);
 
-    settings->set("mongodb/config",         "./bin/mongodb/mongodb.conf");
-    settings->set("mongodb/port",           27015);
+        settings->set("mongodb/config",         "./bin/mongodb/mongodb.conf");
+        settings->set("mongodb/port",           27015);
 
-    //settings->set("updater/mode",         "manual");
-    //settings->set("updater/interval",     "1w");
+        //settings->set("updater/mode",         "manual");
+        //settings->set("updater/interval",     "1w");
 
-    qDebug() << "[Settings] Loaded Defaults...\n";
+        qDebug() << "[Settings] Loaded Defaults...\n";
     }
 }
 
@@ -1037,10 +1037,7 @@ void MainWindow::renderInstalledDaemons()
 
     int rowCounter = 2;
 
-    //foreach(QString server, servers->getListOfServerNames())
-    foreach(QString server, servers->getListOfServerNamesInstalled())
-    {
-        QByteArray serverName = this->servers->getCamelCasedServerName(server).toLocal8Bit();
+    foreach(Server *server, servers->servers()) {
 
         // The DaemonsGrid has the following columns:
         //
@@ -1048,7 +1045,7 @@ void MainWindow::renderInstalledDaemons()
 
         // Status
         QLabel* labelStatus = new QLabel();
-        labelStatus->setObjectName(QString("label_" + serverName + "_Status"));
+        labelStatus->setObjectName(QString("label_" + server->name + "_Status"));
         labelStatus->setPixmap(QPixmap(QString::fromUtf8(":/status_run_big")));
         labelStatus->setAlignment(Qt::AlignCenter);
         labelStatus->setEnabled(false); // inital state of status leds is disabled
@@ -1056,14 +1053,14 @@ void MainWindow::renderInstalledDaemons()
 
         // Port
         QLabel* labelPort = new QLabel();
-        labelPort->setObjectName(QString("label_"+server+"_Port"));
-        labelPort->setText( settings->get(server+"/port").toString() );
+        labelPort->setObjectName(QString("label_"+server->name+"_Port"));
+        labelPort->setText( settings->get(server->lowercaseName+"/port").toString() );
         labelPort->setAlignment(Qt::AlignCenter);
         DaemonsGridLayout->addWidget(labelPort, rowCounter, 1);
 
         // Daemon
         QLabel* labelDaemon = new QLabel();
-        labelDaemon->setObjectName(QString("label_" + serverName + "_Name"));
+        labelDaemon->setObjectName(QString("label_" + server->name + "_Name"));
         labelDaemon->setAlignment(Qt::AlignCenter);
         labelDaemon->setText(QApplication::translate(
             "MainWindow",
@@ -1071,60 +1068,74 @@ void MainWindow::renderInstalledDaemons()
             "<html><head><meta name=\"qrichtext\" content=\"1\" />\n"
             "<style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head>\n"
             "<body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"           
-            "<span style=\" font-size:10pt; font-weight:600;\">" + serverName + "</span></body></html>", 0));
+            "<span style=\" font-size:10pt; font-weight:600;\">" + server->name.toLocal8Bit() + "</span></body></html>", 0));
         DaemonsGridLayout->addWidget(labelDaemon, rowCounter, 2);
 
         // Version
         QLabel* labelVersion = new QLabel();
-        labelVersion->setObjectName(QString("label_" + serverName + "_Version"));
+        labelVersion->setObjectName(QString("label_" + server->name + "_Version"));
         labelVersion->setAlignment(Qt::AlignCenter);
-        labelVersion->setText(getVersion(server));
+        labelVersion->setText(getVersion(server->lowercaseName));
         DaemonsGridLayout->addWidget(labelVersion, rowCounter, 3);
 
         // Config
         QPushButton* pushButton_Configure = new QPushButton();
-        pushButton_Configure->setObjectName(QString("pushButton_Configure_"+ serverName +""));
+        pushButton_Configure->setObjectName(QString("pushButton_Configure_"+ server->name +""));
         pushButton_Configure->setIcon(iconConfig);
         pushButton_Configure->setFlat(true);
         DaemonsGridLayout->addWidget(pushButton_Configure, rowCounter, 4);
 
         // Logs
-        QPushButton* pushButton_ShowLog = new QPushButton();
-        pushButton_ShowLog->setObjectName(QString("pushButton_ShowLog_" + serverName + ""));
-        pushButton_ShowLog->setIcon(iconLog);
-        pushButton_ShowLog->setFlat(true);
-        pushButton_ShowLog->setToolTip(QApplication::translate(
-            "MainWindow", "Open "+ serverName +" Log", 0)
-        );        
-        DaemonsGridLayout->addWidget(pushButton_ShowLog, rowCounter, 5);
-        connect(pushButton_ShowLog, SIGNAL(clicked()), this, SLOT(openLog()));
+        foreach (QString logfile, server->logFiles)
+        {
+            if(!logfile.isEmpty()) {
+                // normal log
+                if(!logfile.contains("error"))
+                {
+                    QPushButton* pushButton_ShowLog = new QPushButton();
+                    pushButton_ShowLog->setObjectName(QString("pushButton_ShowLog_" + server->name + ""));
+                    pushButton_ShowLog->setIcon(iconLog);
+                    pushButton_ShowLog->setFlat(true);
+                    pushButton_ShowLog->setToolTip(QApplication::translate(
+                        "MainWindow", "Open "+ server->name.toLocal8Bit() +" Log", 0)
+                    );
+                    DaemonsGridLayout->addWidget(pushButton_ShowLog, rowCounter, 5);
+                    connect(pushButton_ShowLog, SIGNAL(clicked()), this, SLOT(openLog()));
+                }
 
-        QPushButton* pushButton_ShowErrorLog = new QPushButton();
-        pushButton_ShowErrorLog->setObjectName(QString("pushButton_ShowErrorLog_"+ serverName +""));
-        pushButton_ShowErrorLog->setIcon(iconErrorLog);
-        pushButton_ShowErrorLog->setFlat(true);
-        pushButton_ShowErrorLog->setToolTip(QApplication::translate(
-            "MainWindow", "Open "+ serverName +" Error Log", 0)
-        );
-        DaemonsGridLayout->addWidget(pushButton_ShowErrorLog, rowCounter, 6);
+                // error log
+                if(logfile.contains("error"))
+                {
+                    QPushButton* pushButton_ShowErrorLog = new QPushButton();
+                    pushButton_ShowErrorLog->setObjectName(QString("pushButton_ShowErrorLog_"+ server->name +""));
+                    pushButton_ShowErrorLog->setIcon(iconErrorLog);
+                    pushButton_ShowErrorLog->setFlat(true);
+                    pushButton_ShowErrorLog->setToolTip(QApplication::translate(
+                        "MainWindow", "Open "+ server->name.toLocal8Bit() +" Error Log", 0)
+                    );
+                    DaemonsGridLayout->addWidget(pushButton_ShowErrorLog, rowCounter, 6);
+                    connect(pushButton_ShowErrorLog, SIGNAL(clicked()), this, SLOT(openLog()));
+                }
+            }
+        }
 
         // Actions
         QPushButton* pushButton_Stop = new QPushButton();
-        pushButton_Stop->setObjectName(QString("pushButton_Stop_"+ serverName +""));
+        pushButton_Stop->setObjectName(QString("pushButton_Stop_"+ server->name +""));
 
         pushButton_Stop->setIcon(iconStop);
         pushButton_Stop->setFlat(true);
         pushButton_Stop->setToolTip(QApplication::translate(
-            "MainWindow", "Stop "+ serverName +"", 0)
+            "MainWindow", "Stop "+ server->name.toLocal8Bit() +"", 0)
         );
         DaemonsGridLayout->addWidget(pushButton_Stop, rowCounter, 7);
 
         QPushButton* pushButton_Start = new QPushButton();
-        pushButton_Start->setObjectName(QString("pushButton_Start_"+ serverName +""));
+        pushButton_Start->setObjectName(QString("pushButton_Start_"+ server->name +""));
         pushButton_Start->setIcon(iconStart);
         pushButton_Start->setFlat(true);
         pushButton_Start->setToolTip(QApplication::translate(
-            "MainWindow", "Start "+ serverName +"", 0)
+            "MainWindow", "Start "+ server->name.toLocal8Bit() +"", 0)
         );
         DaemonsGridLayout->addWidget(pushButton_Start, rowCounter, 8);
 
