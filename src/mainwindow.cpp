@@ -657,14 +657,14 @@ void MainWindow::openLog()
        QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
     }
 }
-/*
+
 void MainWindow::execEditor(QUrl logfile)
 {
     QProcess *process = new QProcess(this);
     QString program = settings->get("global/editor").toString();
     qDebug() << logfile.toLocalFile();
     process->start(program, QStringList() << logfile.toLocalFile());
-}*/
+}
 
 void MainWindow::openHelpDialog()
 {

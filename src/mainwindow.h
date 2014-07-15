@@ -95,6 +95,8 @@ public slots:
 
     void quitApplication();
 
+    void execEditor(QUrl logfile);
+
 private:
     Ui::MainWindow *ui;
 
