@@ -1,6 +1,7 @@
 #include "servers.h"
 #include "settings.h"
 #include "tray.h"
+#include "mainwindow.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -229,6 +230,8 @@ void Servers::startNginx()
 
     clearLogFile("Nginx");
 
+    updateVersion("Nginx");
+
     // http://wiki.nginx.org/CommandLine - start daemon
     QString const startNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
@@ -285,6 +288,8 @@ void Servers::startPostgreSQL()
 
     clearLogFile("PostgreSQL");
 
+    updateVersion("PostgreSQL");
+
     // start daemon
     QString const startCmd = getServer("Postgresql")->exe
             + " -D " + qApp->applicationDirPath() + "/bin/pgsql/data"
@@ -328,6 +333,8 @@ void Servers::startPHP()
     }
 
     clearLogFile("PHP");
+
+    updateVersion("PHP");
 
     // start daemon
     QString const startPHP = getServer("PHP")->exe
@@ -393,6 +400,8 @@ void Servers::startMariaDb()
 
     clearLogFile("MariaDb");
 
+    updateVersion("MariaDb");
+
     // start
     QString const startMariaDb = getServer("MariaDb")->exe;
 
@@ -439,6 +448,8 @@ void Servers::startMongoDb()
     }
 
     clearLogFile("MongoDb");
+
+    updateVersion("MongoDb");
 
     // if not installed, skip
     if(!QFile().exists(getServer("MongoDb")->exe)) {
@@ -512,6 +523,8 @@ void Servers::startMemcached()
         QMessageBox::warning(0, tr("Memcached"), tr("Memcached already running."));
         return;
     }
+
+    updateVersion("Memcached");
 
     QString const memcachedStartCommand = getServer("Memcached")->exe;
 
@@ -631,4 +644,9 @@ void Servers::updateProcessStates(QProcess::ProcessState state)
     }
 
     return;
+}
+
+void Servers::updateVersion(QString server) {
+    MainWindow *mw = qobject_cast<MainWindow*>(parent());
+    mw->updateVersion(server);
 }

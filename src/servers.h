@@ -89,6 +89,8 @@ public slots:
         void stopPostgreSQL();
         void restartPostgreSQL();
 
+        void updateVersion(QString server);
+
 signals:
         // following signal is connected to MainWindow::setLabelStatusActive()
         void signalSetLabelStatusActive(QString label, bool enabled);

@@ -57,6 +57,7 @@ public:
     QString getPostgresqlVersion();
 
     QString parseVersionNumber(QString stringWithVersion);
+    void updateVersion(QString server);
 
 public slots:
 

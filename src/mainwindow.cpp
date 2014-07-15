@@ -1170,3 +1170,10 @@ QString MainWindow::getVersion(QString server)
 
     return "The function for fetching the version for " + s + "is not implemented, yet.";
 }
+
+void MainWindow::updateVersion(QString server) {
+    QString version = getVersion(server);
+    qDebug() << "[" + server + "] Updating Version Number Display " + version;
+    QLabel* label = qApp->activeWindow()->findChild<QLabel *>("label_" + server + "_Version");
+    label->setText(version);
+}
