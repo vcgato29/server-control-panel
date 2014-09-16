@@ -266,7 +266,7 @@ void Servers::reloadNginx()
     qDebug() << "[Nginx] Reloading...\n" << reloadNginx;
 
     process->start(reloadNginx);
-    process->waitForFinished(1500);
+    process->waitForFinished(2000);
 }
 
 void Servers::restartNginx()
@@ -378,7 +378,7 @@ void Servers::stopPHP()
 
     // kill PHP daemon
     process->kill();
-    process->waitForFinished(1500);
+    process->waitForFinished(2000);
 }
 
 void Servers::restartPHP()
@@ -427,7 +427,7 @@ void Servers::stopMariaDb()
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
     process->kill();
-    process->waitForFinished(1500);
+    process->waitForFinished(2000);
 }
 
 void Servers::restartMariaDb()
@@ -441,6 +441,12 @@ void Servers::restartMariaDb()
  */
 void Servers::startMongoDb()
 {
+    // if not installed, skip
+    if(!QFile().exists(getServer("MongoDb")->exe)) {
+        qDebug() << "[MongoDb] Is not installed. Skipping start command.";
+        return;
+    }
+
     // already running
     if(getProcessState("MongoDb") != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("MongoDb"), tr("MongoDb already running."));
@@ -450,12 +456,6 @@ void Servers::startMongoDb()
     clearLogFile("MongoDb");
 
     updateVersion("MongoDb");
-
-    // if not installed, skip
-    if(!QFile().exists(getServer("MongoDb")->exe)) {
-        qDebug() << "[MongoDb] Is not installed. Skipping start command.";
-        return;
-    }
 
     // MongoDb doesn't start, when data dir is missing...
     QString const mongoDbDataDir = qApp->applicationDirPath() + "/bin/mongodb/data/db";
@@ -486,15 +486,17 @@ void Servers::startMongoDb()
 
 void Servers::stopMongoDb()
 {
+    QString mongoExe = qApp->applicationDirPath() + "/bin/mongodb/bin/mongo.exe";
+
     // if not installed, skip
-    if(!QFile().exists(getServer("MongoDb")->exe)) {
+    if(!QFile().exists(mongoExe)) {
         qDebug() << "[MongoDb] Is not installed. Skipping stop command.";
         return;
     }
 
     // build mongo stop command based on CLI evaluation
     // mongodb is stopped via "mongo.exe --eval", not "mongodb.exe"
-    QString const mongoStopCommand = getServer("MongoDb")->exe
+    QString const mongoStopCommand = mongoExe 
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
     qDebug() << "[MongoDb] Stopping...\n" << mongoStopCommand;
@@ -503,8 +505,7 @@ void Servers::stopMongoDb()
     disconnect(getProcess("MongoDb"), SIGNAL(error(QProcess::ProcessError)),
                    this, SLOT(showProcessError(QProcess::ProcessError)));
 
-    getProcess("MongoDb")->execute(mongoStopCommand);
-    getProcess("MongoDb")->waitForFinished(1500);
+    QProcess::execute(mongoStopCommand);
 }
 
 void Servers::restartMongoDb()
@@ -518,6 +519,14 @@ void Servers::restartMongoDb()
  */
 void Servers::startMemcached()
 {
+    QString const memcachedStartCommand = getServer("Memcached")->exe;
+
+    // if not installed, skip
+    if(!QFile().exists(memcachedStartCommand)) {
+        qDebug() << "[Memcached] Is not installed. Skipping start command.";
+        return;
+    }
+
     // already running
     if(getProcessState("Memcached") != QProcess::NotRunning){
         QMessageBox::warning(0, tr("Memcached"), tr("Memcached already running."));
@@ -526,13 +535,6 @@ void Servers::startMemcached()
 
     updateVersion("Memcached");
 
-    QString const memcachedStartCommand = getServer("Memcached")->exe;
-
-    // if not installed, skip
-    if(!QFile().exists(memcachedStartCommand)) {
-        qDebug() << "[Memcached] Is not installed. Skipping start command.";
-        return;
-    }
 
     // start
     qDebug() << "[Memcached] Starting...\n" << memcachedStartCommand;
@@ -557,7 +559,7 @@ void Servers::stopMemcached()
     qDebug() << "[Memcached] Stopping...\n";
 
     process->kill();
-    process->waitForFinished(1500);
+    process->waitForFinished(2000);
 }
 
 void Servers::restartMemcached()
