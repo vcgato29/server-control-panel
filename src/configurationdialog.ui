@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>361</height>
+    <width>340</width>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,8 +20,8 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>320</y>
-     <width>361</width>
+     <y>340</y>
+     <width>331</width>
      <height>41</height>
     </rect>
    </property>
@@ -35,252 +35,273 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QWidget" name="formLayoutWidget">
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>90</y>
-     <width>91</width>
-     <height>101</height>
+     <x>10</x>
+     <y>10</y>
+     <width>321</width>
+     <height>331</height>
     </rect>
    </property>
-   <layout class="QFormLayout" name="autostartDaemonsFormLayout">
-    <property name="fieldGrowthPolicy">
-     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-    </property>
-    <property name="labelAlignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-    <property name="formAlignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-    <property name="verticalSpacing">
-     <number>6</number>
-    </property>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="checkbox_autostartPHP"/>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="phpLabel">
-      <property name="text">
-       <string>PHP</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QCheckBox" name="checkbox_autostartNginx"/>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="nginxLabel">
-      <property name="text">
-       <string>Nginx</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QCheckBox" name="checkbox_autostartMariaDb"/>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLabel" name="mariaDbLabel">
-      <property name="text">
-       <string>MariaDb</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QCheckBox" name="checkbox_autostartMongoDb"/>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="mongoDbLabel">
-      <property name="text">
-       <string>MongoDb</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QCheckBox" name="checkbox_autostartMemcached"/>
-    </item>
-    <item row="5" column="1">
-     <widget class="QLabel" name="memcachedLabel">
-      <property name="text">
-       <string>Memcached</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget1">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>268</width>
-     <height>65</height>
-    </rect>
+   <property name="currentIndex">
+    <number>0</number>
    </property>
-   <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QCheckBox" name="checkbox_runOnStartUp">
-      <property name="text">
-       <string>Start WPN-XM SCP with Windows?</string>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Configuration</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>268</width>
+       <height>65</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkbox_runOnStartUp">
+        <property name="text">
+         <string>Start WPN-XM SCP with Windows?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartDaemons">
+        <property name="text">
+         <string>Start these daemons, when starting WPN-XM SCP:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkbox_startMinimized">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Start minimized to Tray?</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="formLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>80</y>
+       <width>91</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="autostartDaemonsFormLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QCheckBox" name="checkbox_autostartDaemons">
-      <property name="text">
-       <string>Start these daemons, when starting WPN-XM SCP:</string>
+      <property name="labelAlignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="checkbox_startMinimized">
-      <property name="enabled">
-       <bool>true</bool>
+      <property name="formAlignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
-      <property name="text">
-       <string>Start minimized to Tray?</string>
+      <property name="verticalSpacing">
+       <number>6</number>
       </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>200</y>
-     <width>281</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="QCheckBox" name="checkbox_clearLogsOnStart">
-      <property name="enabled">
-       <bool>true</bool>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartPHP"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="phpLabel">
+        <property name="text">
+         <string>PHP</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartNginx"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="nginxLabel">
+        <property name="text">
+         <string>Nginx</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartMariaDb"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="mariaDbLabel">
+        <property name="text">
+         <string>MariaDb</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartMongoDb"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="mongoDbLabel">
+        <property name="text">
+         <string>MongoDb</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartMemcached"/>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="memcachedLabel">
+        <property name="text">
+         <string>Memcached</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>281</width>
+       <height>42</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkbox_clearLogsOnStart">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Clear daemon logs, everytime daemon starts?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkbox_stopDaemonsOnQuit">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Stop all daemons on Quit?</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>240</y>
+       <width>298</width>
+       <height>53</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" rowminimumheight="23,23">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
       </property>
-      <property name="text">
-       <string>Clear daemon logs, everytime daemon starts?</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="checkbox_stopDaemonsOnQuit">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string>Stop all daemons on Quit?</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget3">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>250</y>
-     <width>298</width>
-     <height>53</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout" rowminimumheight="23,23">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetFixedSize</enum>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="spacing">
-     <number>5</number>
-    </property>
-    <item row="1" column="1">
-     <widget class="QToolButton" name="toolButton_SelectEditor">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>23</height>
-       </size>
-      </property>
-      <property name="baseSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Select Editor</string>
-      </property>
-      <property name="toolButtonStyle">
-       <enum>Qt::ToolButtonTextOnly</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QToolButton" name="toolButton_ResetEditor">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>23</height>
-       </size>
-      </property>
-      <property name="sizeIncrement">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="baseSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Reset</string>
-      </property>
-      <property name="toolButtonStyle">
-       <enum>Qt::ToolButtonTextOnly</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLineEdit" name="lineEdit_SelectedEditor"/>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_openWith">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Open files with the following editor:</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-      </property>
-      <property name="indent">
+      <property name="topMargin">
        <number>0</number>
       </property>
-      <property name="textInteractionFlags">
-       <set>Qt::NoTextInteraction</set>
+      <property name="spacing">
+       <number>5</number>
       </property>
-     </widget>
-    </item>
-   </layout>
+      <item row="1" column="1">
+       <widget class="QToolButton" name="toolButton_SelectEditor">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Select Editor</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QToolButton" name="toolButton_ResetEditor">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Reset</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="lineEdit_SelectedEditor"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_openWith">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Open files with the following editor:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+        <property name="indent">
+         <number>0</number>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
   </widget>
  </widget>
  <resources/>

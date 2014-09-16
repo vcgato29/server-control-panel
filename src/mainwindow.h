@@ -34,6 +34,7 @@ class QCloseEvent;
 #include <QAction>
 #include <QLayoutItem>
 #include <QGridLayout>
+#include <QJsonDocument>
 
 namespace Ui {
     class MainWindow;
@@ -127,6 +128,9 @@ private:
     QString getVersion(QString server);
 
     void getLogfile(QString key);
+
+    void saveJson(QJsonDocument document, QString fileName);
+    QJsonDocument loadJson(QString fileName);
 
 private slots:
 

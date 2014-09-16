@@ -97,7 +97,8 @@ static {                                      # everything below takes effect wi
     DEFINES += STATIC
     win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
     QMAKE_LFLAGS += -static -static-libgcc
-    QMAKE_CXXFLAGS += -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
+    # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+    QMAKE_CXXFLAGS += -O3 -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
 }
 
 # Copy Dependencies to Build Folder

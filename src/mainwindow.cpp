@@ -1142,20 +1142,36 @@ void MainWindow::renderInstalledDaemons()
         rowCounter++;
     }
 
-    // lets get the height of the DaemonsGridLayout to move the following element
+    /**
+     * DaemonsGridLayout Size depends on installed Components.
+     * So the BottomWidget has to move down (y + height of DaemonsGridLayout + margin)
+     * The RightSideWidget moves up, if there are only 3-4 elements,
+     * the "Webinterface" PushButton will be on par with the Labels.
+     * If there are more then 4 elements, the "webinterface" PushButton
+     * is on par with the first daemon.
+     */
 
     QRect fgeo = DaemonStatusGroupBox->frameGeometry();
     QSize size = DaemonStatusGroupBox->sizeHint();
 
-    // (top left corner y) + (dynamic height y) + 10
-    int newToolsGroupBoxY = fgeo.y() + size.height() + 10;
+    // (top left corner y) + (dynamic height y) + 15
+    int bottomWidgetY = fgeo.y() + size.height() + 15;
 
-    QRect geo = ui->AllDaemonsStartStopGroupBox->geometry();
+    QRect geoBottomWidget = ui->BottomWidget->geometry();
+    QRect geoRightWidget = ui->RightSideWidget->geometry();
 
-    if(geo.y() < newToolsGroupBoxY) {
-        ui->ToolsGroupBox->move(QPoint(ui->ToolsGroupBox->x(), newToolsGroupBoxY));
-        ui->OpenProjectFolderGroupBox->move(QPoint(ui->OpenProjectFolderGroupBox->x(), newToolsGroupBoxY));
+    if(geoBottomWidget.y() > bottomWidgetY) {
+        // 3 or 4 elements
+        ui->BottomWidget->move(QPoint(geoBottomWidget.x(), geoBottomWidget.y() - 30));
+
+        ui->RightSideWidget->move(geoRightWidget.x(), geoRightWidget.y() - 20);
+        this->resize(QSize(this->geometry().width(), this->geometry().height() - 30));
+    } else {
+        // more then 4 elements
+        ui->BottomWidget->move(QPoint(geoBottomWidget.x(), geoBottomWidget.y() + 30));
+        this->resize(QSize(this->geometry().width(), bottomWidgetY + geoBottomWidget.height() - 20));
     }
+
 }
 
 QString MainWindow::getVersion(QString server)
@@ -1176,4 +1192,16 @@ void MainWindow::updateVersion(QString server) {
     qDebug() << "[" + server + "] Updating Version Number Display " + version;
     QLabel* label = qApp->activeWindow()->findChild<QLabel *>("label_" + server + "_Version");
     label->setText(version);
+}
+
+QJsonDocument MainWindow::loadJson(QString fileName) {
+    QFile jsonFile(fileName);
+    jsonFile.open(QFile::ReadOnly);
+    return QJsonDocument().fromJson(jsonFile.readAll());
+}
+
+void MainWindow::saveJson(QJsonDocument document, QString fileName) {
+    QFile jsonFile(fileName);
+    jsonFile.open(QFile::WriteOnly);
+    jsonFile.write(document.toJson());
 }
