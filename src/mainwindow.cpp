@@ -570,7 +570,7 @@ void MainWindow::openToolWebgrind()
 
 void MainWindow::openToolAdminer()
 {
-    QDesktopServices::openUrl(QUrl("http://localhost/tools/adminer/"));
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/adminer/adminer.php"));
 }
 
 void MainWindow::openWebinterface()
