@@ -1151,27 +1151,26 @@ void MainWindow::renderInstalledDaemons()
      * is on par with the first daemon.
      */
 
-    QRect fgeo = DaemonStatusGroupBox->frameGeometry();
-    QSize size = DaemonStatusGroupBox->sizeHint();
+    QRect DaemonsBox = DaemonStatusGroupBox->frameGeometry();
+    QSize DaemonsSize = DaemonStatusGroupBox->sizeHint();
 
-    // (top left corner y) + (dynamic height y) + 15
-    int bottomWidgetY = fgeo.y() + size.height() + 15;
+    // (top left corner y) + (dynamic height y, based on rows for daemons)
+    int bottomWidgetY = DaemonsBox.y() + DaemonsSize.height();
 
-    QRect geoBottomWidget = ui->BottomWidget->geometry();
-    QRect geoRightWidget = ui->RightSideWidget->geometry();
+    QRect BottomWidgetGeo = ui->BottomWidget->geometry();
 
-    if(geoBottomWidget.y() > bottomWidgetY) {
-        // 3 or 4 elements
-        ui->BottomWidget->move(QPoint(geoBottomWidget.x(), geoBottomWidget.y() - 30));
-
-        ui->RightSideWidget->move(geoRightWidget.x(), geoRightWidget.y() - 20);
-        this->resize(QSize(this->geometry().width(), this->geometry().height() - 30));
+    if(BottomWidgetGeo.y() > bottomWidgetY) {
+        // 3 or 4 elements - move things from the bottom up
+        ui->BottomWidget->move(QPoint(BottomWidgetGeo.x(), bottomWidgetY + 10));
+        ui->ToolsGroupBox->move(QPoint(ui->ToolsGroupBox->x(), ui->ToolsGroupBox->y() - 10));
+        QRect RightWidgetGeo = ui->RightSideWidget->geometry();
+        ui->RightSideWidget->move(QPoint(RightWidgetGeo.x(), RightWidgetGeo.y() - 20));
+        this->resize(QSize(this->geometry().width(), bottomWidgetY + BottomWidgetGeo.height() + 20));
     } else {
-        // more then 4 elements
-        ui->BottomWidget->move(QPoint(geoBottomWidget.x(), geoBottomWidget.y() + 30));
-        this->resize(QSize(this->geometry().width(), bottomWidgetY + geoBottomWidget.height() - 20));
+        // more then 4 elements - auto-expand
+        ui->BottomWidget->move(QPoint(BottomWidgetGeo.x(), bottomWidgetY - 10));
+        this->resize(QSize(this->geometry().width(), bottomWidgetY + BottomWidgetGeo.height()));
     }
-
 }
 
 QString MainWindow::getVersion(QString server)
