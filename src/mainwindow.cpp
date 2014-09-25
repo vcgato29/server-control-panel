@@ -655,6 +655,8 @@ void MainWindow::openLog()
 
        // if no UrlHandler is set, this executes the OS-dependend scheme handler
        QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
+
+       QDesktopServices::unsetUrlHandler("file");
     }
 }
 
