@@ -31,7 +31,7 @@ QMAKE_TARGET_PRODUCT = WPN-XM Server Control Panel
 QMAKE_TARGET_DESCRIPTION = WPN-XM SCP Tray Application.
 QMAKE_TARGET_COPYRIGHT = Copyright (c) Jens-André Koch.
 
-CONFIG += qt console #warn-on #static
+CONFIG += qt console #c++11 #warn-on #static
 
 QT += core network widgets
 
