@@ -80,6 +80,7 @@ private:
   QCheckBox* checkbox_autostartPHP;
   QCheckBox* checkbox_autostartNginx;
   QCheckBox* checkbox_autostartMemcached;
+  QCheckBox* checkbox_autostartPostgreSQL;
 
   void readSettings();
   void writeSettings();

@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>340</width>
-    <height>380</height>
+    <height>379</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog { font: 12px; }</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
@@ -59,8 +62,8 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>268</width>
-       <height>65</height>
+       <width>269</width>
+       <height>68</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
@@ -95,8 +98,8 @@
       <rect>
        <x>30</x>
        <y>80</y>
-       <width>91</width>
-       <height>101</height>
+       <width>101</width>
+       <height>81</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="autostartDaemonsFormLayout">
@@ -112,50 +115,40 @@
       <property name="verticalSpacing">
        <number>6</number>
       </property>
-      <item row="1" column="0">
+      <item row="0" column="0">
        <widget class="QCheckBox" name="checkbox_autostartPHP"/>
       </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <widget class="QLabel" name="phpLabel">
         <property name="text">
          <string>PHP</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="1" column="0">
        <widget class="QCheckBox" name="checkbox_autostartNginx"/>
       </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <widget class="QLabel" name="nginxLabel">
         <property name="text">
          <string>Nginx</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="2" column="0">
        <widget class="QCheckBox" name="checkbox_autostartMariaDb"/>
       </item>
-      <item row="3" column="1">
+      <item row="2" column="1">
        <widget class="QLabel" name="mariaDbLabel">
         <property name="text">
          <string>MariaDb</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QCheckBox" name="checkbox_autostartMongoDb"/>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="mongoDbLabel">
-        <property name="text">
-         <string>MongoDb</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
+      <item row="3" column="0">
        <widget class="QCheckBox" name="checkbox_autostartMemcached"/>
       </item>
-      <item row="5" column="1">
+      <item row="3" column="1">
        <widget class="QLabel" name="memcachedLabel">
         <property name="text">
          <string>Memcached</string>
@@ -168,22 +161,12 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>190</y>
+       <y>170</y>
        <width>281</width>
-       <height>42</height>
+       <height>44</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkbox_clearLogsOnStart">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Clear daemon logs, everytime daemon starts?</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QCheckBox" name="checkbox_stopDaemonsOnQuit">
         <property name="enabled">
@@ -194,13 +177,23 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkbox_clearLogsOnStart">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Clear daemon logs, everytime daemon starts?</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QWidget" name="layoutWidget3">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>240</y>
+       <y>250</y>
        <width>298</width>
        <height>53</height>
       </rect>
@@ -301,6 +294,56 @@
       </item>
      </layout>
     </widget>
+    <widget class="QWidget" name="formLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>80</y>
+       <width>91</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="autostartDaemonsFormLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <property name="labelAlignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="formAlignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="verticalSpacing">
+       <number>6</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartMongoDb"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="mongoDbLabel">
+        <property name="text">
+         <string>MongoDb</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkbox_autostartPostgresql"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="postgreSQLLabel">
+        <property name="text">
+         <string>PostgreSQL</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <zorder>layoutWidget1</zorder>
+    <zorder>formLayoutWidget</zorder>
+    <zorder>layoutWidget2</zorder>
+    <zorder>layoutWidget3</zorder>
+    <zorder>formLayoutWidget_2</zorder>
+    <zorder>checkbox_clearLogsOnStart</zorder>
    </widget>
   </widget>
  </widget>
