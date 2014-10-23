@@ -53,9 +53,10 @@ int main(int argc, char * argv[])
 
     /*
      * On windows an application is either a GUI application or Console application.
-     * This is application is a console application. It's compiled with "CONFIG += CONSOLE".
+     * This application is a console application. It is compiled with "CONFIG += CONSOLE".
      * When the app is executed without command line args, it will start a console in GUI mode.
-     * We close this console immediately after starting the GUI.
+     *
+     * By calling FreeConsole(), we close this console immediately after starting the GUI.
      * That results in a short console flickering.
      * It's annoying - but feel free to contribute a better solution.
      * Rules: - one executable; - not embedded exe, - not the devenv.com solution
