@@ -3,7 +3,9 @@ WPN-XM Server Control Panel
 
 The WPN-XM Server Control Panel is a Tray Application written in Qt v5.2+.
 
-![WPN-XM Server Control Panel v0.6.0](https://pbs.twimg.com/media/Bb2YwQNCYAEtKM1.jpg)
+![WPN-XM Server Control Panel v0.8.0](https://cloud.githubusercontent.com/assets/85608/4353472/9dfe4d10-4233-11e4-96bd-939f82b82869.jpg)
+
+![WPN-XM Server Control Panel v0.8.0 - Main Application Window](https://cloud.githubusercontent.com/assets/85608/4353466/85a395c2-4233-11e4-9ff3-5d7d975e7396.jpg)
 
 ## Build Dependencies
 
