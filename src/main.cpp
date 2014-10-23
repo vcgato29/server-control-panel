@@ -51,6 +51,14 @@ int main(int argc, char * argv[])
     // else run as a normal QtGUI application
     QApplication app(argc, argv);
 
+    /**
+     * Assume the screen has a resolution of 96 DPI rather than using
+     * the OS-provided resolution. This will cause font rendering to
+     * be consistent in pixels-per-point across devices rather than
+     * defining 1 point as 1/72 inch.
+     */
+    QApplication::setAttribute(Qt::AA_Use96Dpi, true);
+
     /*
      * On windows an application is either a GUI application or Console application.
      * This application is a console application. It is compiled with "CONFIG += CONSOLE".
