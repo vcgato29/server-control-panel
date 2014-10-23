@@ -733,13 +733,10 @@ void MainWindow::checkAlreadyActiveDaemons()
 {
     checkPorts();
 
-    // Check list of active processes for
-    // apache, nginx, mysql, php-cgi, memcached
-    // and report, if processes are already running.
+    // Check active processes and report, if processes are already running.
     // We do this to avoid collisions.
-
-    // Provide a modal dialog with checkboxes for all running processes
-    // The user might then select the processes to Leave Running or Shutdown.
+    // A modal dialog with checkboxes for running processes is shown.
+    // The user might then select the processes to shutdown or continue.
 
     // fetch processes via tasklist stdout
     QProcess process;
@@ -957,6 +954,10 @@ void MainWindow::renderInstalledDaemons()
     QFont font1;
     font1.setBold(true);
     font1.setWeight(75);
+    font1.setPixelSize(11);
+
+    QFont fontNotBold = font1;
+    fontNotBold.setBold(false);
 
     QGroupBox *DaemonStatusGroupBox = new QGroupBox(ui->centralWidget);
     DaemonStatusGroupBox->setObjectName(QStringLiteral("DaemonStatusGroupBox"));
@@ -1058,19 +1059,15 @@ void MainWindow::renderInstalledDaemons()
         labelPort->setObjectName(QString("label_"+server->name+"_Port"));
         labelPort->setText( settings->get(server->lowercaseName+"/port").toString() );
         labelPort->setAlignment(Qt::AlignCenter);
+        labelPort->setFont(fontNotBold);
         DaemonsGridLayout->addWidget(labelPort, rowCounter, 1);
 
         // Daemon
         QLabel* labelDaemon = new QLabel();
         labelDaemon->setObjectName(QString("label_" + server->name + "_Name"));
         labelDaemon->setAlignment(Qt::AlignCenter);
-        labelDaemon->setText(QApplication::translate(
-            "MainWindow",
-            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-            "<html><head><meta name=\"qrichtext\" content=\"1\" />\n"
-            "<style type=\"text/css\">p, li { white-space: pre-wrap; }</style></head>\n"
-            "<body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"           
-            "<span style=\" font-size:10pt; font-weight:600;\">" + server->name.toLocal8Bit() + "</span></body></html>", 0));
+        labelDaemon->setText(QApplication::translate("MainWindow",
+            "<span style=\" font-family:'MS Shell Dlg 2'; font-size: 14px; font-weight: bold;\">" + server->name.toLocal8Bit() + "</span><", 0));
         DaemonsGridLayout->addWidget(labelDaemon, rowCounter, 2);
 
         // Version
@@ -1078,6 +1075,7 @@ void MainWindow::renderInstalledDaemons()
         labelVersion->setObjectName(QString("label_" + server->name + "_Version"));
         labelVersion->setAlignment(Qt::AlignCenter);
         labelVersion->setText(getVersion(server->lowercaseName));
+        labelVersion->setFont(fontNotBold);
         DaemonsGridLayout->addWidget(labelVersion, rowCounter, 3);
 
         // Config

@@ -20,7 +20,7 @@
    <string notr="true">WPN-XM Server Control Panel</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QPushButton { font: 11px; } QGroupBox { font: 11px; }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -207,10 +207,22 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>101</width>
          <height>26</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="toolTip">
@@ -257,6 +269,18 @@
       <height>161</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>101</width>
+      <height>161</height>
+     </size>
+    </property>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
@@ -281,6 +305,18 @@
         <property name="enabled">
          <bool>true</bool>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Open Webinterface in Browser.</string>
         </property>
@@ -291,12 +327,27 @@
          <iconset resource="resources/resources.qrc">
           <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
         </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_Configuration">
         <property name="enabled">
          <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
@@ -333,6 +384,18 @@
         <property name="enabled">
          <bool>true</bool>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Open the WPN-XM wiki help pages.</string>
         </property>
@@ -350,6 +413,18 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_About">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
         <property name="text">
          <string>About</string>
         </property>
@@ -363,6 +438,12 @@
        <widget class="QPushButton" name="pushButton_Close">
         <property name="enabled">
          <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="toolTip">
          <string>Close to tray.</string>
@@ -1067,7 +1148,7 @@
     padding: 3px;
     font: Arial;
     font-size: 12px;
-    font-weight: bold; 
+    font-weight: bold;
     padding-left: 5px;
     padding-right: 5px;
 }
@@ -1612,6 +1693,7 @@ QPushButton:pressed
        <font>
         <pointsize>-1</pointsize>
         <weight>75</weight>
+        <italic>false</italic>
         <bold>true</bold>
        </font>
       </property>
@@ -1654,14 +1736,12 @@ QPushButton:pressed
   <tabstop>pushButton_AllDaemons_Start</tabstop>
   <tabstop>pushButton_AllDaemons_Stop</tabstop>
   <tabstop>pushButton_Webinterface</tabstop>
-  <tabstop>pushButton_Configuration</tabstop>
   <tabstop>pushButton_Help</tabstop>
   <tabstop>pushButton_About</tabstop>
   <tabstop>pushButton_Close</tabstop>
   <tabstop>pushButton_Website</tabstop>
   <tabstop>pushButton_GoogleGroup</tabstop>
   <tabstop>pushButton_ReportBug</tabstop>
-  <tabstop>pushButton_Donate</tabstop>
   <tabstop>pushButton_tools_phpinfo</tabstop>
   <tabstop>pushButton_tools_phpmyadmin</tabstop>
   <tabstop>pushButton_tools_adminer</tabstop>
