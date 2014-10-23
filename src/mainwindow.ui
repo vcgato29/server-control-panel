@@ -1736,12 +1736,14 @@ QPushButton:pressed
   <tabstop>pushButton_AllDaemons_Start</tabstop>
   <tabstop>pushButton_AllDaemons_Stop</tabstop>
   <tabstop>pushButton_Webinterface</tabstop>
+  <tabstop>pushButton_Configuration</tabstop>
   <tabstop>pushButton_Help</tabstop>
   <tabstop>pushButton_About</tabstop>
   <tabstop>pushButton_Close</tabstop>
   <tabstop>pushButton_Website</tabstop>
   <tabstop>pushButton_GoogleGroup</tabstop>
   <tabstop>pushButton_ReportBug</tabstop>
+  <tabstop>pushButton_Donate</tabstop>
   <tabstop>pushButton_tools_phpinfo</tabstop>
   <tabstop>pushButton_tools_phpmyadmin</tabstop>
   <tabstop>pushButton_tools_adminer</tabstop>
