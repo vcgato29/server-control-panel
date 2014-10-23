@@ -28,6 +28,7 @@
 #include <QPainter>
 #include <QDateTime>
 #include <QPicture>
+#include <QScreen>
 
 SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
     QSplashScreen(pixmap, f)
@@ -41,7 +42,9 @@ SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
     int titleVersionVSpace      = 17;
     int titleCopyrightVSpace    = 35;
 
-    float fontFactor            = 1.0;
+    double physicalDPI = qApp->primaryScreen()->physicalDotsPerInch();
+    double scaleFactor = QString::number((physicalDPI / 160), 'f', 2 ).toDouble(); // scale factor normalized to 160 DPI
+    float fontFactor   = (((15 * 0.03937) * scaleFactor) + 0.5);
 
     // define texts
     QString titleText       = QString(QApplication::applicationName());
