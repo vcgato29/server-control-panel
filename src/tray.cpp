@@ -104,6 +104,7 @@ void Tray::createTrayMenu()
     // add all server submenus to the tray menu
     foreach(Server *server, servers->servers()) {
         trayMenu->addMenu(server->trayMenu);
+        qDebug() << "[" + server->name + "] was added to the TrayMenu.";
     }
 
     trayMenu->addSeparator();
