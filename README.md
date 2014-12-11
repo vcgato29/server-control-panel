@@ -19,19 +19,21 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 
 * Qt Online Installer
 
-  http://download.qt-project.org/official_releases/online_installers/qt-opensource-windows-x86-1.6.0-5-online.exe
+  http://download.qt-project.org/official_releases/online_installers/
 
-* Qt 5.3.x
+* Qt 5.4.x
 
-  http://download.qt-project.org/official_releases/qt/5.3/5.3.2/qt-opensource-windows-x86-mingw482_opengl-5.3.2.exe
+  http://download.qt-project.org/official_releases/qt/5.4/5.4.0/qt-opensource-windows-x86-mingw491_opengl-5.4.0.exe
 
 * Qt Creator
 
-  http://download.qt-project.org/official_releases/qtcreator/3.2/3.2.2/qt-creator-opensource-windows-x86-3.2.2.exe
+  http://download.qt-project.org/official_releases/qtcreator/3.3/3.3.0/qt-creator-opensource-windows-x86-3.3.0.exe
 
 ### Installation Steps and Requirements for Qt
 
-  http://qt-project.org/doc/qt-5/index.html
+  http://doc.qt.io/qt-5/windows-support.html
+  http://doc.qt.io/qt-5/windows-requirements.html
+  http://doc.qt.io/qt-5/index.html
 
 #### Add Qt folder to PATH
 
