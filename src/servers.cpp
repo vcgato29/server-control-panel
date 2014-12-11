@@ -64,7 +64,7 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 
         serverList << server;
 
-        qDebug() << "[" + serverName + "] was added to TrayMenu and ServersList.";
+        qDebug() << "[" + serverName + "] was added to ServersList.";
     }
 }
 
