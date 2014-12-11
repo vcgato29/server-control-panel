@@ -31,9 +31,9 @@ You should be able to find everything at http://qt-project.org/downloads or ftp:
 
 ### Installation Steps and Requirements for Qt
 
-  http://doc.qt.io/qt-5/windows-support.html
-  http://doc.qt.io/qt-5/windows-requirements.html
-  http://doc.qt.io/qt-5/index.html
+-  http://doc.qt.io/qt-5/windows-support.html
+-  http://doc.qt.io/qt-5/windows-requirements.html
+-  http://doc.qt.io/qt-5/index.html
 
 #### Add Qt folder to PATH
 
