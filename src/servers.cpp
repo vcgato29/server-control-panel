@@ -248,6 +248,12 @@ void Servers::startNginx()
 
 void Servers::stopNginx()
 {
+    // if not installed, skip
+    if(!QFile().exists(getServer("Nginx")->exe)) {
+        qDebug() << "[Nginx] Is not installed. Skipping stop command.";
+        return;
+    }
+
     // http://wiki.nginx.org/CommandLine - stop daemon
     QString const stopNginx = getServer("Nginx")->exe
             + " -p " + QDir::currentPath()
@@ -285,7 +291,7 @@ void Servers::restartNginx()
 void Servers::startPostgreSQL()
 {
     // already running
-    if(getProcessState("Postgresql") != QProcess::NotRunning) {
+    if(getProcessState("PostgreSQL") != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("PostgreSQL"), tr("PostgreSQL is already running."));
         return;
     }
@@ -295,14 +301,14 @@ void Servers::startPostgreSQL()
     updateVersion("PostgreSQL");
 
     // start daemon
-    QString const startCmd = getServer("Postgresql")->exe
+    QString const startCmd = getServer("PostgreSQL")->exe
             + " -D " + qApp->applicationDirPath() + "/bin/pgsql/data"
             + " -L " + qApp->applicationDirPath() + "/logs/postgresql.log"
             + " start";
 
     qDebug() << "[PostgreSQL] Starting...\n" << startCmd;
 
-    getProcess("Postgresql")->start(startCmd);
+    getProcess("PostgreSQL")->start(startCmd);
 }
 
 void Servers::stopPostgreSQL()
@@ -310,13 +316,13 @@ void Servers::stopPostgreSQL()
     qDebug() << "[PostgreSQL] Stopping...";
 
     // disconnect process monitoring, before crashing the process
-    disconnect(getProcess("Postgresql"), SIGNAL(error(QProcess::ProcessError)),
+    disconnect(getProcess("PostgreSQL"), SIGNAL(error(QProcess::ProcessError)),
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
-    QString stopCommand = getServer("Postgresql")->exe + " stop";
+    QString stopCommand = getServer("PostgreSQL")->exe + " stop";
 
-    getProcess("Postgresql")->execute(stopCommand);
-    getProcess("Postgresql")->waitForFinished(1500);
+    getProcess("PostgreSQL")->execute(stopCommand);
+    getProcess("PostgreSQL")->waitForFinished(1500);
 }
 
 void Servers::restartPostgreSQL()
@@ -490,17 +496,15 @@ void Servers::startMongoDb()
 
 void Servers::stopMongoDb()
 {
-    QString mongoExe = qApp->applicationDirPath() + "/bin/mongodb/bin/mongo.exe";
-
     // if not installed, skip
-    if(!QFile().exists(mongoExe)) {
+    if(!QFile().exists(getServer("MongoDb")->exe)) {
         qDebug() << "[MongoDb] Is not installed. Skipping stop command.";
         return;
     }
 
     // build mongo stop command based on CLI evaluation
     // mongodb is stopped via "mongo.exe --eval", not "mongodb.exe"
-    QString const mongoStopCommand = mongoExe 
+    QString const mongoStopCommand = getServer("MongoDb")->exe
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
     qDebug() << "[MongoDb] Stopping...\n" << mongoStopCommand;
