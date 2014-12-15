@@ -333,16 +333,15 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
     QList<QPushButton *> allPushButtonsButtons = ui->ToolsGroupBox->findChildren<QPushButton *>();
 
     // set all PushButtons invisible
-    for(int i = 0; i < allPushButtonsButtons.size(); ++i)
-    {
-        allPushButtonsButtons[i]->setDisabled(true);
+    for(int i = 0; i < allPushButtonsButtons.size(); ++i) {
+        allPushButtonsButtons[i]->setVisible(false);
     }
 
     // if tool directory exists, show pushButtons in the Tools Groupbox
-    if(QDir(getProjectFolder() + "/tools/webinterface").exists()) { ui->pushButton_tools_phpinfo->setDisabled(false); }
-    if(QDir(getProjectFolder() + "/tools/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setDisabled(false); }
-    if(QDir(getProjectFolder() + "/tools/adminer").exists())      { ui->pushButton_tools_adminer->setDisabled(false); }
-    if(QDir(getProjectFolder() + "/tools/webgrind").exists())     { ui->pushButton_tools_webgrind->setDisabled(false); }
+    if(QDir(getProjectFolder() + "/tools/webinterface").exists()) { ui->pushButton_tools_phpinfo->setVisible(true);  }
+    if(QDir(getProjectFolder() + "/tools/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setVisible(true); }
+    if(QDir(getProjectFolder() + "/tools/adminer").exists())      { ui->pushButton_tools_adminer->setVisible(true); }
+    if(QDir(getProjectFolder() + "/tools/webgrind").exists())     { ui->pushButton_tools_webgrind->setVisible(true); }
 }
 
 void MainWindow::setLabelStatusActive(QString label, bool enabled)
