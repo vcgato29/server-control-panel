@@ -170,6 +170,8 @@ void MainWindow::createActions()
     if(buttonStartMongoDb != 0) { connect(buttonStartMongoDb, SIGNAL(clicked()), servers, SLOT(startMongoDb())); }
     QPushButton *buttonStartMemcached =  ui->centralWidget->findChild<QPushButton*>("pushButton_Start_Memcached");
     if(buttonStartMemcached != 0) { connect(buttonStartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached())); }
+    QPushButton *buttonStartPostgreSQL =  ui->centralWidget->findChild<QPushButton*>("pushButton_Start_PostgreSQL");
+    if(buttonStartPostgreSQL != 0) { connect(buttonStartPostgreSQL, SIGNAL(clicked()), servers, SLOT(startPostgreSQL())); }
 
     // Connect Actions for Status Table - Column Action (Stop)
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_Nginx"), SIGNAL(clicked()), servers, SLOT(stopNginx()));
@@ -179,6 +181,8 @@ void MainWindow::createActions()
     if(buttonStopMongoDb != 0) { connect(buttonStopMongoDb, SIGNAL(clicked()), servers, SLOT(stopMongoDb())); }
     QPushButton *buttonStopMemcached =  ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_Memcached");
     if(buttonStopMemcached != 0) { connect(buttonStopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached())); }
+    QPushButton *buttonStopPostgreSQL =  ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_PostgreSQL");
+    if(buttonStopPostgreSQL != 0) { connect(buttonStopPostgreSQL, SIGNAL(clicked()), servers, SLOT(stopPostgreSQL())); }
 
     // Connect Actions for Status Table - AllDaemons Start, Stop
     connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), this, SLOT(startAllDaemons()));
