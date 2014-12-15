@@ -82,7 +82,7 @@ QString Servers::getCamelCasedServerName(QString &serverName) const
 {
     if(serverName == "nginx") { return "Nginx"; }
     if(serverName == "memcached") { return "Memcached"; }
-    if(serverName == "mongodb") { return "MongoDb"; }
+    if(serverName == "mongodb" or serverName == "mongod") { return "MongoDb"; }
     if(serverName == "mariadb" or serverName == "mysqld") { return "MariaDb"; }
     if(serverName == "php" or serverName == "php-cgi") { return "PHP"; }
     if(serverName == "postgresql") { return "PostgreSQL"; }
@@ -137,8 +137,12 @@ QStringList Servers::getListOfServerNamesInstalled()
 {
     QStringList list;
     foreach(QString serverName, getListOfServerNames()) {
-        if(serverName == "nginx" || serverName == "php" || serverName == "mariadb"
-        || QFile().exists(getExecutable(serverName))) {
+
+        // these three servers form the base package.
+        // we assume that they are always installed.
+        // this is also for testing, because they appear installed, even if they are not.
+        if(serverName == "nginx" || serverName == "php" || serverName == "mariadb"||
+           QFile().exists(getExecutable(serverName))) {
             qDebug() << "[" + serverName + "] is installed.";
             list << serverName;
         } else {
@@ -165,7 +169,7 @@ Server* Servers::getServer(const char *serverName) const
 
      // anti "control reaches end of non-void function" faked return
      Server *server = new Server();
-     server->name = QString("Unknown");
+     server->name = QString("Not Installed");
      return server;
 }
 
