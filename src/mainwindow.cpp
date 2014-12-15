@@ -320,6 +320,11 @@ void MainWindow::enableToolsPushButtons(bool enabled)
     // change state of "Rightside Toolbar" >> "Webinterface" button
     ui->pushButton_Webinterface->setEnabled(enabled);
 
+    // disable "webinterface" in TrayMenu, if PHP/Nginx is off
+    QMenu *trayMenu = tray->contextMenu();
+    QList<QAction *>actions = trayMenu->actions();
+    actions.at(16)->setEnabled(enabled);
+
     // webinterface configuration is only available, when nginx and php are running
     // disable "pushButton_Configure_*"
     QList<QPushButton *> allConfigurePushButtonsButtons = ui->centralWidget->findChildren<QPushButton *>(QRegExp("pushButton_Configure_\\w"));
