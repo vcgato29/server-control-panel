@@ -1200,7 +1200,7 @@ void MainWindow::renderInstalledDaemons()
     if(BottomWidgetGeo.y() > bottomWidgetY) {
         // 3 or 4 elements - move things from the bottom up
         ui->BottomWidget->move(QPoint(BottomWidgetGeo.x(), bottomWidgetY + 10));
-        ui->ToolsGroupBox->move(QPoint(ui->ToolsGroupBox->x(), ui->ToolsGroupBox->y() - 10));
+        ui->ToolsGroupBox->move(QPoint(ui->ToolsGroupBox->x(), ui->ToolsGroupBox->y()));
         QRect RightWidgetGeo = ui->RightSideWidget->geometry();
         ui->RightSideWidget->move(QPoint(RightWidgetGeo.x(), RightWidgetGeo.y() - 20));
         this->resize(QSize(this->geometry().width(), bottomWidgetY + BottomWidgetGeo.height() + 20));
