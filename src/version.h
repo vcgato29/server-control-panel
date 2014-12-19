@@ -25,7 +25,7 @@
 #define VERSION_H_
 
 // Application version.
-// Its a token, replaced by Nant during the build process.
+// Its a token, replaced during the build process.
 #define VERSION = @APPVERSION@
 #define APP_VERSION "@APPVERSION@"
 
