@@ -80,16 +80,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createTrayIcon();
 
+    renderInstalledDaemons();
+
     checkAlreadyActiveDaemons();
 
     showPushButtonsOnlyForInstalledTools();
 
     // daemon autostart
     if(settings->get("global/autostartdaemons").toBool()) {
+        qDebug() << "[Daemons] Autostart enabled";
         autostartDaemons();
     };
-
-    renderInstalledDaemons();
 
     createActions();
 
@@ -361,7 +362,7 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
     if(label == "mariadb")                      { ui->centralWidget->findChild<QLabel*>("label_MariaDb_Status")->setEnabled(enabled); }
     if(label == "mongodb" || label == "mysqld") { ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->setEnabled(enabled); }
     if(label == "memcached")                    { ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->setEnabled(enabled); }
-    if(label == "postgresql")                   { ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->setEnabled(enabled); }
+    if(label == "postgresql" || label == "postgres") { ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->setEnabled(enabled); }
 }
 
 void MainWindow::quitApplication()
@@ -375,6 +376,11 @@ void MainWindow::quitApplication()
 
 QString MainWindow::getNginxVersion()
 {
+    // this happens only during testing
+    if(!QFile().exists("./bin/nginx/nginx.exe")) {
+        return "0.0.0";
+    }
+
     QProcess processNginx;
     processNginx.setProcessChannelMode(QProcess::MergedChannels);
     processNginx.start("./bin/nginx/nginx.exe -v");
@@ -396,6 +402,11 @@ QString MainWindow::getNginxVersion()
 
 QString MainWindow::getMariaVersion()
 {
+    // this happens only during testing
+    if(!QFile().exists("./bin/mariadb/bin/mysqld.exe")) {
+        return "0.0.0";
+    }
+
     QProcess processMaria;
     processMaria.setProcessChannelMode(QProcess::MergedChannels);
     processMaria.start("./bin/mariadb/bin/mysqld.exe -V"); // upper-case V
@@ -417,6 +428,11 @@ QString MainWindow::getMariaVersion()
 
 QString MainWindow::getPHPVersion()
 {
+    // this happens only during testing
+    if(!QFile().exists("./bin/php/php.exe")) {
+        return "0.0.0";
+    }
+
     QProcess processPhp;
     processPhp.setProcessChannelMode(QProcess::MergedChannels);
     processPhp.start("./bin/php/php.exe -v");
@@ -442,14 +458,14 @@ QString MainWindow::getPHPVersion()
 QString MainWindow::getMongoVersion()
 {
     QProcess processMongoDB;
-    processMongoDB.start("./bin/mongodb/bin/mongod --version");
+    processMongoDB.start("./bin/mongodb/bin/mongod.exe --version");
 
     if (!processMongoDB.waitForFinished()) {
         qDebug() << "[MongoDB] Version failed:" << processMongoDB.errorString();
         return "";
     }
 
-    QByteArray p_stdout = processMongoDB.readAll();
+    QByteArray p_stdout = processMongoDB.readLine();
 
     // string for regexp testing
     //QString p_stdout = "----";
@@ -462,7 +478,7 @@ QString MainWindow::getMongoVersion()
 QString MainWindow::getPostgresqlVersion()
 {
     QProcess process;
-    process.start("./bin/pgsql/pgsql -V");
+    process.start("./bin/pgsql/bin/pg_ctl.exe -V");
 
     if (!process.waitForFinished()) {
         qDebug() << "[PostgreSQL] Version failed:" << process.errorString();
@@ -486,7 +502,7 @@ QString MainWindow::getMemcachedVersion()
         return "";
     }
 
-    QByteArray p_stdout = processMemcached.readAll();
+    QByteArray p_stdout = processMemcached.readLine();
 
     qDebug() << "[Memcached] Version: \n" << p_stdout;
 
@@ -530,6 +546,7 @@ void MainWindow::startAllDaemons()
     servers->startMariaDb();
     servers->startMongoDb();
     servers->startMemcached();
+    servers->startPostgreSQL();
 }
 
 void MainWindow::stopAllDaemons()
@@ -539,6 +556,7 @@ void MainWindow::stopAllDaemons()
     servers->stopNginx();
     servers->stopMongoDb();
     servers->stopMemcached();
+    servers->stopPostgreSQL();
 }
 
 void MainWindow::goToWebsite()
@@ -655,6 +673,7 @@ void MainWindow::openLog()
     if(obj == "pushButton_ShowErrorLog_PHP")     { logfile = logs + "/php_error.log";}
     if(obj == "pushButton_ShowErrorLog_MariaDb") { logfile = logs + "/mariadb_error.log";}
     if(obj == "pushButton_ShowLog_MongoDb")      { logfile = logs + "/mongodb.log";}
+    if(obj == "pushButton_ShowLog_PostgreSQL")   { logfile = logs + "/postgresql.log";}
 
     if(!QFile().exists(logfile)) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
@@ -734,12 +753,14 @@ void MainWindow::checkPorts()
     QByteArray servicesByteArray = process.readAll();
     QStringList strLines = QString(servicesByteArray).split("\n", QString::SkipEmptyParts);
 
-    qDebug() << strLines;
+    qDebug() << "Port check netstat -abno needs higher privileges" << strLines;
 }
 
 void MainWindow::checkAlreadyActiveDaemons()
 {
-    checkPorts();
+    qDebug() << "[Processes Running] Check for already running processes.";
+
+    //checkPorts();
 
     // Check active processes and report, if processes are already running.
     // We do this to avoid collisions.
@@ -766,7 +787,7 @@ void MainWindow::checkAlreadyActiveDaemons()
                       << "mysqld"
                       << "php-cgi"
                       << "mongod"
-                      << "pg_ctl"; // postgresql
+                      << "postgres";
 
     // init a list for found processes
     QStringList processesFoundList;
@@ -807,7 +828,7 @@ void MainWindow::checkAlreadyActiveDaemons()
 
         QLabel *labelB = new QLabel(tr("Please select the processes you wish to shutdown.<br><br>"
                                        "Click Shutdown to shut the selected processes down and continue using the server control panel.<br>"
-                                       "To proceed without shuting processes down, click Continue.<br>"));
+                                       "To proceed without shutting processes down, click Continue.<br>"));
 
         QPushButton *ShutdownButton = new QPushButton(tr("Shutdown"));
         QPushButton *ContinueButton = new QPushButton(tr("Continue"));
@@ -871,14 +892,20 @@ void MainWindow::checkAlreadyActiveDaemons()
             int c = processesFoundList.size();
             for(int i = 0; i < c; ++i) {
                 QString procname = processesFoundList.at(i);
+
                 QString servername = this->servers->getCamelCasedServerName(procname).toLocal8Bit().constData();
 
-                // set indicator in main window
-                setLabelStatusActive(servername, true);
-
-                // set indicator in tray menu
                 Server *server = this->servers->getServer(servername.toLocal8Bit().constData());
-                server->trayMenu->setIcon(QIcon(":/status_run"));
+
+                qDebug() << "[Processes Running] The process" << procname << " has the Server" << server->name;
+
+                if(server->name != "Not Installed") {
+                    // set indicator in main window
+                    setLabelStatusActive(servername, true);
+
+                    // set indicator in tray menu
+                    server->trayMenu->setIcon(QIcon(":/status_run"));
+                }
             }
         }
 
@@ -949,6 +976,9 @@ void MainWindow::setDefaultSettings()
 
         settings->set("mongodb/config",         "./bin/mongodb/mongodb.conf");
         settings->set("mongodb/port",           27015);
+
+        settings->set("postgresql/config",      "./bin/pgsql/data/postgresql.conf");
+        settings->set("postgresql/port",        5432);
 
         //settings->set("updater/mode",         "manual");
         //settings->set("updater/interval",     "1w");
@@ -1196,9 +1226,10 @@ QString MainWindow::getVersion(QString server)
 
 void MainWindow::updateVersion(QString server) {
     QString version = getVersion(server);
-    qDebug() << "[" + server + "] Updating Version Number Display " + version;
     QLabel* label = qApp->activeWindow()->findChild<QLabel *>("label_" + server + "_Version");
-    label->setText(version);
+    if(label != 0) {
+         label->setText(version);
+    }
 }
 
 QJsonDocument MainWindow::loadJson(QString fileName) {
