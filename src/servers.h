@@ -15,7 +15,7 @@ public:
         QString name;
         QIcon icon;
         QString workingDirectory;
-        QStringList configFiles;
+        //QStringList configFiles;
         QStringList logFiles;
         QString exe;
         QMenu *trayMenu;

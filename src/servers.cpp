@@ -21,7 +21,7 @@ Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
         server->lowercaseName = serverName;
         server->name = getCamelCasedServerName(serverName);
         server->icon = QIcon(":/status_stop");
-        server->configFiles = QStringList() << "a" << "b";
+        //server->configFiles = QStringList() << "a" << "b";
         server->logFiles = getLogFiles(serverName);
         server->workingDirectory = settings->get("paths/" + serverName).toString();
         server->exe = getExecutable(server->name);
@@ -85,9 +85,9 @@ QString Servers::getCamelCasedServerName(QString &serverName) const
     if(serverName == "mongodb" or serverName == "mongod") { return "MongoDb"; }
     if(serverName == "mariadb" or serverName == "mysqld") { return "MariaDb"; }
     if(serverName == "php" or serverName == "php-cgi") { return "PHP"; }
-    if(serverName == "postgresql") { return "PostgreSQL"; }
+    if(serverName == "postgresql" or serverName == "postgres") { return "PostgreSQL"; }
 
-    return QString();
+    return QString("Unknown");
 }
 
 QStringList Servers::getLogFiles(QString &serverName) const
@@ -102,7 +102,7 @@ QStringList Servers::getLogFiles(QString &serverName) const
     if(s == "mongodb")   { logfiles << logs + "/mongodb.log"; }
     if(s == "mariadb")   { logfiles << logs + "/mariadb_error.log"; }
     if(s == "php")       { logfiles << logs + "/php_error.log"; }
-    if(s == "postgresql"){ logfiles << logs + "/pgsql.log"; }
+    if(s == "postgresql"){ logfiles << logs + "/postgresql.log"; }
 
     return logfiles;
 }
@@ -118,7 +118,7 @@ QString Servers::getExecutable(QString &serverName) const
     if(s == "php")       { exe = "php-cgi.exe"; }
     if(s == "postgresql"){ exe = "pg_ctl.exe"; }
 
-    return settings->get("paths/" + serverName).toString() + "/" + exe;
+    return QDir::toNativeSeparators(settings->get("paths/" + serverName).toString() + "/" + exe);
 }
 
 QStringList Servers::getListOfServerNames() const
@@ -276,7 +276,7 @@ void Servers::reloadNginx()
     qDebug() << "[Nginx] Reloading...\n" << reloadNginx;
 
     process->start(reloadNginx);
-    process->waitForFinished(2000);
+    process->waitForFinished(1500);
 }
 
 void Servers::restartNginx()
@@ -286,29 +286,32 @@ void Servers::restartNginx()
 }
 
 /*
- * PostgreSQL  Actions: run, stop, restart
+ * PostgreSQL Actions: run, stop, restart
  */
 void Servers::startPostgreSQL()
 {
     // already running
-    if(getProcessState("PostgreSQL") != QProcess::NotRunning) {
+    /*if(QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
         QMessageBox::warning(0, tr("PostgreSQL"), tr("PostgreSQL is already running."));
         return;
-    }
+    }*/
 
     clearLogFile("PostgreSQL");
 
     updateVersion("PostgreSQL");
 
     // start daemon
-    QString const startCmd = getServer("PostgreSQL")->exe
-            + " -D " + qApp->applicationDirPath() + "/bin/pgsql/data"
-            + " -L " + qApp->applicationDirPath() + "/logs/postgresql.log"
+    QString const startCmd = qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe"
+            + " --pgdata " + QDir::toNativeSeparators(QDir::currentPath() + "/bin/pgsql/data")
+            + " --log " + QDir::toNativeSeparators(QDir::currentPath() + "/logs/postgresql.log")
             + " start";
 
     qDebug() << "[PostgreSQL] Starting...\n" << startCmd;
 
     getProcess("PostgreSQL")->start(startCmd);
+
+    // we need to wait for the PID file to be written
+    getProcess("PostgreSQL")->waitForFinished(2000);
 }
 
 void Servers::stopPostgreSQL()
@@ -319,10 +322,21 @@ void Servers::stopPostgreSQL()
     disconnect(getProcess("PostgreSQL"), SIGNAL(error(QProcess::ProcessError)),
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
-    QString stopCommand = getServer("PostgreSQL")->exe + " stop";
+    QString stopCommand = qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe"
+            + " stop "
+            + " --pgdata " + QDir::currentPath() + "/bin/pgsql/data"
+            + " --log " + QDir::currentPath() + "/logs/postgresql.log"
+            + " --mode=fast"
+            + " -W";
 
     getProcess("PostgreSQL")->execute(stopCommand);
-    getProcess("PostgreSQL")->waitForFinished(1500);
+
+    if(!QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
+        qDebug() << "[PostgreSQL] stop NO PID file found. Postgres is not running.";
+        Server *server = getServer("PostgreSQL");
+        server->trayMenu->setIcon(QIcon(":/status_stop"));
+        emit signalSetLabelStatusActive("postgresql", false);
+    }
 }
 
 void Servers::restartPostgreSQL()
@@ -486,7 +500,8 @@ void Servers::startMongoDb()
     QString const mongoStartCommand = getServer("MongoDb")->exe
              + " --config " + qApp->applicationDirPath() + "/bin/mongodb/mongodb.conf"
              + " --dbpath " + qApp->applicationDirPath() + "/bin/mongodb/data/db"
-             + " --logpath " + qApp->applicationDirPath() + "/logs/mongodb.log";
+             + " --logpath " + qApp->applicationDirPath() + "/logs/mongodb.log"
+             + " --rest";
 
     qDebug() << "[MongoDb] Starting...\n"<< mongoStartCommand;
 
@@ -504,7 +519,7 @@ void Servers::stopMongoDb()
 
     // build mongo stop command based on CLI evaluation
     // mongodb is stopped via "mongo.exe --eval", not "mongodb.exe"
-    QString const mongoStopCommand = getServer("MongoDb")->exe
+    QString const mongoStopCommand = qApp->applicationDirPath() + "/bin/mongodb/bin/mongo.exe"
              + " --eval \"db.getSiblingDB('admin').shutdownServer()\"";
 
     qDebug() << "[MongoDb] Stopping...\n" << mongoStopCommand;
@@ -621,36 +636,56 @@ QString Servers::getProcessErrorMessage(QProcess::ProcessError error)
  */
 void Servers::updateProcessStates(QProcess::ProcessState state)
 {
-    //qDebug() << "Sender: " << sender()->objectName();
-    //qDebug() << "State: " << newState;
+    qDebug() << "Sender: " << sender()->objectName();
+
     QString serverName = sender()->objectName();
     Server *server = getServer(serverName.toLocal8Bit().constData());
+
+    qDebug() << server->name << state;
 
     switch(state)
     {
         case QProcess::NotRunning:
-            server->trayMenu->setIcon(QIcon(":/status_stop"));
-            emit signalSetLabelStatusActive(serverName, false);
-            // if NGINX or PHP are not running, disable PushButtons of Tools section,
-            // because target URL is not available
-            if((serverName == "Nginx") or (serverName == "PHP")) {
-                qDebug() << "Signal: turn off - Tools Pushbuttons";
-                emit signalEnableToolsPushButtons(false);
-            }
+                server->trayMenu->setIcon(QIcon(":/status_stop"));
+                emit signalSetLabelStatusActive(serverName, false);
+
+                // if NGINX or PHP are not running, disable PushButtons of Tools section,
+                // because target URL is not available
+                if((serverName == "Nginx") or (serverName == "PHP")) {
+                    qDebug() << "Signal: Disable - Tools Pushbuttons";
+                    emit signalEnableToolsPushButtons(false);
+                }
             break;
         case QProcess::Running:
-            server->trayMenu->setIcon(QIcon(":/status_run"));
-            emit signalSetLabelStatusActive(serverName, true);
+                server->trayMenu->setIcon(QIcon(":/status_run"));
+                emit signalSetLabelStatusActive(serverName, true);
             break;
         case QProcess::Starting:
-            server->trayMenu->setIcon(QIcon(":/status_reload"));
+                server->trayMenu->setIcon(QIcon(":/status_reload"));
             break;
     }
 
     // if NGINX and PHP are running, enable PushButtons of Tools section
     if((getProcessState("Nginx") == QProcess::Running) && (getProcessState("PHP") == QProcess::Running)) {
-        qDebug() << "Signal: Enable Tools Pushbuttons";
+        qDebug() << "Signal: Enable - Tools Pushbuttons";
         emit signalEnableToolsPushButtons(true);
+    }
+
+    // PostgreSQL Process Monitoring via PID file
+    // we can't get process monitoring after calling "pg_ctl start" (startPostgreSQL),
+    // because "pg_ctl" is only a launcher and it will shutdown.
+
+    if(server->name == "PostgreSQL" && state == QProcess::NotRunning) {
+
+        if(QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
+            qDebug() << "[PostgreSQL] PID file found. Postgres is running.";
+            server->trayMenu->setIcon(QIcon(":/status_run"));
+            emit signalSetLabelStatusActive("postgresql", true);
+        } else {
+            qDebug() << "[PostgreSQL] ... NO PID file found. Postgres is not running.";
+            server->trayMenu->setIcon(QIcon(":/status_stop"));
+            emit signalSetLabelStatusActive("postgresql", false);
+        }
     }
 
     return;
