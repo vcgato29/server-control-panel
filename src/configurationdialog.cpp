@@ -68,6 +68,7 @@ void ConfigurationDialog::readSettings()
    ui->checkbox_autostartMariaDb->setChecked(settings->get("autostart/mariadb", true).toBool());
    ui->checkbox_autostartMongoDb->setChecked(settings->get("autostart/mongodb", false).toBool());
    ui->checkbox_autostartMemcached->setChecked(settings->get("autostart/memcached", false).toBool());
+   ui->checkbox_autostartPostgresql->setChecked(settings->get("autostart/postgresql", false).toBool());
 
    ui->checkbox_clearLogsOnStart->setChecked(settings->get("global/clearlogsonstart", false).toBool());
 
@@ -90,6 +91,7 @@ void ConfigurationDialog::writeSettings()
     settings->set("autostart/mariadb",        int(ui->checkbox_autostartMariaDb->isChecked()));
     settings->set("autostart/mongodb",        int(ui->checkbox_autostartMongoDb->isChecked()));
     settings->set("autostart/memcached",      int(ui->checkbox_autostartMemcached->isChecked()));
+    settings->set("autostart/postgresql",     int(ui->checkbox_autostartPostgresql->isChecked()));
 
     settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
     settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
@@ -127,9 +129,16 @@ void ConfigurationDialog::toggleAutostartDaemonCheckboxes(bool run)
 {
     // Note: layout doesn't "inject" itself in the parent-child tree, so findChildren() doesn't work
 
+    // left box
     for (int i = 0; i < ui->autostartDaemonsFormLayout->count(); ++i)
     {
       ui->autostartDaemonsFormLayout->itemAt(i)->widget()->setEnabled(run);
+    }
+
+    // right box
+    for (int i = 0; i < ui->autostartDaemonsFormLayout2->count(); ++i)
+    {
+      ui->autostartDaemonsFormLayout2->itemAt(i)->widget()->setEnabled(run);
     }
 }
 
