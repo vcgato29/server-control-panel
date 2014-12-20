@@ -66,7 +66,7 @@ void Tray::createTrayMenu()
         setContextMenu(trayMenu);
     }
 
-    trayMenu->setToolTip("WPN-XM");
+    //trayMenu->setToolTip("WPN-XM");
 
     // set tray menu icon
     trayMenu->setIcon(QIcon(QPixmap(":/wpnxm.png")));
