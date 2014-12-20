@@ -37,11 +37,11 @@
 
 // Settings for application_win.rc
 // These values are the attributes of the executable, shown when right-clicking on it.
-#define VER_FILEVERSION             1,0,0,0
-#define VER_FILEVERSION_STR         "1.0.0.0\0"
+#define VER_FILEVERSION             @APPVERSIONRC@
+#define VER_FILEVERSION_STR         "@APPVERSION@.0\0"
 
-#define VER_PRODUCTVERSION          1,0,0,0
-#define VER_PRODUCTVERSION_STR      "1.0\0"
+#define VER_PRODUCTVERSION          @APPVERSIONRC@
+#define VER_PRODUCTVERSION_STR      "@APPVERSION@\0"
 
 #define VER_COMPANYNAME_STR         "Koch Softwaresystemtechnik"
 #define VER_COMPANYDOMAIN_STR       "http://wpn-xm.org"
