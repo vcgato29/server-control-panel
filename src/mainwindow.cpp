@@ -322,9 +322,13 @@ void MainWindow::enableToolsPushButtons(bool enabled)
     ui->pushButton_Webinterface->setEnabled(enabled);
 
     // disable "webinterface" in TrayMenu, if PHP/Nginx is off
-    QMenu *trayMenu = tray->contextMenu();
-    QList<QAction *>actions = trayMenu->actions();
-    actions.at(16)->setEnabled(enabled);
+    QList<QAction *>actions = tray->contextMenu()->actions();
+    const int listSize = actions.size();
+    for (int i = 0; i < listSize; ++i) {
+       if(actions.at(i)->iconText() == tr("Webinterface")) {
+            actions.at(i)->setEnabled(enabled);
+       }
+    }
 
     // webinterface configuration is only available, when nginx and php are running
     // disable "pushButton_Configure_*"
