@@ -88,8 +88,10 @@ public slots:
     void openConfigurationDialogPHP();
     void openConfigurationDialogMariaDb();
     void openConfigurationDialogMongoDb();
+    void openConfigurationDialogPostgresql();
 
     void openLog();
+    void openConfigurationInEditor();
 
     void setLabelStatusActive(QString label, bool enabled);
     void enableToolsPushButtons(bool enabled);

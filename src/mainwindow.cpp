@@ -213,10 +213,14 @@ void MainWindow::createActions()
     connect(ui->pushButton_OpenProjects_browser, SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
     connect(ui->pushButton_OpenProjects_Explorer, SIGNAL(clicked()), this, SLOT(openProjectFolderInExplorer()));
 
-    // Actions - Status Table (Config)
+    // Actions - Status Table
+
+    // Configuration via Webinterface
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_Nginx"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogNginx()));
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PHP"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MariaDb"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MongoDb"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogMongoDb()));
+    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PostgreSQL"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogPostgresql()));
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -659,15 +663,44 @@ void MainWindow::openConfigurationDialogMongoDb()
     QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#mongodb"));
 }
 
+void MainWindow::openConfigurationDialogPostgresql()
+{
+    // Open Configuration Dialog - Tab for MongoDb
+    QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#postgresql"));
+}
+
+void MainWindow::openConfigurationInEditor()
+{
+    QPushButton *button = (QPushButton *)sender();
+    QString obj = button->objectName();
+
+    // extract server name from pushbutton name (pushButton_ConfigurationEditor_server => server)
+    QStringList pieces = obj.split("_");
+    QString serverName = pieces.value( pieces.length() - 1);
+
+    // fetch config file for server from the ini
+    QString cfgfile = QDir(settings->get(serverName + "/config").toString()).absolutePath();
+
+    if(!QFile().exists(cfgfile)) {
+        QMessageBox::warning(this, tr("Warning"), tr("Config file not found: \n") + cfgfile, QMessageBox::Yes);
+    } else {
+       QDesktopServices::setUrlHandler("file", this, "execEditor");
+
+       // if no UrlHandler is set, this executes the OS-dependend scheme handler
+       QDesktopServices::openUrl(QUrl::fromLocalFile(cfgfile));
+
+       QDesktopServices::unsetUrlHandler("file");
+    }
+}
+
 void MainWindow::openLog()
 {
     // we have a incoming SIGNAL object to this SLOT
     // we use the object name, e.g. pushButton_ShowLog_Nginx or pushButton_ShowErrorLog_Nginx
     // to map the log file
 
-    QPushButton *button = (QPushButton *)sender();    
+    QPushButton *button = (QPushButton *)sender();
     QString obj = button->objectName();
-    //qDebug() << "Sender : " << obj;
 
     QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
     QString logfile = "";
@@ -1049,24 +1082,27 @@ void MainWindow::renderInstalledDaemons()
     label_Config->setAlignment(Qt::AlignCenter);
     label_Config->setFont(font1);
     label_Config->setEnabled(false);
-    DaemonsGridLayout->addWidget(label_Config, 1, 4);
+    DaemonsGridLayout->addWidget(label_Config, 1, 4, 1, 2); // two columns (gear and gear-pencil)
 
     QLabel* label_Logs = new QLabel();
     label_Logs->setText(QApplication::translate("MainWindow", "Logs", 0));
     label_Logs->setAlignment(Qt::AlignCenter);
     label_Logs->setFont(font1);
     label_Logs->setEnabled(false);
-    DaemonsGridLayout->addWidget(label_Logs, 1, 5, 1, 2); // two columns
+    DaemonsGridLayout->addWidget(label_Logs, 1, 6, 1, 2); // two columns (log and log-warning)
 
     QLabel* label_Actions = new QLabel();
     label_Actions->setText(QApplication::translate("MainWindow", "Actions", 0));
     label_Actions->setAlignment(Qt::AlignCenter);
     label_Actions->setFont(font1);
     label_Actions->setEnabled(false);
-    DaemonsGridLayout->addWidget(label_Actions, 1, 7, 1, 2); // two columns
+    DaemonsGridLayout->addWidget(label_Actions, 1, 8, 1, 2); // two columns
 
     QIcon iconConfig;
     iconConfig.addFile(QStringLiteral(":/gear.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+    QIcon iconConfigEdit;
+    iconConfigEdit.addFile(QStringLiteral(":/gear--pencil.png"), QSize(), QIcon::Normal, QIcon::Off);
 
     QIcon iconLog;
     iconLog.addFile(QStringLiteral(":/report.png"), QSize(), QIcon::Normal, QIcon::Off);
@@ -1121,11 +1157,31 @@ void MainWindow::renderInstalledDaemons()
         DaemonsGridLayout->addWidget(labelVersion, rowCounter, 3);
 
         // Config
-        QPushButton* pushButton_Configure = new QPushButton();
-        pushButton_Configure->setObjectName(QString("pushButton_Configure_"+ server->name +""));
-        pushButton_Configure->setIcon(iconConfig);
-        pushButton_Configure->setFlat(true);
-        DaemonsGridLayout->addWidget(pushButton_Configure, rowCounter, 4);
+
+        if(server->name != "Memcached") {
+
+            // Configuration via Webinterface
+            QPushButton* pushButton_Configure = new QPushButton();
+            pushButton_Configure->setObjectName(QString("pushButton_Configure_"+ server->name +""));
+            pushButton_Configure->setIcon(iconConfig);
+            pushButton_Configure->setFlat(true);
+            pushButton_Configure->setToolTip(QApplication::translate(
+                "MainWindow", "Open the Webinterface Configuration Tab for "+ server->name.toLocal8Bit() +" ", 0)
+            );
+            DaemonsGridLayout->addWidget(pushButton_Configure, rowCounter, 4);
+
+            // Configuration via Editor
+            QPushButton* pushButton_ConfigureEdit = new QPushButton();
+            pushButton_ConfigureEdit->setObjectName(QString("pushButton_ConfigurationEditor_"+ server->name +""));
+            pushButton_ConfigureEdit->setIcon(iconConfigEdit);
+            pushButton_ConfigureEdit->setFlat(true);
+            pushButton_ConfigureEdit->setToolTip(QApplication::translate(
+                "MainWindow", "Open "+ server->name.toLocal8Bit() +" Configuration File with Editor", 0)
+            );
+            DaemonsGridLayout->addWidget(pushButton_ConfigureEdit, rowCounter, 5);
+
+            connect(pushButton_ConfigureEdit, SIGNAL(clicked()), this, SLOT(openConfigurationInEditor()));
+        }
 
         // Logs
         foreach (QString logfile, server->logFiles)
@@ -1141,7 +1197,8 @@ void MainWindow::renderInstalledDaemons()
                     pushButton_ShowLog->setToolTip(QApplication::translate(
                         "MainWindow", "Open "+ server->name.toLocal8Bit() +" Log", 0)
                     );
-                    DaemonsGridLayout->addWidget(pushButton_ShowLog, rowCounter, 5);
+                    DaemonsGridLayout->addWidget(pushButton_ShowLog, rowCounter, 6);
+
                     connect(pushButton_ShowLog, SIGNAL(clicked()), this, SLOT(openLog()));
                 }
 
@@ -1155,7 +1212,8 @@ void MainWindow::renderInstalledDaemons()
                     pushButton_ShowErrorLog->setToolTip(QApplication::translate(
                         "MainWindow", "Open "+ server->name.toLocal8Bit() +" Error Log", 0)
                     );
-                    DaemonsGridLayout->addWidget(pushButton_ShowErrorLog, rowCounter, 6);
+                    DaemonsGridLayout->addWidget(pushButton_ShowErrorLog, rowCounter, 7);
+
                     connect(pushButton_ShowErrorLog, SIGNAL(clicked()), this, SLOT(openLog()));
                 }
             }
@@ -1170,7 +1228,7 @@ void MainWindow::renderInstalledDaemons()
         pushButton_Stop->setToolTip(QApplication::translate(
             "MainWindow", "Stop "+ server->name.toLocal8Bit() +"", 0)
         );
-        DaemonsGridLayout->addWidget(pushButton_Stop, rowCounter, 7);
+        DaemonsGridLayout->addWidget(pushButton_Stop, rowCounter, 8);
 
         QPushButton* pushButton_Start = new QPushButton();
         pushButton_Start->setObjectName(QString("pushButton_Start_"+ server->name +""));
@@ -1179,7 +1237,7 @@ void MainWindow::renderInstalledDaemons()
         pushButton_Start->setToolTip(QApplication::translate(
             "MainWindow", "Start "+ server->name.toLocal8Bit() +"", 0)
         );
-        DaemonsGridLayout->addWidget(pushButton_Start, rowCounter, 8);
+        DaemonsGridLayout->addWidget(pushButton_Start, rowCounter, 9);
 
         rowCounter++;
     }

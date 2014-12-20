@@ -28,5 +28,7 @@
         <file alias="wpnxm">wpnxm.png</file>
         <file alias="status_run_big">bullet_ball_green.png</file>
         <file alias="status_stop_big">bullet_ball_grey.png</file>
+        <file>gear--pencil.png</file>
+        <file>pencil.png</file>
     </qresource>
 </RCC>
