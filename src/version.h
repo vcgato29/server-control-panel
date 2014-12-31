@@ -47,7 +47,7 @@
 #define VER_COMPANYDOMAIN_STR       "http://wpn-xm.org"
 #define VER_FILEDESCRIPTION_STR     "WPN-XM Server Control Panel"
 #define VER_INTERNALNAME_STR        "WPN-XM SCP"
-#define VER_LEGALCOPYRIGHT_STR      "Copyright (c) 2014 Koch Softwaresystemtechnik"
+#define VER_LEGALCOPYRIGHT_STR      "Copyright (c) 2015 Koch Softwaresystemtechnik"
 #define VER_LEGALTRADEMARKS1_STR    "All Rights Reserved"
 #define VER_LEGALTRADEMARKS2_STR    VER_LEGALTRADEMARKS1_STR
 #define VER_ORIGINALFILENAME_STR    "wpn-xm.exe"
