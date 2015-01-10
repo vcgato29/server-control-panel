@@ -25,12 +25,6 @@ message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
-VERSION = 1.20.30.40
-QMAKE_TARGET_COMPANY = Koch Softwaresystemtechnik
-QMAKE_TARGET_PRODUCT = WPN-XM Server Control Panel
-QMAKE_TARGET_DESCRIPTION = WPN-XM SCP Tray Application.
-QMAKE_TARGET_COPYRIGHT = Copyright (c) Jens-Andre Koch.
-
 CONFIG += qt console #c++11 #warn-on #static
 
 QT += core network widgets
