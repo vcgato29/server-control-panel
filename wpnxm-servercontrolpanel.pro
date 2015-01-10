@@ -25,7 +25,7 @@ message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
-CONFIG += qt console #c++11 #warn-on #static
+CONFIG += qt console c++11 #warn-on #static
 
 QT += core network widgets
 
