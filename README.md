@@ -63,7 +63,7 @@ You have to build the libraries to be able to link successfully.
 
 * \platforms\qwindows.dll
 * \plugins\imageformats\qico.dll
-* \plugins\imageformats\qwbmp.dll
+* ~~\plugins\imageformats\qwbmp.dll~~
 * ~~\icudt51.dll~~
 * ~~\icuin51.dll~~
 * ~~\icuuc51.dll~~
