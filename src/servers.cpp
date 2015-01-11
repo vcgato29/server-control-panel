@@ -10,6 +10,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <QDebug>
+#include <QTime>
 
 Servers::Servers(QObject *parent) : QObject(parent), settings(new Settings)
 {
@@ -291,10 +292,10 @@ void Servers::restartNginx()
 void Servers::startPostgreSQL()
 {
     // already running
-    /*if(QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
+    if(QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
         QMessageBox::warning(0, tr("PostgreSQL"), tr("PostgreSQL is already running."));
         return;
-    }*/
+    }
 
     clearLogFile("PostgreSQL");
 
@@ -309,18 +310,41 @@ void Servers::startPostgreSQL()
     qDebug() << "[PostgreSQL] Starting...\n" << startCmd;
 
     getProcess("PostgreSQL")->start(startCmd);
+}
 
-    // we need to wait for the PID file to be written
-    getProcess("PostgreSQL")->waitForFinished(2000);
+void Servers::delay(int millisecondsToWait) const
+{
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
 }
 
 void Servers::stopPostgreSQL()
 {
+    Server *server = getServer("PostgreSQL");
+
+    // if not installed, skip
+    if(!QFile().exists(server->exe)) {
+        qDebug() << "[PostgreSQL] Is not installed. Skipping stop command.";
+        return;
+    }
+
+    // running?
+    QString file = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid");
+    if(!QFile().exists(file)) {
+        qDebug() << "[PostgreSQL] NO PID file found. Postgres is not running. No need to stop it.";
+        server->trayMenu->setIcon(QIcon(":/status_stop"));
+        emit signalSetLabelStatusActive("postgresql", false);
+        return;
+    }
+
     qDebug() << "[PostgreSQL] Stopping...";
 
     // disconnect process monitoring, before crashing the process
-    disconnect(getProcess("PostgreSQL"), SIGNAL(error(QProcess::ProcessError)),
-               this, SLOT(showProcessError(QProcess::ProcessError)));
+    //disconnect(getProcess("PostgreSQL"), SIGNAL(error(QProcess::ProcessError)),
+              // this, SLOT(showProcessError(QProcess::ProcessError)));
 
     QString stopCommand = qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe"
             + " stop "
@@ -331,12 +355,13 @@ void Servers::stopPostgreSQL()
 
     getProcess("PostgreSQL")->execute(stopCommand);
 
-    if(!QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
-        qDebug() << "[PostgreSQL] stop NO PID file found. Postgres is not running.";
-        Server *server = getServer("PostgreSQL");
-        server->trayMenu->setIcon(QIcon(":/status_stop"));
-        emit signalSetLabelStatusActive("postgresql", false);
+    // do we have a failed shutdown? if so, delete PID file, to allow a restart
+    if(QFile().exists(file)) {
+        QFile().remove(file);
     }
+
+    server->trayMenu->setIcon(QIcon(":/status_stop"));
+    emit signalSetLabelStatusActive("postgresql", false);
 }
 
 void Servers::restartPostgreSQL()
@@ -657,6 +682,9 @@ void Servers::updateProcessStates(QProcess::ProcessState state)
                 }
             break;
         case QProcess::Running:
+                if(serverName == "PostgreSQL") {
+                    return; // this stops the activation blink, real start is detected by PID file
+                }
                 server->trayMenu->setIcon(QIcon(":/status_run"));
                 emit signalSetLabelStatusActive(serverName, true);
             break;
@@ -677,12 +705,17 @@ void Servers::updateProcessStates(QProcess::ProcessState state)
 
     if(server->name == "PostgreSQL" && state == QProcess::NotRunning) {
 
-        if(QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
+        delay(1250); // delay PID file check, PostgreSQL must start up
+
+        QString file = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid");
+        qDebug() << file;
+
+        if(QFile().exists(file)) {
             qDebug() << "[PostgreSQL] PID file found. Postgres is running.";
             server->trayMenu->setIcon(QIcon(":/status_run"));
             emit signalSetLabelStatusActive("postgresql", true);
         } else {
-            qDebug() << "[PostgreSQL] ... NO PID file found. Postgres is not running.";
+            qDebug() << "[PostgreSQL] PID file not found. Postgres is not running.";
             server->trayMenu->setIcon(QIcon(":/status_stop"));
             emit signalSetLabelStatusActive("postgresql", false);
         }

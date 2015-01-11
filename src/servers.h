@@ -48,6 +48,8 @@ public:
         bool truncateFile(const QString &file) const;
         void clearLogFile(const QString &serverName) const;
 
+        void delay(int millisecondsToWait) const;
+
 public slots:
 
         void showProcessError(QProcess::ProcessError error);

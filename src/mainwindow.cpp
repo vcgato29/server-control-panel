@@ -635,6 +635,7 @@ QString MainWindow::getProjectFolder() const
 void MainWindow::openConfigurationDialog()
 {
     ConfigurationDialog cfgDlg;
+    cfgDlg.setServers(servers->getListOfServerNamesInstalled());
     cfgDlg.setWindowTitle("WPN-XM Server Control Panel - Configuration");
     cfgDlg.exec();
 }
@@ -910,7 +911,15 @@ void MainWindow::checkAlreadyActiveDaemons()
                QCheckBox *cb = allCheckBoxes.at(i);
                if(cb->isChecked())
                {
-                   //qDebug() << "Shutting down :" << cb->text();
+                   qDebug() << "Process Shutdown:" << cb->text();
+
+                   // handle the PostgreSQL PID file deletion, too
+                   if(cb->text() == "postgres") {
+                       QString file = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid");
+                       if(QFile().exists(file)) {
+                           QFile().remove(file);
+                       }
+                   }
 
                    QProcess::startDetached("cmd.exe",
                     // taskkill parameters:
