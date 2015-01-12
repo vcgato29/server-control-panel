@@ -26,7 +26,9 @@
 
 // global includes
 #include <QDialog>
+
 #include "settings.h"
+#include "servers.h"
 
 // forward declarations
 QT_BEGIN_NAMESPACE
@@ -34,14 +36,15 @@ class QCheckBox;
 QT_END_NAMESPACE
 
 namespace Ui {
-class ConfigurationDialog;
+    class ConfigurationDialog;
 }
 
 class ConfigurationDialog : public QDialog {
   Q_OBJECT
 
- public:
+public:
   explicit ConfigurationDialog(QWidget* parent = 0);
+
   ~ConfigurationDialog();
 
   void setRunOnStartUp(bool run = true);
@@ -58,7 +61,10 @@ class ConfigurationDialog : public QDialog {
 
   void fileOpen();
 
- private slots:
+  void setServers(Servers* servers);
+  void hideAutostartCheckboxesOfNotInstalledServers();
+
+private slots:
   void toggleAutostartDaemonCheckboxes(bool run = true);
   void onClickedButtonBoxOk();
 
@@ -70,17 +76,19 @@ private:
 
   Settings* settings;
 
+  Servers* servers;
+
   QCheckBox* checkbox_runOnStartUp;
   QCheckBox* checkbox_autostartDaemons;
   QCheckBox* checkbox_clearLogsOnStart;
   QCheckBox* checkbox_stopDaemonsOnQuit;
 
-  QCheckBox* checkbox_autostartMariaDb;
-  QCheckBox* checkbox_autostartMongoDb;
-  QCheckBox* checkbox_autostartPHP;
-  QCheckBox* checkbox_autostartNginx;
-  QCheckBox* checkbox_autostartMemcached;
-  QCheckBox* checkbox_autostartPostgreSQL;
+  QCheckBox* checkbox_autostart_MariaDb;
+  QCheckBox* checkbox_autostart_MongoDb;
+  QCheckBox* checkbox_autostart_PHP;
+  QCheckBox* checkbox_autostart_Nginx;
+  QCheckBox* checkbox_autostart_Memcached;
+  QCheckBox* checkbox_autostart_PostgreSQL;
 
   void readSettings();
   void writeSettings();

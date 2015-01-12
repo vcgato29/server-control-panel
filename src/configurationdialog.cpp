@@ -40,6 +40,8 @@ ConfigurationDialog::ConfigurationDialog(QWidget *parent) :
     this->settings = new Settings;
     readSettings();
 
+    hideAutostartCheckboxesOfNotInstalledServers();
+
     toggleAutostartDaemonCheckboxes(ui->checkbox_autostartDaemons->isChecked());
 
     //populateOpenWithDropdown();
@@ -55,6 +57,11 @@ ConfigurationDialog::~ConfigurationDialog()
     delete ui;
 }
 
+void ConfigurationDialog::setServers(Servers *servers)
+{
+    this->servers = servers;
+}
+
 void ConfigurationDialog::readSettings()
 {
    // Read Settings from INI and prefill config dialog items
@@ -63,12 +70,12 @@ void ConfigurationDialog::readSettings()
    ui->checkbox_autostartDaemons->setChecked(settings->get("global/autostartdaemons", false).toBool());
    ui->checkbox_startMinimized->setChecked(settings->get("global/startminimized", false).toBool());
 
-   ui->checkbox_autostartPHP->setChecked(settings->get("autostart/php", true).toBool());
-   ui->checkbox_autostartNginx->setChecked(settings->get("autostart/nginx", true).toBool());
-   ui->checkbox_autostartMariaDb->setChecked(settings->get("autostart/mariadb", true).toBool());
-   ui->checkbox_autostartMongoDb->setChecked(settings->get("autostart/mongodb", false).toBool());
-   ui->checkbox_autostartMemcached->setChecked(settings->get("autostart/memcached", false).toBool());
-   ui->checkbox_autostartPostgresql->setChecked(settings->get("autostart/postgresql", false).toBool());
+   ui->checkbox_autostart_PHP->setChecked(settings->get("autostart/php", true).toBool());
+   ui->checkbox_autostart_Nginx->setChecked(settings->get("autostart/nginx", true).toBool());
+   ui->checkbox_autostart_MariaDb->setChecked(settings->get("autostart/mariadb", true).toBool());
+   ui->checkbox_autostart_MongoDb->setChecked(settings->get("autostart/mongodb", false).toBool());
+   ui->checkbox_autostart_Memcached->setChecked(settings->get("autostart/memcached", false).toBool());
+   ui->checkbox_autostart_Postgresql->setChecked(settings->get("autostart/postgresql", false).toBool());
 
    ui->checkbox_clearLogsOnStart->setChecked(settings->get("global/clearlogsonstart", false).toBool());
 
@@ -86,12 +93,12 @@ void ConfigurationDialog::writeSettings()
     settings->set("global/autostartdaemons",  int(ui->checkbox_autostartDaemons->isChecked()));
     settings->set("global/startminimized",    int(ui->checkbox_startMinimized->isChecked()));
 
-    settings->set("autostart/nginx",          int(ui->checkbox_autostartNginx->isChecked()));
-    settings->set("autostart/php",            int(ui->checkbox_autostartPHP->isChecked()));
-    settings->set("autostart/mariadb",        int(ui->checkbox_autostartMariaDb->isChecked()));
-    settings->set("autostart/mongodb",        int(ui->checkbox_autostartMongoDb->isChecked()));
-    settings->set("autostart/memcached",      int(ui->checkbox_autostartMemcached->isChecked()));
-    settings->set("autostart/postgresql",     int(ui->checkbox_autostartPostgresql->isChecked()));
+    settings->set("autostart/nginx",          int(ui->checkbox_autostart_Nginx->isChecked()));
+    settings->set("autostart/php",            int(ui->checkbox_autostart_PHP->isChecked()));
+    settings->set("autostart/mariadb",        int(ui->checkbox_autostart_MariaDb->isChecked()));
+    settings->set("autostart/mongodb",        int(ui->checkbox_autostart_MongoDb->isChecked()));
+    settings->set("autostart/memcached",      int(ui->checkbox_autostart_Memcached->isChecked()));
+    settings->set("autostart/postgresql",     int(ui->checkbox_autostart_Postgresql->isChecked()));
 
     settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
     settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
@@ -142,6 +149,32 @@ void ConfigurationDialog::toggleAutostartDaemonCheckboxes(bool run)
     }
 }
 
+void ConfigurationDialog::hideAutostartCheckboxesOfNotInstalledServers()
+{
+    QStringList installed = this->servers->getListOfServerNamesInstalled();
+
+    QList<QCheckBox *> boxes = ui->tabWidget->findChildren<QCheckBox *>(QRegExp("checkbox_autostart_\\w"));
+
+    for(int i = 0; i < boxes.size(); ++i) {
+       QCheckBox *box = boxes.at(i);
+
+       // return last part of "checkbox_autostart_*"
+       QString name = box->objectName().section("_", -1).toLower();
+       QString labelName = this->servers->getCamelCasedServerName(name) + "Label";
+       QLabel *label = ui->tabWidget->findChild<QLabel *>(labelName);
+
+       if(installed.contains(name) == true) {
+           qDebug() << "[" + name + "] Autostart Checkbox and Label visible.";
+           box->setVisible(true);
+           //label->setVisible(true);
+       } else {
+           qDebug() << "[" + name + "] Autostart Checkbox and Label hidden.";
+           box->setVisible(false);
+           label->setVisible(false);
+       }
+    }
+}
+
 bool ConfigurationDialog::runClearLogsOnStart() const
 {
     return (ui->checkbox_clearLogsOnStart->checkState() == Qt::Checked);
@@ -169,8 +202,7 @@ void ConfigurationDialog::toggleRunOnStartup()
 
     if(ui->checkbox_runOnStartUp->isChecked() == true) {
         // Add WPN-XM SCP shortcut to the Windows Autostart folder.
-        // In Windows terminology shortcuts are "shell links".
-        //using WindowsAPI::CreateShellLink;
+        // In Windows terminology "shortcuts" are "shell links".
         WindowsAPI::CreateShellLink(
             qApp->applicationFilePath(),"","WPN-XM Server Control Panel", // app, args, desc
             qApp->applicationFilePath(),0, // icon path and idx

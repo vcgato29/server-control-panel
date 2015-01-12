@@ -635,7 +635,7 @@ QString MainWindow::getProjectFolder() const
 void MainWindow::openConfigurationDialog()
 {
     ConfigurationDialog cfgDlg;
-    cfgDlg.setServers(servers->getListOfServerNamesInstalled());
+    cfgDlg.setServers(this->servers);
     cfgDlg.setWindowTitle("WPN-XM Server Control Panel - Configuration");
     cfgDlg.exec();
 }
