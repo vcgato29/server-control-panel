@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>379</height>
+    <width>631</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -90,7 +90,7 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>410</x>
       <y>0</y>
       <width>211</width>
       <height>61</height>
@@ -281,196 +281,13 @@
       <height>161</height>
      </size>
     </property>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>111</width>
-       <height>161</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="RightsideVBoxLayout" stretch="0,0,0,0,0">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QPushButton" name="pushButton_Webinterface">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Open Webinterface in Browser.</string>
-        </property>
-        <property name="text">
-         <string>Webinterface</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_Configuration">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>Configuration</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>16</width>
-          <height>16</height>
-         </size>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
-        </property>
-        <property name="flat">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_Help">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Open the WPN-XM wiki help pages.</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>Help</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/question</normaloff>:/question</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_About">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>About</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/cup.png</normaloff>:/cup.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_Close">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Close to tray.</string>
-        </property>
-        <property name="text">
-         <string>Close</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources/resources.qrc">
-          <normaloff>:/quit.png</normaloff>:/quit.png</iconset>
-        </property>
-       </widget>
-      </item>
-     </layout>
-     <zorder>pushButton_Configuration</zorder>
-     <zorder>pushButton_Webinterface</zorder>
-     <zorder>pushButton_Help</zorder>
-     <zorder>pushButton_About</zorder>
-     <zorder>pushButton_Close</zorder>
-    </widget>
    </widget>
    <widget class="QWidget" name="BottomWidget" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>270</y>
-      <width>601</width>
+      <width>611</width>
       <height>101</height>
      </rect>
     </property>
@@ -545,7 +362,7 @@
     <widget class="QGroupBox" name="OpenProjectFolderGroupBox">
      <property name="geometry">
       <rect>
-       <x>350</x>
+       <x>360</x>
        <y>20</y>
        <width>121</width>
        <height>81</height>
@@ -587,7 +404,7 @@
     <widget class="QGroupBox" name="AllDaemonsStartStopGroupBox">
      <property name="geometry">
       <rect>
-       <x>490</x>
+       <x>500</x>
        <y>0</y>
        <width>111</width>
        <height>101</height>
@@ -1728,6 +1545,189 @@ QPushButton:pressed
       </property>
      </widget>
     </widget>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>90</y>
+      <width>111</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="RightsideVBoxLayout" stretch="0,0,0,0,0">
+     <property name="spacing">
+      <number>5</number>
+     </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pushButton_Webinterface">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Open Webinterface in Browser.</string>
+       </property>
+       <property name="text">
+        <string>Webinterface</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/resources.qrc">
+         <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_Configuration">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Configuration</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/resources.qrc">
+         <normaloff>:/gear.png</normaloff>:/gear.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_Help">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Open the WPN-XM wiki help pages.</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Help</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/resources.qrc">
+         <normaloff>:/question</normaloff>:/question</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_About">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>About</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/resources.qrc">
+         <normaloff>:/cup.png</normaloff>:/cup.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_Close">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Close to tray.</string>
+       </property>
+       <property name="text">
+        <string>Close</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/resources.qrc">
+         <normaloff>:/quit.png</normaloff>:/quit.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+    <zorder>pushButton_Configuration</zorder>
+    <zorder>pushButton_Webinterface</zorder>
+    <zorder>pushButton_Help</zorder>
+    <zorder>pushButton_About</zorder>
+    <zorder>pushButton_Close</zorder>
    </widget>
   </widget>
  </widget>
