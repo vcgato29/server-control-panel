@@ -25,7 +25,7 @@ message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
-CONFIG += qt console c++11 #warn-on #static
+CONFIG += qt console c++11 #warn-on static
 
 QT += core network widgets
 
@@ -90,9 +90,16 @@ static {                                      # everything below takes effect wi
     CONFIG += static staticlib
     DEFINES += STATIC
     win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
+
     QMAKE_LFLAGS += -static -static-libgcc
+
     # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
     QMAKE_CXXFLAGS += -O3 -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
+
+    # for extra security on Windows: enable ASLR and DEP via GCC linker flags
+    QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
+
+    QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector
 }
 
 # Copy Dependencies to Build Folder
