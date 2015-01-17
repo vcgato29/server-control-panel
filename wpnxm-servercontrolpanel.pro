@@ -78,12 +78,18 @@ win32: RC_FILE = src/resources/application.rc
 
 # Build destination and binary name
 CONFIG(debug, debug|release) {
-    DESTDIR = build/debug
     TARGET = wpn-xm-debug
 } else {
-    DESTDIR = build/release
     TARGET = wpn-xm
 }
+
+# if using Shadow build, you need to get the output folder
+CONFIG(release, debug|release): DESTDIR = $$OUT_PWD/release
+CONFIG(debug, debug|release): DESTDIR = $$OUT_PWD/debug
+
+# if using normal build (non-shadow) that would have worked as well.
+CONFIG(release, debug|release): DESTDIR = release
+CONFIG(debug, debug|release): DESTDIR = debug
 
 static {                                      # everything below takes effect with CONFIG += static
     message("~~~ Static Build ~~~")           # this is for information, that a static build is done
@@ -102,21 +108,37 @@ static {                                      # everything below takes effect wi
     QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector
 }
 
+TARGET_CUSTOM_EXT = .exe
+DEPLOY_COMMAND = windeployqt
+
+CONFIG( debug, debug|release ) {
+    # debug
+    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_CUSTOM_EXT}))
+} else {
+    # release
+    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
+}
+
+#  # Uncomment the following line to help debug the deploy command when running qmake
+warning($${DEPLOY_COMMAND} $${DEPLOY_TARGET})
+
+QMAKE_POST_LINK = $${DEPLOY_COMMAND} $${DEPLOY_TARGET}
+
 # Copy Dependencies to Build Folder
-dlls.path  =  $${DESTDIR}
-dlls.files += $$[QT_INSTALL_BINS]/icudt51.dll
-dlls.files += $$[QT_INSTALL_BINS]/icuin51.dll
-dlls.files += $$[QT_INSTALL_BINS]/icuuc51.dll
-dlls.files += $$[QT_INSTALL_BINS]/libgcc_s_dw2-1.dll
-dlls.files += $$[QT_INSTALL_BINS]/libstdc++-6.dll
-dlls.files += $$[QT_INSTALL_BINS]/libwinpthread-1.dll
-dlls.files += $$[QT_INSTALL_BINS]/Qt5Core.dll
-dlls.files += $$[QT_INSTALL_BINS]/Qt5Network.dll
-dlls.files += $$[QT_INSTALL_BINS]/Qt5Gui.dll
-dlls.files += $$[QT_INSTALL_BINS]/Qt5Widgets.dll
-dllA.path   += $${DESTDIR}/platforms
-dllA.files  += $$[QT_INSTALL_PLUGINS]/platforms/qwindows.dll
-dllB.path   += $${DESTDIR}/plugins/imageformats/
-dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qico.dll
-dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qwbmp.dll
-INSTALLS   += dlls dllA dllB
+#dlls.path  =  $${DESTDIR}
+#dlls.files += $$[QT_INSTALL_BINS]/icudt51.dll
+#dlls.files += $$[QT_INSTALL_BINS]/icuin51.dll
+#dlls.files += $$[QT_INSTALL_BINS]/icuuc51.dll
+#dlls.files += $$[QT_INSTALL_BINS]/libgcc_s_dw2-1.dll
+#dlls.files += $$[QT_INSTALL_BINS]/libstdc++-6.dll
+#dlls.files += $$[QT_INSTALL_BINS]/libwinpthread-1.dll
+#dlls.files += $$[QT_INSTALL_BINS]/Qt5Core.dll
+#dlls.files += $$[QT_INSTALL_BINS]/Qt5Network.dll
+#dlls.files += $$[QT_INSTALL_BINS]/Qt5Gui.dll
+#dlls.files += $$[QT_INSTALL_BINS]/Qt5Widgets.dll
+#dllA.path   += $${DESTDIR}/platforms
+#dllA.files  += $$[QT_INSTALL_PLUGINS]/platforms/qwindows.dll
+#dllB.path   += $${DESTDIR}/plugins/imageformats/
+#dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qico.dll
+#dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qwbmp.dll
+#INSTALLS   += dlls dllA dllB
