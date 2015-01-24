@@ -19,7 +19,7 @@ matrix:
 before_install:
   - sudo add-apt-repository --yes ppa:beineri/opt-qt54
 #  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-#  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
   - sudo apt-get update -qq
   - sudo apt-get install qt54base qt54imageformats qt54tools qt54xmlpatterns -y -qq
   - uname -m
@@ -39,10 +39,13 @@ install:
     - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
     - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
 
+before_script:
+  - unset CC; unset CXX
+  - make -j2 -C depends HOST=$HOST
+
 script:
   - qmake -v
-  - qmake -project
-  - qmake wpnxm-servercontrolpanel.pro
+  - qmake -spec win32-x-g++ wpnxm-servercontrolpanel.pro
   - make -s -j 2
 
 notifications:
