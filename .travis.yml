@@ -39,14 +39,10 @@ install:
     - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
     - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
 
-before_script:
-  - unset CC; unset CXX
-  - make -j2 -C depends HOST=$HOST
-
 script:
   - qmake -v
   - qmake -spec win32-x-g++ wpnxm-servercontrolpanel.pro
-  - make -s -j 2
+  - make -s -j2 HOST=$HOST
 
 notifications:
   email: false
