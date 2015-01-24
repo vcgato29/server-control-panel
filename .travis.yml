@@ -31,8 +31,8 @@ before_script:
   - cd ./src
 
 script:
-  - qmake -qt=qt5 -v
-  - qmake -qt=qt5
+  - qmake -v
+  - qmake
   - make -s -j 2
 
 notifications:
