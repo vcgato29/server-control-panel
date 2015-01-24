@@ -1550,9 +1550,9 @@ QPushButton:pressed
     <property name="geometry">
      <rect>
       <x>510</x>
-      <y>90</y>
+      <y>80</y>
       <width>111</width>
-      <height>161</height>
+      <height>151</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="RightsideVBoxLayout" stretch="0,0,0,0,0">
