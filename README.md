@@ -1,4 +1,4 @@
-WPN-XM Server Control Panel
+WPN-XM Server Control Panel [![Build Status](https://travis-ci.org/WPN-XM/server-control-panel.svg)](https://travis-ci.org/WPN-XM/server-control-panel)
 ===========================
 
 The WPN-XM Server Control Panel is a Tray Application written in Qt v5.2+.
