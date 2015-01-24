@@ -32,7 +32,8 @@ before_script:
 
 script:
   - qmake -v
-  - qmake
+  - qmake -project
+  - qmake wpnxm-servercontrolpanel.pro
   - make -s -j 2
 
 notifications:
