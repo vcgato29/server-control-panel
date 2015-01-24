@@ -26,10 +26,6 @@ before_install:
   - sudo ln -s /usr/bin/g++-4.7 /usr/bin/g++
   - sudo ln -s /usr/bin/gcov-4.7 /usr/bin/gcov
 
-
-before_script:
-  - cd ./src
-
 script:
   - qmake -v
   - qmake -project
