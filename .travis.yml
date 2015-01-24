@@ -31,10 +31,8 @@ before_script:
   - cd ./src
 
 script:
-  - qmake -v
-  - sudo chmod a+x configure
-  - sudo ./configure
-  - qmake
+  - qmake -qt=qt5 -v
+  - qmake -qt=qt5
   - make -s -j 2
 
 notifications:
