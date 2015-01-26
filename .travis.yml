@@ -13,9 +13,9 @@ matrix:
   include:
     # cross-compile using mingw
     - compiler: ": Win64"
-      env: HOST="x86_64-w64-mingw32" PACKAGES="gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 binutils-mingw-w64-x86-64 mingw-w64-dev mingw64-qt-qmake wine wine-dev bc gcc-multilib g++-multilib" CC= PLATFORM="mingw32" ARCH="x86_64"
+      env: HOST="x86_64-w64-mingw32" PACKAGES="gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 binutils-mingw-w64-x86-64 mingw-w64-dev wine wine-dev bc gcc-multilib g++-multilib" CC= PLATFORM="mingw32" ARCH="x86_64"
     - compiler: ": Win32"
-      env: HOST="i686-w64-mingw32" PACKAGES="gcc-mingw-w64-i686 g++-mingw-w64-i686 binutils-mingw-w64-i686 mingw-w64-dev mingw32-qt-qmake wine wine-dev bc gcc-multilib g++-multilib" CC= PLATFORM="mingw32" ARCH="x86"
+      env: HOST="i686-w64-mingw32" PACKAGES="gcc-mingw-w64-i686 g++-mingw-w64-i686 binutils-mingw-w64-i686 mingw-w64-dev wine wine-dev bc gcc-multilib g++-multilib" CC= PLATFORM="mingw32" ARCH="x86"
 
 before_install:
   - sudo add-apt-repository --yes ppa:beineri/opt-qt54
