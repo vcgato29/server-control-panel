@@ -45,7 +45,7 @@ script:
   - gcc -v
   - dpkg -L mingw32
   - dpkg -L mingw64
-  - ././configure --host=x86_64-w64-mingw32
+  - ./configure --host=x86_64-w64-mingw32 #< hardcoded, why is $HOST not inserted?
   - make -j2 HOST=$HOST
 
 notifications:
