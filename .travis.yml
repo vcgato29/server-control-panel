@@ -41,8 +41,8 @@ install:
 
 script:
   - qmake -v
-  - qmake -spec win32-x-g++ wpnxm-servercontrolpanel.pro
-  - make -s -j2 HOST=$HOST
+  - qmake wpnxm-servercontrolpanel.pro
+  - make -j2 HOST=$HOST
 
 notifications:
   email: false
