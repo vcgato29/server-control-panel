@@ -18,23 +18,22 @@ matrix:
       env: HOST=i686-w64-mingw32 PACKAGES="gcc-mingw-w64-i686 g++-mingw-w64-i686 binutils-mingw-w64-i686 mingw-w64-dev wine wine-dev bc gcc-multilib g++-multilib" CC= PLATFORM="mingw32" ARCH="x86"
 
 before_install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt54
-  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt54                     # < Qt
+  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test              # < GCC
+  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise              # < MinGW
   - sudo apt-get update -qq
-  - sudo apt-get install qt54base qt54imageformats qt54tools qt54xmlpatterns -y -qq
+  - sudo apt-get install qt54base qt54imageformats qt54tools -y -qq
   - uname -m
   - export QTDIR=/opt/qt54
   - export PATH=$QTDIR/bin:$PATH
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
-  - sudo apt-get install gcc-4.7 g++-4.7 gdb -y -qq
+  - sudo apt-get install gcc-4.9 g++-4.9 gdb -y -qq
   - sudo rm -f /usr/bin/gcc
   - sudo rm -f /usr/bin/g++
   - sudo rm -f /usr/bin/gcov
-  - sudo ln -s /usr/bin/gcc-4.7 /usr/bin/gcc
-  - sudo ln -s /usr/bin/g++-4.7 /usr/bin/g++
-  - sudo ln -s /usr/bin/gcov-4.7 /usr/bin/gcov
-  - CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++
+  - sudo ln -s /usr/bin/gcc-4.9 /usr/bin/gcc
+  - sudo ln -s /usr/bin/g++-4.9 /usr/bin/g++
+  - sudo ln -s /usr/bin/gcov-4.9 /usr/bin/gcov
 
 install:
   - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
@@ -42,7 +41,7 @@ install:
 
 script:
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro -spec win32-g++ CONFIG+=release
+  - qmake wpnxm-servercontrolpanel.pro -spec unsupported/win32-g++-4.6-cross CONFIG+=release # win32-g++, unsupported/win32-g++-cross
   - gcc -v
   - make -j2
 
