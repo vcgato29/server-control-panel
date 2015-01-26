@@ -43,6 +43,7 @@ script:
   - qmake -v
   - qmake wpnxm-servercontrolpanel.pro CONFIG+=release
   - gcc -v
+  - g++ -v
   - make -j2
 
 notifications:
