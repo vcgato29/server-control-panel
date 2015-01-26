@@ -41,7 +41,7 @@ install:
 
 script:
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro -spec unsupported/win32-g++-4.6-cross CONFIG+=release # win32-g++, unsupported/win32-g++-cross
+  - qmake wpnxm-servercontrolpanel.pro -spec win32-g++ CONFIG+=release # win32-g++, unsupported/win32-g++-cross
   - gcc -v
   - make -j2
 

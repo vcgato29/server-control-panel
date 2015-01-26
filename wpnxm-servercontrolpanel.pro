@@ -35,6 +35,9 @@ LIBS += -luuid -lole32
 # this define disables qDebug() output to console
 #DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
 
+QMAKE_CFLAGS *= -fno-keep-inline-dllexport
+QMAKE_CXXFLAGS *= -fno-keep-inline-dllexport
+
 HEADERS += \
     src/version.h \
     src/main.h \
@@ -49,7 +52,8 @@ HEADERS += \
     src/splashscreen.h \
     src/windowsapi.h \
     src/servers.h \
-    src/cli.h
+    src/cli.h \
+    src/updater.h
 
 SOURCES += \
     src/main.cpp \
@@ -64,7 +68,8 @@ SOURCES += \
     src/splashscreen.cpp \
     src/windowsapi.cpp \
     src/servers.cpp \
-    src/cli.cpp
+    src/cli.cpp \
+    src/updater.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
@@ -100,7 +105,7 @@ static {                                      # everything below takes effect wi
     QMAKE_LFLAGS += -static -static-libgcc
 
     # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-    QMAKE_CXXFLAGS += -O3 -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden
+    QMAKE_CXXFLAGS += -O3 -std=c++11 -pedantic -Wextra -fvisibility=hidden -fvisibility-inlines-hidden -mstackrealign -fno-keep-inline-dllexport
 
     # for extra security on Windows: enable ASLR and DEP via GCC linker flags
     QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
