@@ -27,8 +27,13 @@ before_install:
   - export QTDIR=/opt/qt54
   - export PATH=$QTDIR/bin:$PATH
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
-#  - if [ "$BUILDMODE" = "cmake-mingw32" ]; then sudo apt-get install cmake make tofrodos mingw32-x-gcc mingw32-x-qt -y -qq; fi
-#  - if [ "$BUILDMODE" = "cmake-mingw64" ]; then sudo apt-get install cmake make tofrodos mingw64-x-gcc mingw64-x-qt -y -qq; fi
+  - sudo apt-get install gcc-4.7 g++-4.7 gdb -y -qq
+  - sudo rm -f /usr/bin/gcc
+  - sudo rm -f /usr/bin/g++
+  - sudo rm -f /usr/bin/gcov
+  - sudo ln -s /usr/bin/gcc-4.7 /usr/bin/gcc
+  - sudo ln -s /usr/bin/g++-4.7 /usr/bin/g++
+  - sudo ln -s /usr/bin/gcov-4.7 /usr/bin/gcov
 
 install:
   - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
