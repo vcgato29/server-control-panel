@@ -41,7 +41,7 @@ install:
 
 script:
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CXXFLAGS -= -fno-keep-inline-dllexport
+  - qmake wpnxm-servercontrolpanel.pro CONFIG+=release
   - gcc -v
   - g++ -v
   - make -j2
