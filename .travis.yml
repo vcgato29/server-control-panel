@@ -34,6 +34,7 @@ before_install:
   - sudo ln -s /usr/bin/gcc-4.7 /usr/bin/gcc
   - sudo ln -s /usr/bin/g++-4.7 /usr/bin/g++
   - sudo ln -s /usr/bin/gcov-4.7 /usr/bin/gcov
+  - CC=i686-w64-mingw32-gcc CXX=i686-w64-mingw32-g++
 
 install:
   - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
@@ -41,7 +42,7 @@ install:
 
 script:
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro -r -spec win32-g++ CONFIG+=release
+  - qmake wpnxm-servercontrolpanel.pro -spec win32-g++ CONFIG+=release
   - gcc -v
   - make -j2
 
