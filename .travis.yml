@@ -37,6 +37,7 @@ install:
 script:
   - qmake -v
   - qmake wpnxm-servercontrolpanel.pro
+  - configure --host=$HOST
   - gcc -v
   - make -j2 HOST=$HOST
 
