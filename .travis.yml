@@ -18,6 +18,7 @@ matrix:
       env: HOST=i686 PLATFORM="mingw32" ARCH="x86" BITSIZE=32
 
 before_install:
+  - sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y # < Update to Ubuntu Trusty
   - sudo add-apt-repository --yes ppa:beineri/opt-qt54                   # < Qt
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-trusty             # < MinGW
   - sudo apt-get update -qq
