@@ -27,8 +27,8 @@ before_install:
   - export PATH=$QTDIR/bin:$PATH
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
   - sudo apt-get install -y cloog-isl mingw32
-  - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-qt mingw32-x-pkgconfig mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
-  - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-qt mingw64-x-pkgconfig mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
+  - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw-x-qt5base mingw32-x-pkgconfig mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
+  - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw-x-qt5base mingw64-x-pkgconfig mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
   - export MINGW=/opt/mingw$BITSIZE
   - export PATH=$MINGW/bin:$PATH
   - export CC=$HOST-w64-mingw32-gcc
