@@ -13,13 +13,12 @@ matrix:
   include:
     # cross-compile using mingw
     - compiler: "- w64"
-      env: HOST=x86_64 PLATFORM="mingw32" ARCH="x86_64"
+      env: HOST=x86_64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64
     - compiler: "- w32"
-      env: HOST=i686 PLATFORM="mingw32" ARCH="x86"
+      env: HOST=i686 PLATFORM="mingw32" ARCH="x86" BITSIZE=32
 
 before_install:
   - sudo add-apt-repository --yes ppa:beineri/opt-qt54                     # < Qt
-  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test              # < GCC
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise              # < MinGW
   - sudo apt-get update -qq
   - sudo apt-get install qt54base qt54imageformats qt54tools -y -qq
@@ -27,10 +26,10 @@ before_install:
   - export QTDIR=/opt/qt54
   - export PATH=$QTDIR/bin:$PATH
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
-  #- sudo apt-get install gcc-4.9 g++-4.9 gdb -y -qq
-  #- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
-  - sudo apt-get install mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime -y -qq
-  - export MINGW=/opt/mingw32
+  - sudo apt-get install -y cloog-isl mingw32
+  - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-qt mingw32-x-pkgconfig mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
+  - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-qt mingw64-x-pkgconfig mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
+  - export MINGW=/opt/mingw$BITSIZE
   - export PATH=$MINGW/bin:$PATH
   - export CC=$HOST-w64-mingw32-gcc
   - export CXX=$HOST-w64-mingw32-g++
