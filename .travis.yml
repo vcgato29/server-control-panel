@@ -29,7 +29,7 @@ before_install:
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
   #- sudo apt-get install gcc-4.9 g++-4.9 gdb -y -qq
   #- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
-  - sudo apt-get install mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime mingw-x-w32api -y -qq
+  - sudo apt-get install mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime -y -qq
   - export CC=$HOST-gcc
   - export CXX=$HOST-g++
 
