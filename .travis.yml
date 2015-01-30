@@ -17,10 +17,11 @@ matrix:
     - compiler: ": w32"
       env: HOST=i686 PLATFORM="mingw32" ARCH="x86" BITSIZE=32
 
-before_install:
+install:
   - sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y # < Update to Ubuntu Trusty
   - sudo add-apt-repository --yes ppa:beineri/opt-qt54                   # < Qt
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-trusty             # < MinGW
+  - sudo sed -i 's/trusty/precise/g' /etc/apt/sources.list.d/tobydox-mingw-trusty.list  # <  Change the "trusty" release tags to "precise"
   - sudo apt-get update -qq
   - sudo apt-get install qt54base qt54imageformats qt54tools -y -qq
   - uname -m
@@ -34,10 +35,6 @@ before_install:
   - export PATH=$MINGW/bin:$PATH
   - export CC=$HOST-w64-mingw32-gcc
   - export CXX=$HOST-w64-mingw32-g++
-
-#install:
-  #- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
-  #- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
 
 script:
   - qmake -v
