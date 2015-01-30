@@ -13,9 +13,9 @@ matrix:
   include:
     # cross-compile using mingw
     - compiler: "- w64"
-      env: HOST=x86_64-w64-mingw32 PLATFORM="mingw32" ARCH="x86_64"
+      env: HOST=x86_64 PLATFORM="mingw32" ARCH="x86_64"
     - compiler: "- w32"
-      env: HOST=i686-w64-mingw32 PLATFORM="mingw32" ARCH="x86"
+      env: HOST=i686 PLATFORM="mingw32" ARCH="x86"
 
 before_install:
   - sudo add-apt-repository --yes ppa:beineri/opt-qt54                     # < Qt
@@ -30,8 +30,8 @@ before_install:
   #- sudo apt-get install gcc-4.9 g++-4.9 gdb -y -qq
   #- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
   - sudo apt-get install mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime -y -qq
-  - export CC=$HOST-gcc
-  - export CXX=$HOST-g++
+  - export CC=$HOST-w64-mingw32-gcc
+  - export CXX=$HOST-w64-mingw32-g++
 
 #install:
   #- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
@@ -41,7 +41,10 @@ script:
   - qmake -v
   - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
   - gcc -v
-  - g++ -v
+  - gcc -dumpmachine
+  - export CMAKE_OPTS="-DUSE_WERROR=ON"
+  - export MINGW=/opt/mingw32
+  - export PATH=$PATH:$MINGW/bin
   - make -j2 VERBOSE=1
 
 notifications:
