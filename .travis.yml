@@ -12,9 +12,9 @@ matrix:
   fast_finish: true
   include:
     # cross-compile using mingw
-    - compiler: "- w64"
+    - compiler: ": w64"
       env: HOST=x86_64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64
-    - compiler: "- w32"
+    - compiler: ": w32"
       env: HOST=i686 PLATFORM="mingw32" ARCH="x86" BITSIZE=32
 
 before_install:
