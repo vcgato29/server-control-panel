@@ -12,32 +12,30 @@ matrix:
   fast_finish: true
   include:
     # cross-compile using mingw
-    - compiler: ": Win64"
-      env: HOST=x86_64-w64-mingw32 PACKAGES="gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 binutils-mingw-w64-x86-64 mingw-w64-dev wine wine-dev bc gcc-multilib g++-multilib" CC= PLATFORM="mingw32" ARCH="x86_64"
-    - compiler: ": Win32"
-      env: HOST=i686-w64-mingw32 PACKAGES="gcc-mingw-w64-i686 g++-mingw-w64-i686 binutils-mingw-w64-i686 mingw-w64-dev wine wine-dev bc gcc-multilib g++-multilib" CC= PLATFORM="mingw32" ARCH="x86"
+    - compiler: "- w64"
+      env: HOST=x86_64-w64-mingw32 PLATFORM="mingw32" ARCH="x86_64"
+    - compiler: "- w32"
+      env: HOST=i686-w64-mingw32 PLATFORM="mingw32" ARCH="x86"
 
 before_install:
   - sudo add-apt-repository --yes ppa:beineri/opt-qt54                     # < Qt
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test              # < GCC
-  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise              # < MinGW
+  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-trusty               # < MinGW
   - sudo apt-get update -qq
   - sudo apt-get install qt54base qt54imageformats qt54tools -y -qq
   - uname -m
   - export QTDIR=/opt/qt54
   - export PATH=$QTDIR/bin:$PATH
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
-  - sudo apt-get install gcc-4.9 g++-4.9 gdb -y -qq
-  - sudo rm -f /usr/bin/gcc
-  - sudo rm -f /usr/bin/g++
-  - sudo rm -f /usr/bin/gcov
-  - sudo ln -s /usr/bin/gcc-4.9 /usr/bin/gcc
-  - sudo ln -s /usr/bin/g++-4.9 /usr/bin/g++
-  - sudo ln -s /usr/bin/gcov-4.9 /usr/bin/gcov
+  #- sudo apt-get install gcc-4.9 g++-4.9 gdb -y -qq
+  #- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
+  - sudo apt-get install mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime mingw-x-w32api -y -qq
+  - export CC=$HOST-gcc
+  - export CXX=$HOST-g++
 
-install:
-  - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
-  - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
+#install:
+  #- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
+  #- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
 
 script:
   - qmake -v
