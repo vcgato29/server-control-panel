@@ -25,7 +25,7 @@ install:
   - if [ $BITSIZE == 64 ]; then sudo wget -O qt.zip http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/x64-Qt-5.2.1%2BQtCreator-3.0.1-%28gcc-4.8.2-seh%29.7z/download; fi
   # unzip Qt to /opt/qt5 and set path variable
   - sudo mkdir /opt/qt5/
-  - sudo 7z x qt.zip -o/opt/qt5 -y
+  - sudo 7z x qt.zip -o/opt/qt5 -y > /dev/null
   # set Qt Paths, QtSDK-{x86_64|i686}
   - uname -m
   - export QTDIR=/opt/qt5/QtSDK-$HOST
