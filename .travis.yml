@@ -26,9 +26,9 @@ install:
   # unzip Qt to /opt/qt5 and set path variable
   - sudo mkdir /opt/qt5/
   - sudo 7z x qt.zip -o/opt/qt5 -y
-  # set Qt Paths
+  # set Qt Paths, QtSDK-{x86_64|i686}
   - uname -m
-  - export QTDIR=/opt/qt5
+  - export QTDIR=/opt/qt5/QtSDK-$HOST
   - export PATH=$QTDIR/bin:$PATH
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
   # < MinGW
