@@ -26,6 +26,7 @@ install:
   # unzip Qt to /opt/qt5 and set path variable
   - sudo mkdir /opt/qt5/
   - sudo 7z x qt.zip -o/opt/qt5 -y > /dev/null
+  - sudo ls /opt/qt5/QtSDK-$HOST
   # set Qt Paths, QtSDK-{x86_64|i686}
   - uname -m
   - export QTDIR=/opt/qt5/QtSDK-$HOST
