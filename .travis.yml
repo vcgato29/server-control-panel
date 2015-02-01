@@ -45,11 +45,12 @@ install:
   - if [ $BITSIZE == 32 ]; then export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; export PKG_CONFIG_LIBDIR=$QTDIR/lib/pkgconfig; export QMAKE_LIB_DIR=$QTDIR/lib; fi
   - if [ $BITSIZE == 64 ]; then export LD_LIBRARY_PATH=$QTDIR/lib64/:$QTDIR/lib64/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; export PKG_CONFIG_LIBDIR=$QTDIR/lib64/pkgconfig; export QMAKE_LIB_DIR=$QTDIR/lib64; fi
   # < MinGW
-  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-trusty
   - sudo apt-get update -qq
-  - sudo apt-get install -y cloog-isl mingw32 qt5-default qtbase5-dev libqt5gui5 libqt5printsupport5 libqt5widgets5 libpango-1.0-0
-  - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
-  - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
+  - sudo apt-get install -y cloog-isl mingw32
+  #qt5-default qtbase5-dev libqt5gui5 libqt5printsupport5 libqt5widgets5 libpango-1.0-0
+  - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime mingw-x-qt5base; fi
+  - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime mingw-x-qt5base; fi
   - export MINGW=/opt/mingw$BITSIZE
   - export PATH=$MINGW/bin:$PATH
   - export CC=$HOST-w64-mingw32-gcc
