@@ -37,9 +37,10 @@ install:
   # set Qt Paths, QtSDK-{x86_64|i686}
   - uname -m
   #- export QTDIR=/opt/qt5/QtSDK-$HOST
-  - export QTDIR=/opt/qt5
+  - export QTDIR=/opt/qt5/windows_$BITSIZE
   - export PATH=$QTDIR/bin:$PATH
-  - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
+  - if [ $BITSIZE == 32 ]; then export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
+  - if [ $BITSIZE == 64 ]; then export LD_LIBRARY_PATH=$QTDIR/lib64/:$QTDIR/lib64/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
   # < MinGW
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
   - sudo apt-get update -qq
