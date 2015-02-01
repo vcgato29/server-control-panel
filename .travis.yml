@@ -18,6 +18,9 @@ matrix:
       env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686"
 
 install:
+  # < Trusty
+  - sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y
+  - sudo apt-get update -qq
   # < NUM_CPU (for make jobs)
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
   # < 7zip
