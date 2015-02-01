@@ -35,6 +35,7 @@ install:
   - sudo mkdir /opt/qt5/
   - sudo tar xfp qt.txz -C /opt/qt5
   - sudo ls -alh /opt/qt5/windows_$BITSIZE/*
+  - sudo ls -alh /opt/qt5/windows_$BITSIZE/mkspec/*
   #- sudo 7z x qt.zip -o/opt/qt5 -y > /dev/null
   #- sudo ls /opt/qt5/QtSDK-$HOST
   # set Qt Paths, QtSDK-{x86_64|i686}
@@ -61,7 +62,7 @@ install:
 script:
   - which qmake
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro -spec $SPEC/win32-g++ CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX QMAKE_LIB_DIR=$QMAKE_LIB_DIR
+  - qmake wpnxm-servercontrolpanel.pro -spec $SPEC/linux-g++ CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX QMAKE_LIB_DIR=$QMAKE_LIB_DIR
   - gcc -v
   - gcc -dumpmachine
   - export CMAKE_OPTS="-DUSE_WERROR=ON"
