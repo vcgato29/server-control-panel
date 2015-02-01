@@ -53,6 +53,7 @@ install:
   - export CXX=$HOST-w64-mingw32-g++
 
 script:
+  - which qmake
   - qmake -v
   - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
   - gcc -v
