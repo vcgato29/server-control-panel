@@ -35,7 +35,7 @@ install:
   - sudo mkdir /opt/qt5/
   - sudo tar xfp qt.txz -C /opt/qt5
   - sudo ls -alh /opt/qt5/windows_$BITSIZE/*
-  - sudo ls -alh /opt/qt5/windows_$BITSIZE/mkspec/*
+  - sudo ls -alh /opt/qt5/windows_$BITSIZE/mkspecs/*
   #- sudo 7z x qt.zip -o/opt/qt5 -y > /dev/null
   #- sudo ls /opt/qt5/QtSDK-$HOST
   # set Qt Paths, QtSDK-{x86_64|i686}
