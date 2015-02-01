@@ -22,16 +22,22 @@ install:
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
   # < 7zip
   - sudo apt-get install p7zip-full
-  # < Qt
-  - if [ $BITSIZE == 32 ]; then sudo wget -O qt.zip http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/x32-Qt-5.2.1%2BQtCreator-3.0.1-%28gcc-4.8.2-dwarf%29.7z/download; fi
-  - if [ $BITSIZE == 64 ]; then sudo wget -O qt.zip http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/x64-Qt-5.2.1%2BQtCreator-3.0.1-%28gcc-4.8.2-seh%29.7z/download; fi
+  # < Qt from mingw-builds
+  #- if [ $BITSIZE == 32 ]; then sudo wget -O qt.zip http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/x32-Qt-5.2.1%2BQtCreator-3.0.1-%28gcc-4.8.2-dwarf%29.7z/download; fi
+  #- if [ $BITSIZE == 64 ]; then sudo wget -O qt.zip http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/x64-Qt-5.2.1%2BQtCreator-3.0.1-%28gcc-4.8.2-seh%29.7z/download; fi
+  # < Qt from win-builds
+  - if [ $BITSIZE == 32 ]; then sudo wget -O qt.txz http://win-builds.org/1.5.0/packages/windows_32/qt-5.3.1-4-i686-w64-mingw32.txz; fi
+  - if [ $BITSIZE == 64 ]; then sudo wget -O qt.txz http://win-builds.org/1.5.0/packages/windows_64/qt-5.3.1-4-x86_64-w64-mingw32.txz; fi
   # unzip Qt to /opt/qt5 and set path variable
   - sudo mkdir /opt/qt5/
-  - sudo 7z x qt.zip -o/opt/qt5 -y > /dev/null
-  - sudo ls /opt/qt5/QtSDK-$HOST
+  - sudo tar xfp qt.txz -C /opt/qt5
+  - sudo ls -alh /opt/qt5/*
+  #- sudo 7z x qt.zip -o/opt/qt5 -y > /dev/null
+  #- sudo ls /opt/qt5/QtSDK-$HOST
   # set Qt Paths, QtSDK-{x86_64|i686}
   - uname -m
-  - export QTDIR=/opt/qt5/QtSDK-$HOST
+  #- export QTDIR=/opt/qt5/QtSDK-$HOST
+  - export QTDIR=/opt/qt5
   - export PATH=$QTDIR/bin:$PATH
   - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
   # < MinGW
