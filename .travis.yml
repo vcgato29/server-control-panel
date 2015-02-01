@@ -61,7 +61,7 @@ install:
 script:
   - which qmake
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro -spec $SPEC CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX QMAKE_LIB_DIR=$QMAKE_LIB_DIR LIBS += "-L$QMAKE_LIB_DIR" INCLUDEPATH += "$QMAKE_LIB_DIR src"
+  - qmake wpnxm-servercontrolpanel.pro -spec $SPEC CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX QMAKE_LIB_DIR=$QMAKE_LIB_DIR
   - gcc -v
   - gcc -dumpmachine
   - export CMAKE_OPTS="-DUSE_WERROR=ON"
