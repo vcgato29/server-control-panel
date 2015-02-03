@@ -50,6 +50,7 @@ install:
 
 script:
   - which qmake
+  - qmake -set prefix $QTDIR
   - qmake -query
   - qmake -v
   - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
