@@ -43,9 +43,11 @@ install:
   #- export QTDIR=/opt/qt5/QtSDK-$HOST
   - export QTDIR=/opt/qt5/windows_$BITSIZE
   - export PATH=$QTDIR/bin:$PATH
-  - if [ $BITSIZE == 32 ]; then export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; export PKG_CONFIG_LIBDIR=$QTDIR/lib/pkgconfig; export QMAKE_LIB_DIR=$QTDIR/lib; export SPEC=/opt/qt5/windows_32/mkspecs; fi
-  - if [ $BITSIZE == 64 ]; then export LD_LIBRARY_PATH=$QTDIR/lib64/:$QTDIR/lib64/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; export PKG_CONFIG_LIBDIR=$QTDIR/lib64/pkgconfig; export QMAKE_LIB_DIR=$QTDIR/lib64; export SPEC=/opt/qt5/windows_64/mkspecs; fi
+  - if [ $BITSIZE == 32 ]; then export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
+  - if [ $BITSIZE == 64 ]; then export LD_LIBRARY_PATH=$QTDIR/lib64/:$QTDIR/lib64/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
   - export PATH=$QMAKE_LIB_DIR:$PATH
+  - export QMAKESPEC=$QTDIR/mkspecs/linux-g++
+  - export QT_PLUGIN_PATH=$QTDIR/mkspecs
   # < MinGW
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
   - sudo apt-get update -qq
@@ -58,12 +60,11 @@ install:
   - export CC=$HOST-w64-mingw32-gcc
   - export CXX=$HOST-w64-mingw32-g++
 
-
 script:
   - which qmake
   - qmake -query
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro -spec $SPEC/linux-g++ CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX QMAKE_LIB_DIR=$QMAKE_LIB_DIR
+  - qmake wpnxm-servercontrolpanel.pro -spec $SPEC/linux-g++ CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
   - gcc -v
   - gcc -dumpmachine
   - export CMAKE_OPTS="-DUSE_WERROR=ON"
