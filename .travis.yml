@@ -23,29 +23,17 @@ install:
   - sudo apt-get update -qq
   # < NUM_CPU (for make jobs)
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
-  # < 7zip
-  #- sudo apt-get install p7zip-full
-  # < Qt from mingw-builds
-  #- if [ $BITSIZE == 32 ]; then sudo wget -O qt.zip http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/x32-Qt-5.2.1%2BQtCreator-3.0.1-%28gcc-4.8.2-dwarf%29.7z/download; fi
-  #- if [ $BITSIZE == 64 ]; then sudo wget -O qt.zip http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/x64-Qt-5.2.1%2BQtCreator-3.0.1-%28gcc-4.8.2-seh%29.7z/download; fi
   # < Qt from win-builds
   - if [ $BITSIZE == 32 ]; then sudo wget -O qt.txz http://win-builds.org/1.5.0/packages/windows_32/qt-5.3.1-4-i686-w64-mingw32.txz; fi
   - if [ $BITSIZE == 64 ]; then sudo wget -O qt.txz http://win-builds.org/1.5.0/packages/windows_64/qt-5.3.1-4-x86_64-w64-mingw32.txz; fi
-  # unzip Qt to /opt/qt5 and set path variable
   - sudo mkdir /opt/qt5/
   - sudo tar xfp qt.txz -C /opt/qt5
   - sudo ls -alh /opt/qt5/windows_$BITSIZE/*
-  - sudo ls -alh /opt/qt5/windows_$BITSIZE/mkspecs/*
-  #- sudo 7z x qt.zip -o/opt/qt5 -y > /dev/null
-  #- sudo ls /opt/qt5/QtSDK-$HOST
-  # set Qt Paths, QtSDK-{x86_64|i686}
   - uname -m
-  #- export QTDIR=/opt/qt5/QtSDK-$HOST
   - export QTDIR=/opt/qt5/windows_$BITSIZE
   - export PATH=$QTDIR/bin:$PATH
   - if [ $BITSIZE == 32 ]; then export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
   - if [ $BITSIZE == 64 ]; then export LD_LIBRARY_PATH=$QTDIR/lib64/:$QTDIR/lib64/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
-  - export PATH=$QMAKE_LIB_DIR:$PATH
   - export QMAKESPEC=$QTDIR/mkspecs/linux-g++
   - export QT_PLUGIN_PATH=$QTDIR/mkspecs
   # < MinGW
@@ -64,7 +52,7 @@ script:
   - which qmake
   - qmake -query
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro -spec $SPEC/linux-g++ CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
+  - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
   - gcc -v
   - gcc -dumpmachine
   - export CMAKE_OPTS="-DUSE_WERROR=ON"
