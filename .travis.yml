@@ -47,6 +47,7 @@ install:
   - export PATH=$MINGW/bin:$PATH
   - export CC=$HOST-w64-mingw32-gcc
   - export CXX=$HOST-w64-mingw32-g++
+  - export QT_INSTALL_PREFIX=$QTDIR
 
 script:
   - which qmake
