@@ -18,40 +18,24 @@ matrix:
       env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686"
 
 install:
-  # < Trusty
-  #- sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y
   # < Mingw Repo
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
   - sudo apt-get update -qq
   # < NUM_CPU (for make jobs)
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
-  # < Qt from win-builds
-  #- if [ $BITSIZE == 32 ]; then sudo wget -O qt.txz http://win-builds.org/1.5.0/packages/windows_32/qt-5.3.1-4-i686-w64-mingw32.txz; fi
-  #- if [ $BITSIZE == 64 ]; then sudo wget -O qt.txz http://win-builds.org/1.5.0/packages/windows_64/qt-5.3.1-4-x86_64-w64-mingw32.txz; fi
-  #- sudo mkdir /opt/qt5/
-  #- sudo tar xfp qt.txz -C /opt/qt5
-  #- sudo ls -alh /opt/qt5/windows_$BITSIZE/*
-  #- uname -m
-  #- export QTDIR=/opt/qt5/windows_$BITSIZE
-  #- export PATH=$QTDIR/bin:$PATH
-  #- if [ $BITSIZE == 32 ]; then export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
-  #- if [ $BITSIZE == 64 ]; then export LD_LIBRARY_PATH=$QTDIR/lib64/:$QTDIR/lib64/`uname -m`-linux-gnu:$LD_LIBRARY_PATH; fi
-  #- export QMAKESPEC=$QTDIR/mkspecs/linux-g++
-  #- export QT_PLUGIN_PATH=$QTDIR/mkspecs
+  - uname -m
   # Install
   - sudo apt-get install -y cloog-isl mingw32
-  #qt5-default qtbase5-dev libqt5gui5 libqt5printsupport5 libqt5widgets5 libpango-1.0-0
   - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime mingw32-x-qt5base; fi
   - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime mingw64-x-qt5base; fi
   - export MINGW=/opt/mingw$BITSIZE
   - export PATH=$MINGW/bin:$PATH
   - export CC=$HOST-w64-mingw32-gcc
   - export CXX=$HOST-w64-mingw32-g++
-  #- export QT_INSTALL_PREFIX=$QTDIR
+  - sudo ls -alh /home/travis/build/WPN-XM/*
 
 script:
   - which qmake
-  - qmake -set QT_INSTALL_PREFIX $QTDIR
   - qmake -query
   - qmake -v
   - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
