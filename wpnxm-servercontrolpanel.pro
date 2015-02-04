@@ -23,6 +23,12 @@
 
 message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
+VERSION = 0.000
+QMAKE_TARGET_COMPANY = company
+QMAKE_TARGET_PRODUCT = product
+QMAKE_TARGET_DESCRIPTION = description
+QMAKE_TARGET_COPYRIGHT = copyright
+
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
 CONFIG += qt console c++11 #warn-on static

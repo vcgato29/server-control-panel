@@ -44,7 +44,7 @@ script:
   - sed -i -e 's/@APPVERSIONRC@/1,2,3/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
   - cat /home/travis/build/WPN-XM/server-control-panel/src/version.h
   - make -j$NUM_CPU VERBOSE=1
-  - sudo ls -alh /home/travis/build/WPN-XM/release/*
+  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release/*
 
 notifications:
   email: false
