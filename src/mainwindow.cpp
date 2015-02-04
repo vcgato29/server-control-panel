@@ -38,7 +38,7 @@
 #include <QTimer>
 #include <QDir>
 #include <QDialogButtonBox>
-#include <QCheckbox>
+#include <QCheckBox>
 #include <QDesktopWidget>
 #include <QDate>
 
@@ -832,7 +832,7 @@ void MainWindow::checkAlreadyActiveDaemons()
 
     // foreach processesToSearch take a look in the processList
     for (int i = 0; i < processesToSearch.size(); ++i)
-    {        
+    {
         //qDebug() << "Searching for process: " << processesToSearch.at(i).toLocal8Bit().constData() << endl;
 
         if(processList.contains( processesToSearch.at(i).toLatin1().constData() ))
