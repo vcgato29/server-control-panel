@@ -19,11 +19,10 @@ matrix:
 
 install:
   # < Trusty
-  - sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y
-  - sudo apt-get update -qq
-  - sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes -fuy dist-upgrade
+  #- sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y
   # < Mingw Repo
-  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-trusty
+  #- sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+  - echo "deb http://ppa.launchpad.net/tobydox/mingw-x-trusty/ubuntu/ trusty main" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
   # < NUM_CPU (for make jobs)
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
