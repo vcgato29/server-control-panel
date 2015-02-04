@@ -21,10 +21,7 @@ install:
   # < Trusty
   #- sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y
   # < Mingw Repo
-  #- sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
-  - sudo gpg --keyserver keyserver.ubuntu.com --recv  02FE5F12ADDE29B2
-  - sudo gpg --export --armor 02FE5F12ADDE29B2  | sudo apt-key add -
-  - echo "deb http://ppa.launchpad.net/tobydox/mingw-x-trusty/ubuntu/ trusty main" | sudo tee -a /etc/apt/sources.list
+  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
   - sudo apt-get update -qq
   # < NUM_CPU (for make jobs)
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
@@ -42,7 +39,7 @@ install:
   #- export QMAKESPEC=$QTDIR/mkspecs/linux-g++
   #- export QT_PLUGIN_PATH=$QTDIR/mkspecs
   # Install
-  - sudo apt-get install -y cloog-isl mingw32 mingw-x-qt5base mingw-x-qt5connectivity mingw-x-qt5serialport
+  - sudo apt-get install -y cloog-isl mingw32 mingw-x-qt5base mingw-x-qt5serialport
   #qt5-default qtbase5-dev libqt5gui5 libqt5printsupport5 libqt5widgets5 libpango-1.0-0
   - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
   - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
