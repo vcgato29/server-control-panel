@@ -41,9 +41,12 @@ script:
   - gcc -v
   - gcc -dumpmachine
   - sed -i -e 's/@APPVERSION@/1.2.3/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
-  - sed -i -e 's/@APPVERSIONRC@/1,2,3/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
+  - sed -i -e 's/@APPVERSIONRC@/1,2,3,0/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
   - cat /home/travis/build/WPN-XM/server-control-panel/src/version.h
   - make -j$NUM_CPU VERBOSE=1
+  - sudo ls -alh /home/travis/build/*
+  - sudo ls -alh /home/travis/build/WPN-XM/*
+  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/*
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release/*
 
 notifications:
