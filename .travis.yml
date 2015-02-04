@@ -32,7 +32,6 @@ install:
   - export PATH=$MINGW/bin:$PATH
   - export CC=$HOST-w64-mingw32-gcc
   - export CXX=$HOST-w64-mingw32-g++
-  - sudo ls -alh /home/travis/build/WPN-XM/*
 
 script:
   - which qmake
@@ -41,8 +40,10 @@ script:
   - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
   - gcc -v
   - gcc -dumpmachine
-  - export CMAKE_OPTS="-DUSE_WERROR=ON"
+  - sed -i -e 's/@APPVERSION@/1.2.3/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
+  - sed -i -e 's/@APPVERSIONRC@/1,2,3/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
   - make -j$NUM_CPU VERBOSE=1
+  - sudo ls -alh /home/travis/build/WPN-XM/*
 
 notifications:
   email: false
