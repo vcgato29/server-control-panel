@@ -22,6 +22,8 @@ install:
   #- sudo add-apt-repository "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" -y
   # < Mingw Repo
   #- sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+  - sudo gpg --keyserver keyserver.ubuntu.com --recv  02FE5F12ADDE29B2
+  - sudo gpg --export --armor 02FE5F12ADDE29B2  | sudo apt-key add -
   - echo "deb http://ppa.launchpad.net/tobydox/mingw-x-trusty/ubuntu/ trusty main" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
   # < NUM_CPU (for make jobs)
