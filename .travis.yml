@@ -29,7 +29,7 @@ install:
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
   - uname -m
   # Install
-  - sudo apt-get install -y cloog-isl mingw32 wine
+  - sudo apt-get install -y cloog-isl mingw32
   - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime mingw32-x-qt5base; fi
   - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime mingw64-x-qt5base; fi
   - export MINGW=/opt/mingw$BITSIZE
@@ -50,6 +50,7 @@ script:
   - make -j$NUM_CPU VERBOSE=1
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release/*
   # test executable with wine
+  - sudo apt-get install -y wine
   - wineconsole --backend=curses /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe --help
 
 notifications:
