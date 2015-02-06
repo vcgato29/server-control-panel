@@ -38,7 +38,7 @@
 // Settings for application_win.rc
 // These values are the attributes of the executable, shown when right-clicking on it.
 #define VER_FILEVERSION             @APPVERSIONRC@
-#define VER_FILEVERSION_STR         "@APPVERSION@.0\0"
+#define VER_FILEVERSION_STR         "@APPVERSION@\0"
 
 #define VER_PRODUCTVERSION          VER_FILEVERSION
 #define VER_PRODUCTVERSION_STR      VER_FILEVERSION_STR
