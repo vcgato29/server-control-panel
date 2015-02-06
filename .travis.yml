@@ -45,14 +45,15 @@ script:
   - gcc -v
   - gcc -dumpmachine
   # insert version
-  - sed -i -e 's/@APPVERSION@/1.2.3/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
-  - sed -i -e 's/@APPVERSIONRC@/1,2,3,0/g' /home/travis/build/WPN-XM/server-control-panel/src/version.h
+  - ant main
   - cat /home/travis/build/WPN-XM/server-control-panel/src/version.h
   # build
   - make -j$NUM_CPU VERBOSE=1
-  # test executable with wine
 
 after_success:
+  # fetch Qt Deployment package (dlls)
+  #-
+  # test executable with wine
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release/*
   - sudo apt-get install -y wine
   - wineconsole --backend=curses /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe --help
