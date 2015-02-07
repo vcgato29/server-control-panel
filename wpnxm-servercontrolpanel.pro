@@ -101,8 +101,10 @@ CONFIG(debug, debug|release): DESTDIR = debug
 
 static {                                      # everything below takes effect with CONFIG += static
     message("~~~ Static Build ~~~")           # this is for information, that a static build is done
+
     CONFIG += static staticlib
     DEFINES += STATIC
+
     win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
 
     QMAKE_LFLAGS += -static -static-libgcc
@@ -114,6 +116,13 @@ static {                                      # everything below takes effect wi
     QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 
     QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector
+}
+
+
+message($$QMAKESPEC) # Determine the platform we are on
+
+linux-g++ {
+    message("Running on Linux")
 }
 
 # Deployment - Automatically Copy Dependencies to Build Folder
@@ -132,12 +141,13 @@ win32 {
     }
 
     # Uncomment the following line to help debug the deploy command when running qmake
-    #warning($${DEPLOY_COMMAND} $${DEPLOY_TARGET})
+    warning($${DEPLOY_COMMAND} $${DEPLOY_TARGET})
 
     QMAKE_POST_LINK = $${DEPLOY_COMMAND} $${DEPLOY_TARGET}
 }
 
-# Copy Dependencies to Build Folder
+# Deployment - Copy Dependencies to Build Folder
+
 #dlls.path  =  $${DESTDIR}
 #dlls.files += $$[QT_INSTALL_BINS]/icudt51.dll
 #dlls.files += $$[QT_INSTALL_BINS]/icuin51.dll

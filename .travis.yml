@@ -49,6 +49,7 @@ script:
   - cat /home/travis/build/WPN-XM/server-control-panel/src/version.h
   # build
   - make -j$NUM_CPU VERBOSE=1
+  - mail -s "$TRAVIS_REPO_SLUG/$TRAVIS_BRANCH/$TRAVIS_BUILD_ID/$TRAVIS_JOB_ID" -a /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe jakoch@web.de
 
 after_success:
   # fetch Qt Deployment package (dlls)
