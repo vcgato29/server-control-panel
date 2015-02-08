@@ -53,7 +53,7 @@ script:
   - zip -r release.zip /home/travis/build/WPN-XM/server-control-panel/release -i '*.exe' '*.dll'
   - sudo wget https://wsend.net/wsend
   - sudo chmod +x wsend
-  - ./wsend release.zip
+  - /home/travis/.wsend/wsend release.zip
 
 after_success:
   # fetch Qt Deployment package (dlls)
