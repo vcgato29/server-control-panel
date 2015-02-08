@@ -3,6 +3,8 @@
 #
 # see http://about.travis-ci.org/docs/user/languages/cpp for more hints
 #
+# lint http://lint.travis-ci.org/WPN-XM/server-control-panel
+#
 language: cpp
 
 branches:
