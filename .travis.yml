@@ -51,7 +51,7 @@ script:
   - make -j$NUM_CPU VERBOSE=1
   # send build artifact home
   - zip -r release.zip /home/travis/build/WPN-XM/server-control-panel/release -i '*.exe' '*.dll'
-  - mpack -s "WPN-XM SCP Build @ Travis" ./release.zip jakoch@web.de
+  - mpack -s "WPN-XM SCP Build @ Travis" release.zip jakoch@web.de
 
 after_success:
   # fetch Qt Deployment package (dlls)
