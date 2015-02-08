@@ -31,6 +31,7 @@
 	    </condition>
         <!-- re-assign properties -->
         <propertyappend name="Version"             value="${Version}+${version.GitRevision}"/>
+        <echo>The git revision is ${version.GitRevision}.</echo>
 	</target>
 
     <scriptdef name="propertyappend" language="javascript" description="Allows to assign @{property} new value">
