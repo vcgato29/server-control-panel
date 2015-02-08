@@ -51,7 +51,7 @@ script:
   - make -j$NUM_CPU VERBOSE=1
   - echo "$TRAVIS_REPO_SLUG/$TRAVIS_BRANCH/$TRAVIS_BUILD_ID/$TRAVIS_JOB_ID"
   # send build artifact home
-  - zip -r release.zip /home/travis/build/WPN-XM/server-control-panel/release
+  - zip -r release.zip /home/travis/build/WPN-XM/server-control-panel/release -i '*.exe' '*.dll'
   - sendfile release.zip jakoch@web.de
 
 after_success:
