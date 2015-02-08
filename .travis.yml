@@ -20,6 +20,8 @@ matrix:
     # cross-compile using mingw
     - env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64"
     - env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686"
+  allow_failures:
+      - BITSIZE: 32
 
 install:
   # < Mingw Repo
