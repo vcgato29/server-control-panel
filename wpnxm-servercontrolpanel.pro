@@ -125,6 +125,11 @@ linux-g++ {
     message("Running on Linux")
 }
 
+win32-g++ {
+    message("The project is build on Travis: $$(TRAVIS)")
+    message("Running on Windows")
+}
+
 # Deployment - Automatically Copy Dependencies to Build Folder
 
 win32 {
