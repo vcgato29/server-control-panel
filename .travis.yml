@@ -29,7 +29,7 @@ install:
   - export NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
   - uname -m
   # Install
-  - sudo apt-get install -y zip mutt cloog-isl mingw32
+  - sudo apt-get install -y zip mpack cloog-isl mingw32
   - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime mingw32-x-qt5base; fi
   - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime mingw64-x-qt5base; fi
   - export MINGW=/opt/mingw$BITSIZE
@@ -51,7 +51,7 @@ script:
   - make -j$NUM_CPU VERBOSE=1
   # send build artifact home
   - zip -r release.zip /home/travis/build/WPN-XM/server-control-panel/release -i '*.exe' '*.dll'
-  - mutt -a release.zip -s "WPN-XM SCP Build @ Travis" -- jakoch@web.de
+  - mpack -s "WPN-XM SCP Build @ Travis" ./release.zip jakoch@web.de
 
 after_success:
   # fetch Qt Deployment package (dlls)
