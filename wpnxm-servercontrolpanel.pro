@@ -21,6 +21,10 @@
 #    along with WPN-XM SCP. If not, see <http://www.gnu.org/licenses/>.
 #
 
+if(!equals(QT_MAJOR_VERSION, 5)) {
+    error("This program can only be compiled with Qt 5.")
+}
+
 message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
 VERSION = 0.000
