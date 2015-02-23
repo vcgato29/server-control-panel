@@ -65,8 +65,25 @@ after_success:
   - 7za x -y 5.4.0.7z -o/home/travis/build/WPN-XM/server-control-panel/qt
   - rm 5.4.0.7z
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/qt/*
+  # copy dependencies
+  # from the 5.4.0 dir
+  - cp /home/travis/build/WPN-XM/server-control-panel/qt/libstdc++-6.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /home/travis/build/WPN-XM/server-control-panel/qt/libgcc_s_dw2-1.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /home/travis/build/WPN-XM/server-control-panel/qt/libwinpthread-1.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  # mingw-x-runtime
+  #- cp /opt/mingw64/x86_64-w64-mingw32/libwinpthread-1.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  # mingw-x-qt5base
+  - cp /opt/mingw$BITSIZE/bin/Qt5Core.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /opt/mingw$BITSIZE/bin/Qt5Gui.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /opt/mingw$BITSIZE/bin/Qt5Widgets.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /opt/mingw$BITSIZE/bin/Qt5Network.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /opt/mingw$BITSIZE/lib/qt5/plugins/platforms/qwindows.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qico.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  - cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qwbmp.dll /home/travis/build/WPN-XM/server-control-panel/release/
+  # lets take a look
+  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release/*
   #
-  - cp /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe /home/travis/build/WPN-XM/server-control-panel/qt/
+  #- cp /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe /home/travis/build/WPN-XM/server-control-panel/qt/
   # Enigma VirtualBox - boxing the Qt application
   #- sudo mkdir /home/travis/build/WPN-XM/server-control-panel/release-boxed
   #- wine bin/evb/enigmaconsole.exe bin/evb/scp.travis.evb
@@ -74,7 +91,7 @@ after_success:
   # zip boxed executable
   #- zip /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.zip wpn-xm.exe
   # test executable with wine
-  - wineconsole --backend=curses /home/travis/build/WPN-XM/server-control-panel/qt/wpn-xm.exe --help
+  - wineconsole --backend=curses /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe --help
 
 #deploy:
 #  provider: releases
