@@ -50,7 +50,7 @@ script:
   - ant main
   - cat /home/travis/build/WPN-XM/server-control-panel/src/version.h
   # build
-  - make -j$NUM_CPU VERBOSE=1
+  - make -j2 VERBOSE=1
 
 after_success:
   # install wine
