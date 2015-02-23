@@ -74,7 +74,7 @@ after_success:
   # zip boxed executable
   #- zip /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.zip wpn-xm.exe
   # test executable with wine
-  - wineconsole --backend=curses /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.exe --help
+  - wineconsole --backend=curses /home/travis/build/WPN-XM/server-control-panel/qt/wpn-xm.exe --help
 
 #deploy:
 #  provider: releases
