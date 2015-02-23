@@ -55,12 +55,15 @@ script:
 after_success:
   # install wine
   - sudo apt-get install -y wine p7zip-full
+  # start framebuffer (wine wants this)
+  - "sh -e /etc/init.d/xvfb start"
+  - "export DISPLAY=:99.0"
   # fetch Qt Deployment package (dlls)
   - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/deploy
   - wget https://github.com/WPN-XM/qt-mini-deploy/raw/master/5.4.0.7z
-  - 7za x -y 5.4.0.7z -o /home/travis/build/WPN-XM/server-control-panel/deploy
+  - 7za x -y 5.4.0.7z -o/home/travis/build/WPN-XM/server-control-panel/qt
   - rm 5.4.0.7z
-  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/deploy/*
+  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/qt/*
   # Enigma VirtualBox - boxing the Qt application
   - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/release-boxed
   - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/bin/evb/enigmaconsole.exe scp.travis.evb
