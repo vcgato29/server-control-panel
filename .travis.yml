@@ -54,7 +54,7 @@ script:
 
 after_success:
   # install wine
-  - sudo apt-get install -y wine
+  - sudo apt-get install -y wine p7zip-full
   # fetch Qt Deployment package (dlls)
   - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/deploy
   - wget -q https://github.com/WPN-XM/qt-mini-deploy/raw/master/5.4.0.7z
