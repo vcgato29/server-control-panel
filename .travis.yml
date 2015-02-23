@@ -53,20 +53,22 @@ script:
   - make -j$NUM_CPU VERBOSE=1
 
 after_success:
-  - if [ -f /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe ]; then
-      zip -r release.zip /home/travis/build/WPN-XM/server-control-panel/release -i '*.exe' '*.dll'
-    else
-      echo "[wpn-xm.exe] File not found."
-    fi
-  # send build artifact home
-  # publish only, if not a "pull request" and on "master" branch
-  # - if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' && ]]; then deploy; fi
+  # install wine
+  - sudo apt-get install -y wine
   # fetch Qt Deployment package (dlls)
-  # ...
+  - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/deploy
+  - wget -q https://github.com/WPN-XM/qt-mini-deploy/raw/master/5.4.0.7z
+  - 7za x -y 5.4.0.7z -o /home/travis/build/WPN-XM/server-control-panel/deploy
+  - rm 5.4.0.7z
+  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/deploy/*
+  # Enigma VirtualBox - boxing the Qt application
+  - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/release-boxed
+  - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/bin/evb/enigmaconsole.exe scp.travis.evb
+  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release-boxed/*
+  # zip boxed executable
+  - zip /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.zip wpn-xm.exe
   # test executable with wine
-  #- sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release/*
-  #- sudo apt-get install -y wine
-  #- wineconsole --backend=curses /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe --help
+  - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.exe --help
 
 #deploy:
 #  provider: releases
