@@ -61,7 +61,7 @@ after_success:
   - "export DISPLAY=:99.0"
   #
   - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/deploy
-  - cp /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe /home/travis/build/WPN-XM/server-control-panel/deploy/
   # fetch Qt Deployment package (dlls)
   - wget https://github.com/WPN-XM/qt-mini-deploy/raw/master/5.4.0.7z
   - 7za x -y 5.4.0.7z -o/home/travis/build/WPN-XM/server-control-panel/qt
@@ -69,21 +69,21 @@ after_success:
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/qt/*
   # copy dependencies
   # from the 5.4.0 dir
-  - cp /home/travis/build/WPN-XM/server-control-panel/qt/libstdc++-6.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /home/travis/build/WPN-XM/server-control-panel/qt/libgcc_s_dw2-1.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /home/travis/build/WPN-XM/server-control-panel/qt/libwinpthread-1.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /home/travis/build/WPN-XM/server-control-panel/bin/windows/$BITSIZE/libpng16-16.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /home/travis/build/WPN-XM/server-control-panel/bin/windows/$BITSIZE/zlib1.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /home/travis/build/WPN-XM/server-control-panel/qt/libstdc++-6.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /home/travis/build/WPN-XM/server-control-panel/qt/libgcc_s_dw2-1.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /home/travis/build/WPN-XM/server-control-panel/qt/libwinpthread-1.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /home/travis/build/WPN-XM/server-control-panel/bin/windows/$BITSIZE/libpng16-16.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /home/travis/build/WPN-XM/server-control-panel/bin/windows/$BITSIZE/zlib1.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
   # mingw-x-runtime
   #- cp /opt/mingw64/x86_64-w64-mingw32/libwinpthread-1.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
   # mingw-x-qt5base
-  - cp /opt/mingw$BITSIZE/bin/Qt5Core.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /opt/mingw$BITSIZE/bin/Qt5Gui.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /opt/mingw$BITSIZE/bin/Qt5Widgets.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /opt/mingw$BITSIZE/bin/Qt5Network.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
-  - cp /opt/mingw$BITSIZE/lib/qt5/plugins/platforms/qwindows.dll /home/travis/build/WPN-XM/server-control-panel/deploy/platforms/
-  - cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qico.dll /home/travis/build/WPN-XM/server-control-panel/deploy/imageformats/
-  - cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qwbmp.dll /home/travis/build/WPN-XM/server-control-panel/deploy/imageformats/
+  - sudo cp /opt/mingw$BITSIZE/bin/Qt5Core.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /opt/mingw$BITSIZE/bin/Qt5Gui.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /opt/mingw$BITSIZE/bin/Qt5Widgets.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /opt/mingw$BITSIZE/bin/Qt5Network.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
+  - sudo cp /opt/mingw$BITSIZE/lib/qt5/plugins/platforms/qwindows.dll /home/travis/build/WPN-XM/server-control-panel/deploy/platforms/
+  - sudo cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qico.dll /home/travis/build/WPN-XM/server-control-panel/deploy/imageformats/
+  - sudo cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qwbmp.dll /home/travis/build/WPN-XM/server-control-panel/deploy/imageformats/
   # lets take a look
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/deploy/*
   # Enigma VirtualBox - boxing the Qt application
