@@ -40,27 +40,29 @@
             project.setProperty(attributes.get("name"), attributes.get("value"));
     </scriptdef>
 
+    <property name="basedir"            value="${project.basedir}" />
+
     <!--
             Set properties based on OS
     -->
 
     <target name="init-properties" description="set properties based on OS">
-          <condition property="isUnix"><os family="unix" /></condition>
-          <condition property="isWindows"><os family="windows" /></condition>
-          <antcall target="setUnixEnv" />
-          <antcall target="setWindowsEnv" />
+        <condition property="isUnix"><os family="unix" /></condition>
+        <condition property="isWindows"><os family="windows" /></condition>
+        <antcall target="setUnixEnv" />
+        <antcall target="setWindowsEnv" />
     </target>
 
     <target name="setUnixEnv" if="isUnix">
-          <echo>Setting properties for a Unix machine.</echo>
-          <!-- <property file="unix.properties" />-->
+        <echo>Setting properties for a Unix machine.</echo>
+        <!-- <property file="unix.properties" />-->
     </target>
 
     <target name="setWindowsEnv" if="isWindows">
-          <echo>Setting properties for a Windows machine.</echo>
-          <!-- <property file="unix.properties" />-->
-          <property name="dir.qmake"   value="D:\Qt\Qt5.2.0\5.2.0-rc1\mingw48_32\bin"/>
-          <property name="dir.mingw32" value="D:\Qt\Qt5.2.0\Tools\mingw48_32\bin\"/>
+        <echo>Setting properties for a Windows machine.</echo>
+        <!-- <property file="unix.properties" />-->
+        <property name="dir.qmake"   value="D:\Qt\Qt5.2.0\5.2.0-rc1\mingw48_32\bin"/>
+        <property name="dir.mingw32" value="D:\Qt\Qt5.2.0\Tools\mingw48_32\bin\"/>
     </target>
 
 	<!--
@@ -84,22 +86,24 @@
         <echo file="${basedir}/src/version.h">${filecontent.scp.version.h}</echo>
     </target>
 
-    <target name="build-server-control-panel"
-            description="Prepares the freshly build SCP zip archive for distribution."
-            depends="compile-server-control-panel">
-            <!-- zip the build/release folder to "_build/wpnxm-scp-1.2.3"-->
-            <echo message="Building zip archive of Server-Control-Panel for distribution"/>
-            <zip zipfile="${basedir}/_build/wpnxm-scp-${wpnxm.Version}.zip" ziplevel="9">
-                <fileset dir="${basedir}/server-control-panel/build/release/">
-                    <include name="**/*" />
-                </fileset>
-            </zip>
-            <!-- copy zip to the downloads folder -->
-            <copy file="${basedir}/_build/wpnxm-scp-${wpnxm.Version}.zip" tofile="${basedir}/downloads/wpnxmscp.zip" />
+    <target name="clean-build-dir" description="Mr. Proper cleans the build environment and recreates it.">
+        <!-- clean -->
+        <delete dir="${basedir}/deploy"/>
+        <delete dir="${basedir}/deploy/imageformats"/>
+        <delete dir="${basedir}/deploy/platforms"/>
+        <!-- mkdir -->
+        <mkdir dir="${basedir}/deploy"/>
+        <mkdir dir="${basedir}/deploy/imageformats"/>
+        <mkdir dir="${basedir}/deploy/platforms"/>
+    </target>
 
-            <echo message="Clean Server-Control-Panel folder"/>
-            <!-- remove files, ignores and folders. you might add "n" for dry-run -->
-            <exec command="git clean -fxd" dir="${basedir}/server-control-panel/" passthru="true"/>
+    <target name="package" description="zip the deployment folder to deploy/wpnxm-scp-1.2.3.zip">
+        <echo message="Building zip archive of Server-Control-Panel for distribution."/>
+        <zip zipfile="${basedir}/deploy/wpnxm-scp-${wpnxm.Version}.zip" ziplevel="9">
+            <fileset dir="${basedir}/deploy/">
+                <include name="**/*" />
+            </fileset>
+        </zip>
     </target>
 
     <target name="compile-server-control-panel"
