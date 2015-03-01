@@ -110,6 +110,8 @@ deploy:
   skip_cleanup: true
   on:
     tags: true #  the application is deployed, when a tag is applied to the commit
+    repo: WPN-XM/server-control-panel
+    all_branches: true
 
 notifications:
   email: false
