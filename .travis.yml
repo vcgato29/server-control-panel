@@ -59,8 +59,11 @@ after_success:
   # start framebuffer (wine wants this)
   - "sh -e /etc/init.d/xvfb start"
   - "export DISPLAY=:99.0"
-  #
+  # create deployment folder
   - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/deploy
+  - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/deploy/imageformats
+  - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/deploy/platforms
+  # copy executable
   - sudo cp /home/travis/build/WPN-XM/server-control-panel/release/wpn-xm.exe /home/travis/build/WPN-XM/server-control-panel/deploy/
   # fetch Qt Deployment package (dlls)
   - wget https://github.com/WPN-XM/qt-mini-deploy/raw/master/5.4.0.7z
@@ -92,18 +95,21 @@ after_success:
   #- sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release-boxed/*
   # zip boxed executable
   #- zip /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.zip wpn-xm.exe
+  # zip unboxed deployment folder
+  - zip -r wpnxm-scp-$BITSIZE.zip /home/travis/build/WPN-XM/server-control-panel/deploy/
   # test executable with wine
   - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/deploy/wpn-xm.exe --help
 
-#deploy:
-#  provider: releases
-#  api-key: "GITHUB OAUTH TOKEN"
-#  file: "FILE TO UPLOAD"
-#  skip_cleanup: true
-#  on:
-#    condition:
-#    tags: true
-#    all_branches: true
+# deploy the installer executables to github releases
+deploy:
+  provider: releases
+  api_key:
+      secure: "KEY"
+  file_glob: true
+  file: ${HOME}/build/${TRAVIS_REPO_SLUG}/deploy/*.zip
+  skip_cleanup: true
+  on:
+    tags: true #  the application is deployed, when a tag is applied to the commit
 
 notifications:
   email: false
