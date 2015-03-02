@@ -91,6 +91,13 @@ Launch the following commands to build it from command line:
 * `qmake wpnxm-servercontrolpanel.pro`
 * `mingw32-make -j4`
 
+### Deployment of Tags via Travis
+
+	git commit -m "This is the commit message. Tagging v1.2.3"
+	git tag 1.2.3
+	git push --tags
+	git push
+
 ## Bugs
 
 If you find a bug in the software, please let us know about it.
