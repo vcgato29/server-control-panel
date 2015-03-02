@@ -86,9 +86,9 @@ after_success:
   # lets take a look
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/deploy/*
   # Enigma VirtualBox - boxing the Qt application
-  #- sudo mkdir /home/travis/build/WPN-XM/server-control-panel/release-boxed
-  #- wine bin/evb/enigmaconsole.exe bin/evb/scp.travis.evb
-  #- sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release-boxed/*
+  - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/release-boxed
+  - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/bin/evb/enigmaconsole.exe /home/travis/build/WPN-XM/server-control-panel/bin/evb/scp.travis.evb
+  - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release-boxed/*
   # zip boxed executable
   #- zip /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.zip wpn-xm.exe
   # zip unboxed deployment folder
