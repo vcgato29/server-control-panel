@@ -106,12 +106,11 @@ deploy:
   api_key:
     secure: fE+So00loM94TxHsyYpoRgi6SaCXKx8tKdujbNvOcsCMwqRKllWPSpxXriK9pYQ7MW6s7gAXaACPxnIkme+l/7sZhNLewSIAslAt47Fni/7JAx1vGypWphhHCh+HTpOZAQAwE9mVgY2EHbhDpxE4d/4OT/8ToDxymQSkAZpioxg=
   file_glob: true
-  file: ${HOME}/build/${TRAVIS_REPO_SLUG}/deploy/*.zip
+  file: ${HOME}/build/${TRAVIS_REPO_SLUG}/*.zip
   skip_cleanup: true
   on:
     tags: true #  the application is deployed, when a tag is applied to the commit
     repo: WPN-XM/server-control-panel
-    all_branches: true
 
 notifications:
   email: false
