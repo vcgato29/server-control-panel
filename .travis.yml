@@ -91,7 +91,7 @@ after_success:
   # zip boxed executable
   #- zip /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.zip wpn-xm.exe
   # zip unboxed deployment folder
-  - 7za a -tzip wpnxm-scp-x$BITSIZE.zip /home/travis/build/WPN-XM/server-control-panel/deploy/*
+  - 7za a -tzip wpnxm-scp-$ARCH.zip /home/travis/build/WPN-XM/server-control-panel/deploy/*
   # test executable with wine
   - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/deploy/wpn-xm.exe --help
 
