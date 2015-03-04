@@ -82,7 +82,6 @@ after_success:
   - sudo cp /opt/mingw$BITSIZE/bin/Qt5Network.dll /home/travis/build/WPN-XM/server-control-panel/deploy/
   - sudo cp /opt/mingw$BITSIZE/lib/qt5/plugins/platforms/qwindows.dll /home/travis/build/WPN-XM/server-control-panel/deploy/platforms/
   - sudo cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qico.dll /home/travis/build/WPN-XM/server-control-panel/deploy/imageformats/
-  - sudo cp /opt/mingw$BITSIZE/lib/qt5/plugins/imageformats/qwbmp.dll /home/travis/build/WPN-XM/server-control-panel/deploy/imageformats/
   # lets take a look
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/deploy/*
   # Enigma VirtualBox - boxing the Qt application
