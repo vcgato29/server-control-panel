@@ -8,7 +8,7 @@
     <property name="version.Major"          value="0"/>
     <property name="version.Minor"          value="8"/>
     <property name="version.Patch"          value="1"/>
-    <property name="version.PreRelease"     value="-alpha"/>
+    <property name="version.PreRelease"     value=""/> <!-- alpha, beta, rc -->
     <property name="version.BuildMetadata"  value=""/> <!-- auto -->
 
     <!-- Version Tokens used in /src/version.h -->
