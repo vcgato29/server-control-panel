@@ -18,7 +18,7 @@
 
 // wpnxm-scp x86
 
-download('http://wpn-xm.org/get.php?s=wpnxmscp', 'wpnxm-scp-x86.zip');
+download('https://github.com/WPN-XM/server-control-panel/releases/download/0.8.1/wpnxm-scp-x86.zip', 'wpnxm-scp-x86.zip');
 unzip('wpnxm-scp-x86.zip', __DIR__ . '/wpnxm-scp-x86');
 passthru('php EnigmaVirtualBox.php wpnxm-scp-x86 wpn-xm.exe wpn-xm-x86_boxed.exe');
 rename(__DIR__ . '\wpn-xm-x86_boxed.exe', __DIR__ . '\wpn-xm.exe');
@@ -29,7 +29,7 @@ unlink(__DIR__ . '\project.evb');
 
 // wpnxm-scp x86_64
 
-download('http://wpn-xm.org/get.php?s=wpnxmscp', 'wpnxm-scp-x86_64.zip');
+download('https://github.com/WPN-XM/server-control-panel/releases/download/0.8.1/wpnxm-scp-x86_64.zip', 'wpnxm-scp-x86_64.zip');
 unzip('wpnxm-scp-x86_64.zip', __DIR__ . '/wpnxm-scp-x86_64');
 passthru('php EnigmaVirtualBox.php wpnxm-scp-x86_64 wpn-xm.exe wpn-xm-x86_64_boxed.exe');
 rename(__DIR__ . '\wpn-xm-x86_64_boxed.exe', __DIR__ . '\wpn-xm.exe');
