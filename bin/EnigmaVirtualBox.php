@@ -163,9 +163,9 @@ class EnigmaVirtualBox
 		    "        <Enabled>false</Enabled>\n" .
 		    "    </Packaging>\n" .
 		    "    <Options>\n" .
-		    "        <ShareVirtualSystem>true</ShareVirtualSystem>\n" .
+		    "        <ShareVirtualSystem>false</ShareVirtualSystem>\n" .
 		    "        <MapExecutableWithTemporaryFile>false</MapExecutableWithTemporaryFile>\n" .
-		    "        <AllowRunningOfVirtualExeFiles>true</AllowRunningOfVirtualExeFiles>\n" .
+		    "        <AllowRunningOfVirtualExeFiles>false</AllowRunningOfVirtualExeFiles>\n" .
 		    "    </Options>\n" .
 		    "</>\n";
 
