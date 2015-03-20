@@ -219,8 +219,12 @@ void MainWindow::createActions()
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_Nginx"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogNginx()));
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PHP"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MariaDb"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
-    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MongoDb"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogMongoDb()));
-    connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PostgreSQL"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogPostgresql()));
+
+    QPushButton *buttonConfigureMongoDb =  ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MongoDb");
+    connect(buttonConfigureMongoDb, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMongoDb()));
+
+    QPushButton *buttonConfigurePostgresql =  ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PostgreSQL");
+    connect(buttonConfigurePostgresql, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPostgresql()));
 }
 
 void MainWindow::changeEvent(QEvent *event)
