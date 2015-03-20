@@ -35,6 +35,7 @@ class QCloseEvent;
 #include <QLayoutItem>
 #include <QGridLayout>
 #include <QJsonDocument>
+#include <QPushButton>
 
 namespace Ui {
     class MainWindow;
@@ -129,7 +130,8 @@ private:
 
     QString getVersion(QString server);
 
-    void getLogfile(QString key);
+    QString getLogfile(QString obj);
+    QString getServerNameFromPushButton(QPushButton *button);
 
     void saveJson(QJsonDocument document, QString fileName);
     QJsonDocument loadJson(QString fileName);

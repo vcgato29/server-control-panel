@@ -221,10 +221,10 @@ void MainWindow::createActions()
     connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MariaDb"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
 
     QPushButton *buttonConfigureMongoDb =  ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MongoDb");
-    connect(buttonConfigureMongoDb, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMongoDb()));
+    if(buttonConfigureMongoDb != 0) { connect(buttonConfigureMongoDb, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMongoDb())); }
 
     QPushButton *buttonConfigurePostgresql =  ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PostgreSQL");
-    connect(buttonConfigurePostgresql, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPostgresql()));
+    if(buttonConfigurePostgresql != 0) { connect(buttonConfigurePostgresql, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPostgresql())); }
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -674,14 +674,18 @@ void MainWindow::openConfigurationDialogPostgresql()
     QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#postgresql"));
 }
 
+// extract server name from pushbutton name (pushButton_ConfigurationEditor_server => server)
+QString MainWindow::getServerNameFromPushButton(QPushButton *button)
+{
+    QString obj = button->objectName();
+    QStringList pieces = obj.split("_");
+    return pieces.value(pieces.length() - 1);
+}
+
 void MainWindow::openConfigurationInEditor()
 {
     QPushButton *button = (QPushButton *)sender();
-    QString obj = button->objectName();
-
-    // extract server name from pushbutton name (pushButton_ConfigurationEditor_server => server)
-    QStringList pieces = obj.split("_");
-    QString serverName = pieces.value( pieces.length() - 1);
+    QString serverName = this->getServerNameFromPushButton(button);
 
     // fetch config file for server from the ini
     QString cfgfile = QDir(settings->get(serverName + "/config").toString()).absolutePath();
@@ -698,15 +702,8 @@ void MainWindow::openConfigurationInEditor()
     }
 }
 
-void MainWindow::openLog()
+QString MainWindow::getLogfile(QString obj)
 {
-    // we have a incoming SIGNAL object to this SLOT
-    // we use the object name, e.g. pushButton_ShowLog_Nginx or pushButton_ShowErrorLog_Nginx
-    // to map the log file
-
-    QPushButton *button = (QPushButton *)sender();
-    QString obj = button->objectName();
-
     QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
     QString logfile = "";
 
@@ -716,6 +713,20 @@ void MainWindow::openLog()
     if(obj == "pushButton_ShowErrorLog_MariaDb") { logfile = logs + "/mariadb_error.log";}
     if(obj == "pushButton_ShowLog_MongoDb")      { logfile = logs + "/mongodb.log";}
     if(obj == "pushButton_ShowLog_PostgreSQL")   { logfile = logs + "/postgresql.log";}
+
+    return logfile;
+}
+
+void MainWindow::openLog()
+{
+    // we have a incoming SIGNAL object to this SLOT
+    // we use the object name, e.g. pushButton_ShowLog_Nginx or pushButton_ShowErrorLog_Nginx
+    // to map the log file
+
+    QPushButton *button = (QPushButton *)sender();
+    QString obj = button->objectName();
+
+    QString logfile = this->getLogfile(obj);
 
     if(!QFile().exists(logfile)) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
