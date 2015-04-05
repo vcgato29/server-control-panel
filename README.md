@@ -15,7 +15,7 @@ The WPN-XM Server Control Panel is a Tray Application written in Qt v5.2+.
 
 Install Qt binaries from either the Qt SDK or standalone binary package or just use the Qt Online Installer.
 
-You should be able to find everything at http://qt-project.org/downloads or ftp://ftp.qt-project.org/
+You should be able to find everything at http://www.qt.io/download-open-source/ or ftp://ftp.qt-project.org/
 
 * Qt Online Installer
 
