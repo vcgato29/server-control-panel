@@ -291,6 +291,12 @@ void Servers::restartNginx()
  */
 void Servers::startPostgreSQL()
 {
+    // if not installed, skip
+    if(!QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe")) {
+        qDebug() << "[PostgreSQL] Is not installed. Skipping start command.";
+        return;
+    }
+
     // already running
     if(QFile().exists(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid")) {
         QMessageBox::warning(0, tr("PostgreSQL"), tr("PostgreSQL is already running."));
