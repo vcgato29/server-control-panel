@@ -458,7 +458,8 @@ void Servers::startMariaDb()
     updateVersion("MariaDb");
 
     // start
-    QString const startMariaDb = getServer("MariaDb")->exe;
+    QString const startMariaDb = getServer("MariaDb")->exe
+            + " --defaults-file=" + QDir::currentPath() + "\bin\mariadb\my.ini";
 
     qDebug() << "[MariaDB] Starting...\n" << startMariaDb;
 
