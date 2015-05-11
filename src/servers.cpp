@@ -239,8 +239,8 @@ void Servers::startNginx()
 
     // http://wiki.nginx.org/CommandLine - start daemon
     QString const startNginx = getServer("Nginx")->exe
-            + " -p " + QDir::currentPath()
-            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf";
+            + " -p " + qApp->applicationDirPath() +
+            + " -c " + qApp->applicationDirPath() + "/bin/nginx/conf/nginx.conf";
 
     qDebug() << "[Nginx] Starting...\n" << startNginx;
 
@@ -257,8 +257,8 @@ void Servers::stopNginx()
 
     // http://wiki.nginx.org/CommandLine - stop daemon
     QString const stopNginx = getServer("Nginx")->exe
-            + " -p " + QDir::currentPath()
-            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
+            + " -p " + qApp->applicationDirPath()
+            + " -c " + qApp->applicationDirPath() + "/bin/nginx/conf/nginx.conf"
             + " -s stop";
     qDebug() << "[Nginx] Stopping...\n" << stopNginx;
 
@@ -270,8 +270,8 @@ void Servers::reloadNginx()
     QProcess *process = getProcess("Nginx");
 
     QString const reloadNginx = getServer("Nginx")->exe
-            + " -p " + QDir::currentPath()
-            + " -c " + QDir::currentPath() + "/bin/nginx/conf/nginx.conf"
+            + " -p " + qApp->applicationDirPath()
+            + " -c " + qApp->applicationDirPath() + "/bin/nginx/conf/nginx.conf"
             + "-s reload";
 
     qDebug() << "[Nginx] Reloading...\n" << reloadNginx;
@@ -308,9 +308,9 @@ void Servers::startPostgreSQL()
     updateVersion("PostgreSQL");
 
     // start daemon
-    QString const startCmd = qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe"
-            + " --pgdata " + QDir::toNativeSeparators(QDir::currentPath() + "/bin/pgsql/data")
-            + " --log " + QDir::toNativeSeparators(QDir::currentPath() + "/logs/postgresql.log")
+    QString const startCmd = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe")
+            + " --pgdata " + QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/data")
+            + " --log " + QDir::toNativeSeparators(qApp->applicationDirPath() + "/logs/postgresql.log")
             + " start";
 
     qDebug() << "[PostgreSQL] Starting...\n" << startCmd;
@@ -352,10 +352,10 @@ void Servers::stopPostgreSQL()
     //disconnect(getProcess("PostgreSQL"), SIGNAL(error(QProcess::ProcessError)),
               // this, SLOT(showProcessError(QProcess::ProcessError)));
 
-    QString stopCommand = qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe"
+    QString stopCommand = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/bin/pg_ctl.exe")
             + " stop "
-            + " --pgdata " + QDir::currentPath() + "/bin/pgsql/data"
-            + " --log " + QDir::currentPath() + "/logs/postgresql.log"
+            + " --pgdata " + QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/data")
+            + " --log " + QDir::toNativeSeparators(qApp->applicationDirPath() + "/logs/postgresql.log")
             + " --mode=fast"
             + " -W";
 
@@ -458,7 +458,8 @@ void Servers::startMariaDb()
     updateVersion("MariaDb");
 
     // start
-    QString const startMariaDb = getServer("MariaDb")->exe;
+    QString const startMariaDb = getServer("MariaDb")->exe
+            + " --defaults-file=" + QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/mariadb/my.ini");
 
     qDebug() << "[MariaDB] Starting...\n" << startMariaDb;
 
