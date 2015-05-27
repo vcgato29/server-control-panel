@@ -766,14 +766,21 @@ void MainWindow::openAboutDialog()
             "<span style=\"display: inline-block; vertical-align: super; top: -20px; font-weight: bold; font-size: 16px;\">v" APP_VERSION "</span>"
             "</td></tr>"
             "<tr><td colspan=2>&nbsp;&nbsp;</td></tr>"
-            "<tr><td align=center><b>Website</b></td><td><a href=\"http://wpn-xm.org/\">http://wpn-xm.org/</a><br></td></tr>"
-            "<tr><td align=center><b>License</b></td><td>GNU/GPL version 3, or any later version.<br></td></tr>"
-            "<tr><td align=center><b>Author(s)</b></td><td>Jens-André Koch (C) 2011 - ").append(year).append(", <br>Yann Le Moigne (C) 2010.<br></td></tr>"
+            "<tr><td align=center><b>Website</b></td><td><a href=\"http://wpn-xm.org/\">http://wpn-xm.org/</a><br></td></tr>"           
+            "<tr><td align=center><b>Author(s)</b></td><td>Jens-André Koch (c) 2011 - ").append(year).append(", <br>Yann Le Moigne (c) 2010.<br></td></tr>"
             "<tr><td align=center><b>Github</b></td><td>WPN-XM is developed on Github.<br><a href=\"https://github.com/WPN-XM/WPN-XM/\">https://github.com/WPN-XM/WPN-XM/</a><br></td></tr>"
             "<tr><td align=center><b>Icons</b></td><td>We are using Yusukue Kamiyamane's Fugue Icon Set.<br><a href=\"http://p.yusukekamiyamane.com/\">http://p.yusukekamiyamane.com/</a><br></td></tr>"
             "<tr><td align=center><b>+1?</b></td><td>If you like using WPN-XM, consider supporting it:<br><a href=\"http://wpn-xm.org/#donate\">http://wpn-xm.org/#donate</a><br></td></tr>"
+            "<tr><td align=center><b>License</b></td><td>GNU/GPL version 3, or any later version.<br></td></tr>"
+            "<tr><td align=center><b>Disclaimer</b></td><td>&nbsp;</td></tr>"
             "</td></tr></table>"
-            "<br><br>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.<br>"
+            "<br><br>This software is provided by the development team ``as is'' and any expressed or implied warranties, including, but not limited to,"
+            " the implied warranties of merchantability  and fitness for a particular purpose are disclaimed. In no event shall the development team or its"
+            " contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages"
+            " (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption)"
+            " however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising"
+            " in any way out of the use of this software, even if advised of the possibility of such damage.<br>"
+
     ));
     about.setParent(this);
     about.setAutoFillBackground(true);
