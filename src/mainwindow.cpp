@@ -196,7 +196,7 @@ void MainWindow::createActions()
     connect(ui->pushButton_Donate, SIGNAL(clicked()), this, SLOT(goToDonate()));
 
     // PushButtons: Configuration, Help, About, Close
-    connect(ui->pushButton_Webinterface, SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
+    connect(ui->pushButton_Console, SIGNAL(clicked()), this, SLOT(openConsole()));
     connect(ui->pushButton_Configuration, SIGNAL(clicked()), this, SLOT(openConfigurationDialog()));
     connect(ui->pushButton_Help, SIGNAL(clicked()), this, SLOT(openHelpDialog()));
     connect(ui->pushButton_About, SIGNAL(clicked()), this, SLOT(openAboutDialog()));
@@ -210,7 +210,7 @@ void MainWindow::createActions()
     connect(ui->pushButton_tools_adminer, SIGNAL(clicked()), this, SLOT(openToolAdminer()));
 
     // Actions - Open Projects Folder
-    connect(ui->pushButton_OpenProjects_browser, SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
+    connect(ui->pushButton_OpenProjects_Browser, SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
     connect(ui->pushButton_OpenProjects_Explorer, SIGNAL(clicked()), this, SLOT(openProjectFolderInExplorer()));
 
     // Actions - Status Table
@@ -322,12 +322,8 @@ void MainWindow::enableToolsPushButtons(bool enabled)
         allPushButtonsButtons[i]->setEnabled(enabled);
     }
 
-    // the following two buttons provide the same functionality
-    // they open up the webinterface in the browser
     // change state of "Open Projects Folder" >> "Browser" button
-    ui->pushButton_OpenProjects_browser->setEnabled(enabled);
-    // change state of "Rightside Toolbar" >> "Webinterface" button
-    ui->pushButton_Webinterface->setEnabled(enabled);
+    ui->pushButton_OpenProjects_Browser->setEnabled(enabled);
 
     // disable "webinterface" in TrayMenu, if PHP/Nginx is off
     QList<QAction *>actions = tray->contextMenu()->actions();
@@ -631,6 +627,21 @@ void MainWindow::openProjectFolderInExplorer()
     }
 }
 
+void MainWindow::openConsole()
+{
+    QString cmd;
+
+    // prefer "ConEmu", else fallback to "Windows Console"
+    if(QFile().exists("./bin/conemu/conemu.exe")) {
+        cmd = "./bin/conemu/conemu.exe /config ConEmu.xml";
+    } else {
+        cmd = "cmd.exe";
+    }
+
+    QProcess *process = new QProcess(this);
+    process->startDetached(cmd);
+}
+
 QString MainWindow::getProjectFolder() const
 {
     return QDir::toNativeSeparators(QApplication::applicationDirPath() + "/www");
@@ -774,7 +785,7 @@ void MainWindow::openAboutDialog()
             "<tr><td align=center><b>License</b></td><td>GNU/GPL version 3, or any later version.<br></td></tr>"
             "<tr><td align=center><b>Disclaimer</b></td><td>&nbsp;</td></tr>"
             "</td></tr></table>"
-            "<br><br>This software is provided by the development team ``as is'' and any expressed or implied warranties, including, but not limited to,"
+            "<br><br>This software is provided by the development team 'as is' and any expressed or implied warranties, including, but not limited to,"
             " the implied warranties of merchantability  and fitness for a particular purpose are disclaimed. In no event shall the development team or its"
             " contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages"
             " (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption)"

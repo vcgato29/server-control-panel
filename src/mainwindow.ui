@@ -374,7 +374,7 @@
      <property name="flat">
       <bool>false</bool>
      </property>
-     <widget class="QPushButton" name="pushButton_OpenProjects_browser">
+     <widget class="QPushButton" name="pushButton_OpenProjects_Browser">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -384,7 +384,20 @@
        </rect>
       </property>
       <property name="text">
-       <string>Browser</string>
+       <string>Webinterface</string>
+      </property>
+      <property name="icon">
+       <iconset resource="resources/resources.qrc">
+        <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+      <property name="default">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_OpenProjects_Explorer">
@@ -396,8 +409,18 @@
         <height>24</height>
        </rect>
       </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="text">
-       <string>Explorer</string>
+       <string notr="true">Explorer</string>
+      </property>
+      <property name="icon">
+       <iconset resource="resources/resources.qrc">
+        <normaloff>:/explorer</normaloff>:/explorer</iconset>
       </property>
      </widget>
     </widget>
@@ -1566,7 +1589,7 @@ QPushButton:pressed
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton_Webinterface">
+      <widget class="QPushButton" name="pushButton_Console">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -1586,11 +1609,11 @@ QPushButton:pressed
         <string>Open Webinterface in Browser.</string>
        </property>
        <property name="text">
-        <string>Webinterface</string>
+        <string>Console</string>
        </property>
        <property name="icon">
         <iconset resource="resources/resources.qrc">
-         <normaloff>:/wpnxm</normaloff>:/wpnxm</iconset>
+         <normaloff>:/console</normaloff>:/console</iconset>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -1724,7 +1747,7 @@ QPushButton:pressed
      </item>
     </layout>
     <zorder>pushButton_Configuration</zorder>
-    <zorder>pushButton_Webinterface</zorder>
+    <zorder>pushButton_Console</zorder>
     <zorder>pushButton_Help</zorder>
     <zorder>pushButton_About</zorder>
     <zorder>pushButton_Close</zorder>
@@ -1735,7 +1758,7 @@ QPushButton:pressed
  <tabstops>
   <tabstop>pushButton_AllDaemons_Start</tabstop>
   <tabstop>pushButton_AllDaemons_Stop</tabstop>
-  <tabstop>pushButton_Webinterface</tabstop>
+  <tabstop>pushButton_Console</tabstop>
   <tabstop>pushButton_Configuration</tabstop>
   <tabstop>pushButton_Help</tabstop>
   <tabstop>pushButton_About</tabstop>
@@ -1748,7 +1771,7 @@ QPushButton:pressed
   <tabstop>pushButton_tools_phpmyadmin</tabstop>
   <tabstop>pushButton_tools_adminer</tabstop>
   <tabstop>pushButton_tools_webgrind</tabstop>
-  <tabstop>pushButton_OpenProjects_browser</tabstop>
+  <tabstop>pushButton_OpenProjects_Browser</tabstop>
   <tabstop>pushButton_OpenProjects_Explorer</tabstop>
  </tabstops>
  <resources>

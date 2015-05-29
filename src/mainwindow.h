@@ -80,6 +80,7 @@ public slots:
     void openProjectFolderInBrowser();
     void openProjectFolderInExplorer();
 
+    void openConsole();
     void openWebinterface();
     void openConfigurationDialog();
     void openHelpDialog();

@@ -30,5 +30,7 @@
         <file alias="status_stop_big">bullet_ball_grey.png</file>
         <file>gear--pencil.png</file>
         <file>pencil.png</file>
+        <file alias="console">terminal.png</file>
+        <file alias="explorer">folder-smiley.png</file>
     </qresource>
 </RCC>
