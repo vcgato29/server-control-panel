@@ -85,9 +85,6 @@ FORMS += \
     src/mainwindow.ui \
     src/configurationdialog.ui
 
-# WINDOWS RC-FILE (sets the executable attributes)
-win32: RC_FILE = src/resources/application.rc
-
 # Build destination and binary name
 CONFIG(debug, debug|release) {
     TARGET = wpn-xm-debug
@@ -152,6 +149,9 @@ win32:contains($(TRAVIS), false) {
     warning($${DEPLOY_COMMAND} $${DEPLOY_TARGET})
 
     QMAKE_POST_LINK = $${DEPLOY_COMMAND} $${DEPLOY_TARGET}
+
+    # WINDOWS RC-FILE (sets the executable attributes)
+    RC_FILE = src/resources/application.rc
 }
 
 # Deployment - Copy Dependencies to Build Folder
