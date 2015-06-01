@@ -396,9 +396,16 @@ void Servers::startPHP()
             + " -b " + settings->get("php/fastcgi-host").toString()
             + ":" + settings->get("php/fastcgi-port").toString();
 
+    // disable PHP_FCGI_MAX_REQUESTS to go beyond the default request limit of 500 requests
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("PHP_FCGI_MAX_REQUESTS", "0");
+
+    qDebug() << "[PHP] Set PHP_FCGI_MAX_REQUESTS \"0\" (disabled).";
     qDebug() << "[PHP] Starting...\n" << startPHP;
 
-    getProcess("PHP")->start(startPHP);
+    QProcess* process = getProcess("PHP");
+    process->setEnvironment(env.toStringList());
+    process->start(startPHP);
 }
 
 void Servers::stopPHP()
