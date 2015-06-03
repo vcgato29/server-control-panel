@@ -78,8 +78,10 @@ void ConfigurationDialog::readSettings()
    ui->checkbox_autostart_Postgresql->setChecked(settings->get("autostart/postgresql", false).toBool());
 
    ui->checkbox_clearLogsOnStart->setChecked(settings->get("global/clearlogsonstart", false).toBool());
-
    ui->checkbox_stopDaemonsOnQuit->setChecked(settings->get("global/stopdaemonsonquit", false).toBool());
+
+   ui->checkbox_OnStartAllMinimize->setChecked(settings->get("global/onstartallminimize", false).toBool());
+   ui->checkbox_OnStartAllOpenWebinterface->setChecked(settings->get("global/onstartallminimize", false).toBool());
 
    ui->lineEdit_SelectedEditor->setText(settings->get("global/editor", QVariant(QString("notepad.exe")) ).toString());
 }
@@ -90,8 +92,8 @@ void ConfigurationDialog::writeSettings()
     // boolean return value to integer (0/1). i like that more then having true/false in INI.
 
     settings->set("global/runonstartup",      int(ui->checkbox_runOnStartUp->isChecked()));
-    settings->set("global/autostartdaemons",  int(ui->checkbox_autostartDaemons->isChecked()));
     settings->set("global/startminimized",    int(ui->checkbox_startMinimized->isChecked()));
+    settings->set("global/autostartdaemons",  int(ui->checkbox_autostartDaemons->isChecked()));
 
     settings->set("autostart/nginx",          int(ui->checkbox_autostart_Nginx->isChecked()));
     settings->set("autostart/php",            int(ui->checkbox_autostart_PHP->isChecked()));
@@ -102,6 +104,9 @@ void ConfigurationDialog::writeSettings()
 
     settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
     settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
+
+    settings->set("global/onstartallminimize",          int(ui->checkbox_OnStartAllMinimize->isChecked()));
+    settings->set("global/onstartallopenwebinterface",  int(ui->checkbox_OnStartAllOpenWebinterface->isChecked()));
 
     settings->set("global/editor",            QString(ui->lineEdit_SelectedEditor->text()));
 }
