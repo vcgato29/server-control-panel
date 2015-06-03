@@ -304,6 +304,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
                 show();
                 setFocus();
                 setWindowState( windowState() & ( ~Qt::WindowMinimized | Qt::WindowActive | Qt::WindowMaximized ) );
+                activateWindow();
             }
             break;
         default:
