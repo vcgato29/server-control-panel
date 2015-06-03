@@ -356,7 +356,7 @@ void MainWindow::showPushButtonsOnlyForInstalledTools()
         allPushButtonsButtons[i]->setVisible(false);
     }
 
-    // if tool directory exists, show pushButtons in the Tools Groupbox
+    // if "component" exists in "tools" directory, show pushButtons in the Tools Groupbox
     if(QDir(getProjectFolder() + "/tools/webinterface").exists()) { ui->pushButton_tools_phpinfo->setVisible(true);  }
     if(QDir(getProjectFolder() + "/tools/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setVisible(true); }
     if(QDir(getProjectFolder() + "/tools/adminer").exists())      { ui->pushButton_tools_adminer->setVisible(true); }
@@ -724,6 +724,8 @@ void MainWindow::openConfigurationInEditor()
 
 QString MainWindow::getLogfile(QString obj)
 {
+    // map objectName to fileName
+
     QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
     QString logfile = "";
 
@@ -739,14 +741,9 @@ QString MainWindow::getLogfile(QString obj)
 
 void MainWindow::openLog()
 {
-    // we have a incoming SIGNAL object to this SLOT
-    // we use the object name, e.g. pushButton_ShowLog_Nginx or pushButton_ShowErrorLog_Nginx
-    // to map the log file
-
+    // get log file from objectName of the Signal
     QPushButton *button = (QPushButton *)sender();
-    QString obj = button->objectName();
-
-    QString logfile = this->getLogfile(obj);
+    QString logfile = this->getLogfile(button->objectName());
 
     if(!QFile().exists(logfile)) {
         QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
@@ -1102,6 +1099,12 @@ void MainWindow::renderInstalledDaemons()
     DaemonsGridLayout->setObjectName(QStringLiteral("DaemonsGridLayout"));
     DaemonsGridLayout->setSizeConstraint(QLayout::SetMinimumSize);
 
+    /**
+     * The DaemonsGrid has the following columns:
+     *
+     * Status | Port | Daemon | Version | Config | Logs (2) | Actions (2)
+     */
+
     QLabel* label_Status = new QLabel();
     label_Status->setText(QApplication::translate("MainWindow", "Status", 0));
     label_Status->setAlignment(Qt::AlignCenter);
@@ -1151,6 +1154,10 @@ void MainWindow::renderInstalledDaemons()
     label_Actions->setEnabled(false);
     DaemonsGridLayout->addWidget(label_Actions, 1, 8, 1, 2); // two columns
 
+    /**
+     * Define Icons
+     */
+
     QIcon iconConfig;
     iconConfig.addFile(QStringLiteral(":/gear.png"), QSize(), QIcon::Normal, QIcon::Off);
 
@@ -1173,9 +1180,11 @@ void MainWindow::renderInstalledDaemons()
 
     foreach(Server *server, servers->servers()) {
 
-        // The DaemonsGrid has the following columns:
-        //
-        // Status | Port | Daemon | Version | Config | Logs (2) | Actions (2)
+        /**
+         * Columns:
+         *
+         * Status | Port | Daemon | Version | Config | Logs (2) | Actions (2)
+         */
 
         // Status
         QLabel* labelStatus = new QLabel();
