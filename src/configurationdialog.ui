@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>337</width>
-    <height>379</height>
+    <width>340</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,8 +28,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>340</y>
+     <x>10</x>
+     <y>360</y>
      <width>331</width>
      <height>41</height>
     </rect>
@@ -53,7 +53,7 @@
      <x>10</x>
      <y>10</y>
      <width>321</width>
-     <height>331</height>
+     <height>351</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -78,18 +78,18 @@
        <x>10</x>
        <y>10</y>
        <width>301</width>
-       <height>92</height>
+       <height>68</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
+      <item row="0" column="0" alignment="Qt::AlignTop">
        <widget class="QCheckBox" name="checkbox_runOnStartUp">
         <property name="text">
          <string>Start WPN-XM SCP with Windows?</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="2" column="0" alignment="Qt::AlignVCenter">
        <widget class="QCheckBox" name="checkbox_autostartDaemons">
         <property name="text">
          <string>Start these daemons, when starting WPN-XM SCP:</string>
@@ -111,10 +111,10 @@
     <widget class="QWidget" name="formLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>90</y>
-       <width>112</width>
-       <height>96</height>
+       <x>31</x>
+       <y>70</y>
+       <width>111</width>
+       <height>91</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="autostartDaemonsFormLayout">
@@ -176,13 +176,13 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>190</y>
+       <y>170</y>
        <width>301</width>
-       <height>59</height>
+       <height>89</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0">
+      <item row="1" column="0" alignment="Qt::AlignVCenter">
        <widget class="QCheckBox" name="checkbox_stopDaemonsOnQuit">
         <property name="enabled">
          <bool>true</bool>
@@ -202,13 +202,44 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="0">
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="checkbox_OnStartAllMinimize">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Open Webinterface</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" alignment="Qt::AlignHCenter">
+         <widget class="QCheckBox" name="checkbox_OnStartAllOpenWebinterface">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Minimize To Tray</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="LabelAfterAllDaemonsStart">
+        <property name="text">
+         <string>After &quot;All Daemons - Start&quot; was pressed:</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QWidget" name="layoutWidget3">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>250</y>
+       <y>270</y>
        <width>301</width>
        <height>55</height>
       </rect>
@@ -313,7 +344,7 @@
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>90</y>
+       <y>70</y>
        <width>112</width>
        <height>91</height>
       </rect>

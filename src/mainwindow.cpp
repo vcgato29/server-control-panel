@@ -555,6 +555,14 @@ void MainWindow::startAllDaemons()
     servers->startMongoDb();
     servers->startMemcached();
     servers->startPostgreSQL();
+
+    if(settings->get("global/OnStartAllOpenWebinterface").toBool()) {
+        openWebinterface();
+    }
+
+    if(settings->get("global/OnStartAllMinimize").toBool()) {
+        setWindowState( Qt::WindowMinimized );
+    }
 }
 
 void MainWindow::stopAllDaemons()
@@ -1015,13 +1023,15 @@ void MainWindow::setDefaultSettings()
         //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
         //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
-        settings->set("global/runonstartup",             0);
-        settings->set("global/autostartdaemons",         0);
-        settings->set("global/startminimized",           0);
-        settings->set("global/stopdaemonsonquit",        1);
-        settings->set("global/clearlogsonstart",         0);
-        settings->set("global/donotaskagainclosetotray", 0);
-        settings->set("global/editor",                   "notepad.exe");
+        settings->set("global/runonstartup",               0);
+        settings->set("global/autostartdaemons",           0);
+        settings->set("global/startminimized",             0);
+        settings->set("global/stopdaemonsonquit",          1);
+        settings->set("global/clearlogsonstart",           0);
+        settings->set("global/donotaskagainclosetotray",   0);
+        settings->set("global/onstartallopenwebinterface", 0);
+        settings->set("global/onstartallminimize",         0);
+        settings->set("global/editor",                     "notepad.exe");
         //settings->set("global/showballooninfos",         0);
 
         settings->set("paths/logs",             "./logs");
