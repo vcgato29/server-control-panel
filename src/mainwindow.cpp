@@ -642,7 +642,7 @@ void MainWindow::openConsole()
 
     // prefer "ConEmu", else fallback to "Windows Console"
     if(QFile().exists("./bin/conemu/conemu.exe")) {
-        cmd = "./bin/conemu/conemu.exe /config ConEmu.xml";
+        cmd = "./bin/conemu/conemu.exe /LoadCfgFile ConEmu.xml";
     } else {
         cmd = "cmd.exe";
     }
