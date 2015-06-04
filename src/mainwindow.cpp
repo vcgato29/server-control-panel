@@ -638,11 +638,17 @@ void MainWindow::openProjectFolderInExplorer()
 
 void MainWindow::openConsole()
 {
-    QString cmd;
+    QString cmd, conemu;
+
+    if(qgetenv("PROCESSOR_ARCHITECTURE") == "x86") {
+        conemu = "./bin/conemu/conemu.exe";
+    } else {
+        conemu = "./bin/conemu/conemu64.exe";
+    }
 
     // prefer "ConEmu", else fallback to "Windows Console"
-    if(QFile().exists("./bin/conemu/conemu.exe")) {
-        cmd = "./bin/conemu/conemu.exe /LoadCfgFile ./bin/conemu/ConEmu.xml";
+    if(QFile().exists(conemu)) {
+        cmd = conemu + " /LoadCfgFile ./bin/conemu/ConEmu.xml";
     } else {
         cmd = "cmd.exe";
     }
