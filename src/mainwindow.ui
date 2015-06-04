@@ -1606,7 +1606,7 @@ QPushButton:pressed
         </size>
        </property>
        <property name="toolTip">
-        <string>Open Webinterface in Browser.</string>
+        <string>Open Console.</string>
        </property>
        <property name="text">
         <string>Console</string>
