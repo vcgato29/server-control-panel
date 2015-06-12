@@ -80,8 +80,8 @@ void ConfigurationDialog::readSettings()
    ui->checkbox_clearLogsOnStart->setChecked(settings->get("global/clearlogsonstart", false).toBool());
    ui->checkbox_stopDaemonsOnQuit->setChecked(settings->get("global/stopdaemonsonquit", false).toBool());
 
-   ui->checkbox_OnStartAllMinimize->setChecked(settings->get("global/onstartallminimize", false).toBool());
-   ui->checkbox_OnStartAllOpenWebinterface->setChecked(settings->get("global/onstartallminimize", false).toBool());
+   ui->checkbox_onStartAllMinimize->setChecked(settings->get("global/onstartallminimize", false).toBool());
+   ui->checkbox_onStartAllOpenWebinterface->setChecked(settings->get("global/onstartallopenwebinterface", false).toBool());
 
    ui->lineEdit_SelectedEditor->setText(settings->get("global/editor", QVariant(QString("notepad.exe")) ).toString());
 }
@@ -105,8 +105,8 @@ void ConfigurationDialog::writeSettings()
     settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
     settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
 
-    settings->set("global/onstartallminimize",          int(ui->checkbox_OnStartAllMinimize->isChecked()));
-    settings->set("global/onstartallopenwebinterface",  int(ui->checkbox_OnStartAllOpenWebinterface->isChecked()));
+    settings->set("global/onstartallminimize",          int(ui->checkbox_onStartAllMinimize->isChecked()));
+    settings->set("global/onstartallopenwebinterface",  int(ui->checkbox_onStartAllOpenWebinterface->isChecked()));
 
     settings->set("global/editor",            QString(ui->lineEdit_SelectedEditor->text()));
 }
