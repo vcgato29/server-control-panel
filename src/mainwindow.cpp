@@ -337,12 +337,12 @@ void MainWindow::enableToolsPushButtons(bool enabled)
 
     // webinterface configuration is only available, when nginx and php are running
     // disable "pushButton_Configure_*"
-    QList<QPushButton *> allConfigurePushButtonsButtons = ui->centralWidget->findChildren<QPushButton *>(QRegExp("pushButton_Configure_\\w"));
+    QList<QPushButton *> allConfigurePushButtons = ui->centralWidget->findChildren<QPushButton *>(QRegExp("pushButton_Configure_\\w"));
 
     // set all PushButtons enabled/disabled
-    for(int i = 0; i < allConfigurePushButtonsButtons.size(); ++i)
+    for(int i = 0; i < allConfigurePushButtons.size(); ++i)
     {
-        allConfigurePushButtonsButtons[i]->setEnabled(enabled);
+        allConfigurePushButtons[i]->setEnabled(enabled);
     }
 }
 
@@ -768,7 +768,7 @@ void MainWindow::execEditor(QUrl logfile)
     QProcess *process = new QProcess(this);
     QString program = settings->get("global/editor").toString();
     qDebug() << logfile.toLocalFile();
-    process->start(program, QStringList() << logfile.toLocalFile());
+    process->startDetached(program, QStringList() << logfile.toLocalFile());
 }
 
 void MainWindow::openHelpDialog()
