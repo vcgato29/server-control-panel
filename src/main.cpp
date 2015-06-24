@@ -59,6 +59,18 @@ int main(int argc, char * argv[])
      */
     QApplication::setAttribute(Qt::AA_Use96Dpi, true);
 
+    /**
+     * @brief Set Style: "Fusion Dark"
+     */
+    //QApplication::setStyle(QStyleFactory::create("Fusion"));
+    /*QPalette p;
+    p = qApp->palette();
+    p.setColor(QPalette::Window, QColor(53,53,53));
+    p.setColor(QPalette::Button, QColor(53,53,53));
+    p.setColor(QPalette::Highlight, QColor(142,45,197));
+    p.setColor(QPalette::ButtonText, QColor(255,255,255));
+    qApp->setPalette(p);*/
+
     /*
      * On windows an application is either a GUI application or Console application.
      * This application is a console application. It is compiled with "CONFIG += CONSOLE".
