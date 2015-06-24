@@ -28,10 +28,10 @@ if(!equals(QT_MAJOR_VERSION, 5)) {
 message("You are running qmake on wpnxm-servercontrolpanel.pro file.")
 
 VERSION = 0.000
-QMAKE_TARGET_COMPANY = company
-QMAKE_TARGET_PRODUCT = product
-QMAKE_TARGET_DESCRIPTION = description
-QMAKE_TARGET_COPYRIGHT = copyright
+QMAKE_TARGET_COMPANY = Koch Softwaresystemtechnik
+QMAKE_TARGET_PRODUCT = WPN-XM Server Control Panel
+QMAKE_TARGET_DESCRIPTION = WPN-XM Server Control Panel
+QMAKE_TARGET_COPYRIGHT = Copyright 2010-2015 Jens A. Koch
 
 DEPLOYMENT.display_name = WPN-XM Server Control Panel
 
