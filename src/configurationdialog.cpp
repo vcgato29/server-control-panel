@@ -37,6 +37,9 @@ ConfigurationDialog::ConfigurationDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // remove question mark from the title bar
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
     this->settings = new Settings;
     readSettings();
 
