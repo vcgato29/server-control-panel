@@ -418,7 +418,7 @@ QString MainWindow::getMariaVersion()
 
     QProcess processMaria;
     processMaria.setProcessChannelMode(QProcess::MergedChannels);
-    processMaria.start("./bin/mariadb/bin/mysqld.exe -V"); // upper-case V
+    processMaria.start("./bin/mariadb/bin/mysql.exe -V"); // upper-case V
 
     if (!processMaria.waitForFinished()) {
         qDebug() << "[MariaDb] Version failed:" << processMaria.errorString();
@@ -429,10 +429,9 @@ QString MainWindow::getMariaVersion()
 
     // string for regexp testing
     //QString p_stdout = "mysql  Ver 15.1 Distrib 5.5.24-MariaDB, for Win32 (x86)";
-
     qDebug() << "[MariaDb] Version: \n" << p_stdout;
 
-    return parseVersionNumber(p_stdout.mid(15));
+    return parseVersionNumber(p_stdout.mid(45, 15));
 }
 
 QString MainWindow::getPHPVersion()
@@ -453,15 +452,18 @@ QString MainWindow::getPHPVersion()
 
     QByteArray p_stdout = processPhp.readAll();
 
-    // remove everything before "PHP" (e.g. warnings from false php.ini settings, etc)
-    p_stdout.remove(0, p_stdout.indexOf("PHP"));
-
     // string for regexp testing
     //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
 
     qDebug() << "[PHP] Version: \n" << p_stdout;
 
-    return parseVersionNumber(p_stdout);
+    QRegExp regex("PHP\\s(\\d.\\d.\\d)\\s");
+
+    regex.indexIn(p_stdout); // match
+
+    //qDebug() << regex.cap(0) << regex.cap(1) << regex.cap(2);
+
+    return regex.cap(1);
 }
 
 QString MainWindow::getMongoVersion()
@@ -529,9 +531,7 @@ QString MainWindow::parseVersionNumber(QString stringWithVersion)
     // match
     regex.indexIn(stringWithVersion);
 
-    //qDebug() << regex.cap(0);
-    QString cap = regex.cap(0);
-    return cap;
+    return regex.cap(0);
 
 // Leave this for debugging reasons
 //    int pos = 0;
