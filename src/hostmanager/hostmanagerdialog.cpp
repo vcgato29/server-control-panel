@@ -42,8 +42,8 @@
 HostsManagerDialog::HostsManagerDialog(QWidget *parent) :
     QDialog(parent)
 {
-    // remove question mark (?) from the title bar
-    setWindowFlags(Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
+    // remove question mark from the title bar
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     QToolBar* toolbar = new QToolBar(this);
     toolbar->addAction("Add", this, SLOT(addEntry()));
