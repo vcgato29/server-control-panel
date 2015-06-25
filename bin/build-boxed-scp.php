@@ -67,14 +67,12 @@ function unzip($zipfile, $folder)
 	}
 }
 
-function download($url, $path)
+function download($url, $targetFile)
 {
-	$newfname = $path;
-
 	$file = fopen($url, "rb");
 
 	if ($file) {
-		$newf = fopen($newfname, "wb");
+		$newf = fopen($targetFile, "wb");
 
 		if ($newf) {
 			while(!feof($file)) {
