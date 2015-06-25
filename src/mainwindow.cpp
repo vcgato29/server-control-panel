@@ -454,14 +454,13 @@ QString MainWindow::getPHPVersion()
 
     // string for regexp testing
     //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
+    //QString p_stdout = "PHP 7.0.0alpha2 (cli)  (non semantic version)";
 
     qDebug() << "[PHP] Version: \n" << p_stdout;
 
-    QRegExp regex("PHP\\s(\\d.\\d.\\d)\\s");
+    QRegExp regex("PHP\\s((\\d+\\.\\d+\\.\\d+(?:(?:\\-)?(?:alpha|beta|RC))(?:\\.)?\\d+)?)\\s");
 
     regex.indexIn(p_stdout); // match
-
-    //qDebug() << regex.cap(0) << regex.cap(1) << regex.cap(2);
 
     return regex.cap(1);
 }
