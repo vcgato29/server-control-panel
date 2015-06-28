@@ -14,7 +14,7 @@
     <!-- Version Tokens used in /src/version.h -->
     <property name="Version"                value="${version.Major}.${version.Minor}.${version.Patch}${version.PreRelease}"/>
     <property name="VersionForRcFile"       value="${version.Major},${version.Minor},${version.Patch},0"/>
-    <property name="VersionShort"           value="${version.Major},${version.Minor},${version.Patch}"/>
+    <property name="VersionShort"           value="${version.Major}.${version.Minor}.${version.Patch}"/>
 
     <!-- Fetch the Git Revision {version.GitRevision} and re-assign it to the version token properties -->
     <available file=".git" type="dir" property="git.present"/>
