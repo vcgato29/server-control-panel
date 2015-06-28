@@ -73,6 +73,12 @@
         <echo message="Building WPN-XM Server Control Panel ${Version}"/>
     </target>
 
+    <target name="export-version-number-to-env">
+       <exec executable="sh">
+           <arg value="export VERSION=${version.Major}.${version.Minor}.${version.Patch}"/>
+        </exec>
+    </target>
+
     <target name="bump-version-number" description="Inserts the current version number into version.h.">
         <loadfile srcFile="${basedir}/src/version.h" property="filecontent.scp.version.h">
             <filterchain>
@@ -149,6 +155,6 @@
 
     </target>
 
-    <target name="main" depends="init-properties, print-version-number, bump-version-number"></target>
+    <target name="main" depends="init-properties, print-version-number, bump-version-number, export-version-number-to-env"></target>
 
 </project>
