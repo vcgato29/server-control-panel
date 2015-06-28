@@ -88,10 +88,8 @@ after_success:
   - sudo mkdir /home/travis/build/WPN-XM/server-control-panel/release-boxed
   - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/bin/evb/enigmaconsole.exe /home/travis/build/WPN-XM/server-control-panel/bin/evb/scp.travis.evb
   - sudo ls -alh /home/travis/build/WPN-XM/server-control-panel/release-boxed/*
-  # zip boxed executable
-  #- zip /home/travis/build/WPN-XM/server-control-panel/release-boxed/wpn-xm.zip wpn-xm.exe
-  # zip unboxed deployment folder
-  - 7za a -tzip wpnxm-scp-$VERSION-$ARCH.zip /home/travis/build/WPN-XM/server-control-panel/deploy/*
+  # zip deployment folder
+  - ant package
   # test executable with wine
   - wine cmd.exe /c /home/travis/build/WPN-XM/server-control-panel/deploy/wpn-xm.exe --help
 

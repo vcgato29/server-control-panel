@@ -14,6 +14,7 @@
     <!-- Version Tokens used in /src/version.h -->
     <property name="Version"                value="${version.Major}.${version.Minor}.${version.Patch}${version.PreRelease}"/>
     <property name="VersionForRcFile"       value="${version.Major},${version.Minor},${version.Patch},0"/>
+    <property name="VersionShort"           value="${version.Major},${version.Minor},${version.Patch}"/>
 
     <!-- Fetch the Git Revision {version.GitRevision} and re-assign it to the version token properties -->
     <available file=".git" type="dir" property="git.present"/>
@@ -73,13 +74,6 @@
         <echo message="Building WPN-XM Server Control Panel ${Version}"/>
     </target>
 
-    <target name="export-version-number-to-env">
-       <exec executable="sh">
-           <arg value="-c"/>
-           <arg value="export VERSION=${version.Major}.${version.Minor}.${version.Patch}"/>
-        </exec>
-    </target>
-
     <target name="bump-version-number" description="Inserts the current version number into version.h.">
         <loadfile srcFile="${basedir}/src/version.h" property="filecontent.scp.version.h">
             <filterchain>
@@ -106,11 +100,11 @@
 
     <target name="package" description="zip the deployment folder to deploy/wpnxm-scp-1.2.3.zip">
         <echo message="Building zip archive of Server-Control-Panel for distribution."/>
-        <zip zipfile="${basedir}/deploy/wpnxm-scp-${wpnxm.Version}.zip" ziplevel="9">
-            <fileset dir="${basedir}/deploy/">
-                <include name="**/*" />
-            </fileset>
-        </zip>
+        <property environment="env"/>
+        <exec executable="sh">
+           <arg value="-c"/>
+           <arg value="7za a -tzip wpnxm-scp-${VersionShort}-${env.ARCH}.zip ${basedir}/deploy/*"/>
+        </exec>
     </target>
 
     <target name="compile-server-control-panel"
@@ -156,6 +150,6 @@
 
     </target>
 
-    <target name="main" depends="init-properties, print-version-number, bump-version-number, export-version-number-to-env"></target>
+    <target name="main" depends="init-properties, print-version-number, bump-version-number"></target>
 
 </project>
