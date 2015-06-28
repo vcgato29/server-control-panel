@@ -75,6 +75,7 @@
 
     <target name="export-version-number-to-env">
        <exec executable="sh">
+           <arg value="-c"/>
            <arg value="export VERSION=${version.Major}.${version.Minor}.${version.Patch}"/>
         </exec>
     </target>
