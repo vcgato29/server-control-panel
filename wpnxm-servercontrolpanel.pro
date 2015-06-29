@@ -43,7 +43,7 @@ QT += core network widgets
 LIBS += -luuid -lole32
 
 # this define disables qDebug() output to console
-#DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
+DEFINES += QT_NO_WARNING_OUTPUT QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
 
 QMAKE_CXXFLAGS -= -fno-keep-inline-dllexport
 
