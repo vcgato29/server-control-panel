@@ -248,10 +248,10 @@ void Servers::startNginx()
 }
 
 void Servers::stopNginx()
-{
-    // if not installed, skip
-    if(!QFile().exists(getServer("Nginx")->exe)) {
-        qDebug() << "[Nginx] Is not installed. Skipping stop command.";
+{   
+    // if not running, skip
+    if(getProcessState("Nginx") == QProcess::NotRunning) {
+        qDebug() << "[Nginx] Not running... Skipping stop command.";
         return;
     }
 
@@ -337,10 +337,10 @@ void Servers::stopPostgreSQL()
         return;
     }
 
-    // running?
+    // if not running, skip
     QString file = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid");
     if(!QFile().exists(file)) {
-        qDebug() << "[PostgreSQL] NO PID file found. Postgres is not running. No need to stop it.";
+        qDebug() << "[PostgreSQL] NO PID file found. Postgres is not running. Skipping stop command.";
         server->trayMenu->setIcon(QIcon(":/status_stop"));
         emit signalSetLabelStatusActive("postgresql", false);
         return;
@@ -410,18 +410,19 @@ void Servers::startPHP()
 
 void Servers::stopPHP()
 {
-    qDebug() << "[PHP] Stopping...";
-
     // if not installed, skip
     if(!QFile().exists(getServer("PHP")->exe)) {
         qDebug() << "[PHP] Is not installed. Skipping stop command.";
         return;
     }
 
+    // if not running, skip
     if(getProcessState("PHP") == QProcess::NotRunning) {
         qDebug() << "[PHP] Not running... Skipping stop command.";
         return;
     }
+
+    qDebug() << "[PHP] Stopping...";
 
     QProcess *process = getProcess("PHP");
 
@@ -454,7 +455,7 @@ void Servers::restartPHP()
  */
 void Servers::startMariaDb()
 {
-    // already running
+    // if already running, skip
     if(getProcessState("MariaDb") != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("MariaDB"), tr("MariaDB already running."));
         return;
@@ -475,13 +476,19 @@ void Servers::startMariaDb()
 
 void Servers::stopMariaDb()
 {
-    qDebug() << "[MariaDB] Stopping...";
-
     // if not installed, skip
     if(!QFile().exists(getServer("MariaDb")->exe)) {
         qDebug() << "[MariaDb] Is not installed. Skipping stop command.";
         return;
     }
+
+    // if not running, skip
+    if(getProcessState("MariaDb") == QProcess::NotRunning) {
+        qDebug() << "[MariaDb] Not running... Skipping stop command.";
+        return;
+    }
+
+    qDebug() << "[MariaDB] Stopping...";
 
     QProcess *process = getProcess("MariaDb");
 
@@ -510,7 +517,7 @@ void Servers::startMongoDb()
         return;
     }
 
-    // already running
+    // if already running, skip
     if(getProcessState("MongoDb") != QProcess::NotRunning) {
         QMessageBox::warning(0, tr("MongoDb"), tr("MongoDb already running."));
         return;
@@ -556,6 +563,12 @@ void Servers::stopMongoDb()
         return;
     }
 
+    // if not running, skip
+    if(getProcessState("MongoDb") == QProcess::NotRunning) {
+        qDebug() << "[MongoDb] Not running... Skipping stop command.";
+        return;
+    }
+
     // build mongo stop command based on CLI evaluation
     // mongodb is stopped via "mongo.exe --eval", not "mongodb.exe"
     QString const mongoStopCommand = qApp->applicationDirPath() + "/bin/mongodb/bin/mongo.exe"
@@ -589,7 +602,7 @@ void Servers::startMemcached()
         return;
     }
 
-    // already running
+    // if already running, skip
     if(getProcessState("Memcached") != QProcess::NotRunning){
         QMessageBox::warning(0, tr("Memcached"), tr("Memcached already running."));
         return;
@@ -609,6 +622,12 @@ void Servers::stopMemcached()
     // if not installed, skip
     if(!QFile().exists(getServer("Memcached")->exe)) {
         qDebug() << "[Memcached] Is not installed. Skipping stop command.";
+        return;
+    }
+
+    // if not running, skip
+    if(getProcessState("Memcached") == QProcess::NotRunning) {
+        qDebug() << "[Memcached] Not running... Skipping stop command.";
         return;
     }
 
@@ -713,16 +732,17 @@ void Servers::updateProcessStates(QProcess::ProcessState state)
         emit signalEnableToolsPushButtons(true);
     }
 
-    // PostgreSQL Process Monitoring via PID file
-    // we can't get process monitoring after calling "pg_ctl start" (startPostgreSQL),
-    // because "pg_ctl" is only a launcher and it will shutdown.
+    // The PostgreSQL Process Monitoring works via a PID file.
+    // PostgresSQL is started via "pg_ctl start" from startPostgreSQL().
+    // The command "pg_ctl" itself is only a launcher for "postgres".
+    // It shuts down and is not the process we want to monitor.
+    
 
     if(server->name == "PostgreSQL" && state == QProcess::NotRunning) {
 
         delay(1250); // delay PID file check, PostgreSQL must start up
 
         QString file = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/pgsql/data/postmaster.pid");
-        qDebug() << file;
 
         if(QFile().exists(file)) {
             qDebug() << "[PostgreSQL] PID file found. Postgres is running.";
