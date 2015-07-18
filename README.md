@@ -19,15 +19,15 @@ You should be able to find everything at http://www.qt.io/download-open-source/ 
 
 * Qt Online Installer
 
-  http://download.qt-project.org/official_releases/online_installers/
+  http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe
 
-* Qt 5.4.x
+* Qt 5.5.x
 
-  http://download.qt-project.org/official_releases/qt/5.4/5.4.0/qt-opensource-windows-x86-mingw491_opengl-5.4.0.exe
+  http://download.qt.io/official_releases/qt/5.5/5.5.0/qt-opensource-windows-x86-mingw492-5.5.0.exe
 
 * Qt Creator
 
-  http://download.qt-project.org/official_releases/qtcreator/3.3/3.3.0/qt-creator-opensource-windows-x86-3.3.0.exe
+  http://download.qt.io/official_releases/qtcreator/3.4/3.4.2/qt-creator-opensource-windows-x86-3.4.2.exe
 
 ### Installation Steps and Requirements for Qt
 
@@ -91,7 +91,7 @@ Launch the following commands to build it from command line:
 * `qmake wpnxm-servercontrolpanel.pro`
 * `mingw32-make -j4`
 
-### Deployment of Tags via Travis
+### How to push a new tag?
 
 	git commit -m "This is the commit message. Tagging v1.2.3"
 	git tag 1.2.3
