@@ -24,10 +24,11 @@ repackage($version, 'x86_64');
  * 4. zip the executable (the file suffix is "_boxed.zip").
  * 5. cleanup
  */
-function repackage($version, $bitsize) '. $bitsize .'
+function repackage($version, $bitsize)
 {
     // 1
-    download('https://github.com/WPN-XM/server-control-panel/releases/download/'. $version . '/wpnxm-scp-'. $version . '-'. $bitsize .'.zip', 'wpnxm-scp-'. $bitsize .'.zip');
+    download('https://github.com/WPN-XM/server-control-panel/releases/download/'. $version . '/wpnxm-scp-'. $version . '-'. $bitsize .'.zip',
+             'wpnxm-scp-'. $bitsize .'.zip');
     // 2
     unzip('wpnxm-scp-'. $bitsize .'.zip', __DIR__ . '/wpnxm-scp-'. $bitsize);
     // 3
@@ -73,7 +74,15 @@ function unzip($zipfile, $folder)
 
 function download($url, $targetFile)
 {
-    $file = fopen($url, "rb");
+    // disable the SSL certificate check
+    $context = stream_context_create([
+        "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ]
+    ]);
+
+    $file = fopen($url, "rb", false, $context);
 
     if ($file) {
         $newf = fopen($targetFile, "wb");
