@@ -88,7 +88,7 @@ FORMS += \
     src/configurationdialog.ui
     
 # WINDOWS RC-FILE (sets the executable attributes)		
-win32: RC_FILE = src/resources/application.rc
+RC_FILE = src/resources/application.rc
 
 # Build destination and binary name
 CONFIG(debug, debug|release) {
@@ -128,16 +128,19 @@ message($$QMAKESPEC) # Determine the platform we are on
 
 linux-g++ {
     message("Running on Linux")
+    message("using linux g++")
 }
 
 win32-g++ {
     message("The project is build on Travis: $$(TRAVIS)")
-    message("Running on Windows")
+    message("using win32 g++")
 }
 
 # Deployment - Automatically Copy Dependencies to Build Folder
 
-win32:contains($(TRAVIS), false) {
+win32:isEmpty($(TRAVIS)) {
+
+    RC_FILE -= src/resources/application.rc
 
     TARGET_CUSTOM_EXT = .exe
     DEPLOY_COMMAND = windeployqt
