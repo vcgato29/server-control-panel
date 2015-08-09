@@ -86,8 +86,8 @@ RESOURCES += \
 FORMS += \
     src/mainwindow.ui \
     src/configurationdialog.ui
-    
-# WINDOWS RC-FILE (sets the executable attributes)		
+
+# WINDOWS RC-FILE (sets the executable attributes)
 RC_FILE = src/resources/application.rc
 
 # Build destination and binary name
@@ -138,7 +138,7 @@ win32-g++ {
 
 # Deployment - Automatically Copy Dependencies to Build Folder
 
-win32:isEmpty($(TRAVIS)) {
+win32:contains($(TRAVIS), false) {
 
     RC_FILE -= src/resources/application.rc
 
