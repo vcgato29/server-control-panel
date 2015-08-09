@@ -88,7 +88,13 @@ FORMS += \
     src/configurationdialog.ui
 
 # WINDOWS RC-FILE (sets the executable attributes)
-RC_FILE = src/resources/application.rc
+exists(C:\Windows\System32\cmd.exe) {
+    message("Running on Windows")
+    HEADERS += src/version_localdev.h
+    RC_FILE = src/resources/application_localdev.rc
+} else {
+    RC_FILE = src/resources/application.rc
+}
 
 # Build destination and binary name
 CONFIG(debug, debug|release) {
@@ -111,7 +117,7 @@ static {                                      # everything below takes effect wi
     CONFIG += static staticlib
     DEFINES += STATIC
 
-    win32: TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
+    TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build
 
     QMAKE_LFLAGS += -static -static-libgcc
 
@@ -126,21 +132,21 @@ static {                                      # everything below takes effect wi
 
 message($$QMAKESPEC) # Determine the platform we are on
 
+!isEmpty($$(TRAVIS)) {
+    message("The project is build on Travis: $$(TRAVIS)")
+}
+
 linux-g++ {
-    message("Running on Linux")
     message("using linux g++")
 }
 
 win32-g++ {
-    message("The project is build on Travis: $$(TRAVIS)")
     message("using win32 g++")
 }
 
 # Deployment - Automatically Copy Dependencies to Build Folder
 
 win32:contains($(TRAVIS), false) {
-
-    RC_FILE -= src/resources/application.rc
 
     TARGET_CUSTOM_EXT = .exe
     DEPLOY_COMMAND = windeployqt
