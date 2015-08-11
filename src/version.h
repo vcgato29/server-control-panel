@@ -26,14 +26,13 @@
 
 // Application version.
 // Its a token, replaced during the build process.
-#define VERSION = @APPVERSION@
-#define APP_VERSION "@APPVERSION@"
+#define VERSION = @APPVERSION@                 // 1.2.3+githash
+#define APP_VERSION "@APPVERSION@"             // "1.2.3+githash"
+#define APP_VERSION_SHORT "@APPVERSIONSHORT@"  // 1.2.3
 
 // Application name
 #define APP_NAME "WPИ-XM Server Control Panel"
-
-// Application name and version
-#define APP_NAME_AND_VERSION "WPИ-XM Server Control Panel @APPVERSION@"
+#define APP_NAME_AND_VERSION "WPИ-XM Server Control Panel @APPVERSIONSHORT@"
 
 // Settings for application_win.rc
 // These values are the attributes of the executable, shown when right-clicking on it.

@@ -72,7 +72,7 @@ void Tray::createTrayMenu()
     trayMenu->setIcon(QIcon(QPixmap(":/wpnxm.png")));
 
     // add title entry like for WPN-XM in KVirc style (background gray, bold, small font)
-    trayMenu->addAction("WPN-XM v" APP_VERSION)->setFont(QFont("Arial", 9, QFont::Bold));
+    trayMenu->addAction("WPN-XM v" APP_VERSION_SHORT)->setFont(QFont("Arial", 9, QFont::Bold));
     trayMenu->addSeparator();
 
     // Add local IPs to the tray menu

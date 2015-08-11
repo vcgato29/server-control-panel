@@ -80,6 +80,7 @@
                 <replacetokens>
                     <token key="APPVERSION" value="${Version}"/>
                     <token key="APPVERSIONRC" value="${VersionForRcFile}"/>
+                    <token key="APPVERSIONSHORT" value="${VersionShort}"/>
                 </replacetokens>
             </filterchain>
         </loadfile>
