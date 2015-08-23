@@ -490,13 +490,18 @@ void Servers::stopMariaDb()
 
     qDebug() << "[MariaDB] Stopping...";
 
+    QString stopCommand = QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/mariadb/bin/mysqladmin.exe")
+            + " --defaults-file=" + QDir::toNativeSeparators(qApp->applicationDirPath() + "/bin/mariadb/my.ini")
+            + " -uroot -h127.0.0.1 --protocol=tcp"
+            + " shutdown";
+
     QProcess *process = getProcess("MariaDb");
 
     // disconnect process monitoring, before crashing the process
     disconnect(process, SIGNAL(error(QProcess::ProcessError)),
                this, SLOT(showProcessError(QProcess::ProcessError)));
 
-    process->kill();
+    process->execute(stopCommand);
     process->waitForFinished(2000);
 }
 
