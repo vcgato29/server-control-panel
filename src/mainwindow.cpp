@@ -86,6 +86,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     showPushButtonsOnlyForInstalledTools();
 
+    connect(this, SIGNAL(mainwindow_show()), this, SLOT(MainWindow_ShowEvent()));
+
     // daemon autostart
     if(settings->get("global/autostartdaemons").toBool()) {
         qDebug() << "[Daemons] Autostart enabled";
@@ -249,6 +251,37 @@ void MainWindow::changeEvent(QEvent *event)
     }
 
     QMainWindow::changeEvent(event);
+}
+
+void MainWindow::MainWindow_ShowEvent()
+{
+    /**
+     * Only show the log file icons/buttons in SCP if the respective file exists.
+     */
+
+    // Set enabled/disabled state for all "pushButton_ShowLog_*" buttons
+    QList<QPushButton *> allShowLogPushButtons = ui->centralWidget->findChildren<QPushButton *>(QRegExp("pushButton_ShowLog_\\w"));
+
+    for(int i = 0; i < allShowLogPushButtons.size(); ++i) {
+        allShowLogPushButtons[i]->setEnabled(
+            QFile().exists(this->getLogfile(this->getServerNameFromPushButton(allShowLogPushButtons[i])))
+        );
+    }
+
+    // Set enabled/disabled state for all "pushButton_ShowErrorLog_*" buttons
+    QList<QPushButton *> allShowErrorLogPushButtons = ui->centralWidget->findChildren<QPushButton *>(QRegExp("pushButton_ShowErrorLog_\\w"));
+
+    for(int i = 0; i < allShowErrorLogPushButtons.size(); ++i) {
+        allShowErrorLogPushButtons[i]->setEnabled(
+            QFile().exists(this->getLogfile(this->getServerNameFromPushButton(allShowErrorLogPushButtons[i])))
+        );
+    }
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+    emit mainwindow_show();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -750,16 +783,12 @@ void MainWindow::openLog()
     QPushButton *button = (QPushButton *)sender();
     QString logfile = this->getLogfile(button->objectName());
 
-    if(!QFile().exists(logfile)) {
-        QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
-    } else {
-       QDesktopServices::setUrlHandler("file", this, "execEditor");
+    QDesktopServices::setUrlHandler("file", this, "execEditor");
 
-       // if no UrlHandler is set, this executes the OS-dependend scheme handler
-       QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
+    // if no UrlHandler is set, this executes the OS-dependend scheme handler
+    QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
 
-       QDesktopServices::unsetUrlHandler("file");
-    }
+    QDesktopServices::unsetUrlHandler("file");
 }
 
 void MainWindow::execEditor(QUrl logfile)
@@ -1359,16 +1388,4 @@ void MainWindow::updateVersion(QString server) {
     if(label != 0) {
          label->setText(version);
     }
-}
-
-QJsonDocument MainWindow::loadJson(QString fileName) {
-    QFile jsonFile(fileName);
-    jsonFile.open(QFile::ReadOnly);
-    return QJsonDocument().fromJson(jsonFile.readAll());
-}
-
-void MainWindow::saveJson(QJsonDocument document, QString fileName) {
-    QFile jsonFile(fileName);
-    jsonFile.open(QFile::WriteOnly);
-    jsonFile.write(document.toJson());
 }

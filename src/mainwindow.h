@@ -134,19 +134,23 @@ private:
     QString getLogfile(QString obj);
     QString getServerNameFromPushButton(QPushButton *button);
 
-    void saveJson(QJsonDocument document, QString fileName);
-    QJsonDocument loadJson(QString fileName);
+
+signals:
+    void mainwindow_show();
 
 private slots:
 
-     // when tray icon is activated
-     void iconActivated(QSystemTrayIcon::ActivationReason reason);
-     //void execEditor(QUrl logfile);
+    // when tray icon is activated
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    //void execEditor(QUrl logfile);
+
+    void on_pushButton_Updater_clicked();
+    void MainWindow_ShowEvent();
 
 protected:
     void closeEvent(QCloseEvent *event);
     void changeEvent(QEvent *event);
-
+    void showEvent(QShowEvent *ev);
 };
 
 #endif // MAINWINDOW_H
