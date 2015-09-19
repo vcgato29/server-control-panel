@@ -144,7 +144,6 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     //void execEditor(QUrl logfile);
 
-    void on_pushButton_Updater_clicked();
     void MainWindow_ShowEvent();
 
 protected:
