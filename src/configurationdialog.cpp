@@ -47,8 +47,6 @@ ConfigurationDialog::ConfigurationDialog(QWidget *parent) :
 
     toggleAutostartDaemonCheckboxes(ui->checkbox_autostartDaemons->isChecked());
 
-    //populateOpenWithDropdown();
-
     connect(ui->checkbox_autostartDaemons, SIGNAL(clicked(bool)),
             this, SLOT(toggleAutostartDaemonCheckboxes(bool)));
 
@@ -225,10 +223,8 @@ void ConfigurationDialog::toggleRunOnStartup()
 
 void ConfigurationDialog::fileOpen()
 {
-    QString programFilesPath(getenv("PROGRAMFILES"));
-
     QString fileName = QFileDialog::getOpenFileName(this, tr("Select Editor..."),
-            programFilesPath, tr("Executables (*.exe);;All Files (*)"));
+            getenv("PROGRAMFILES"), tr("Executables (*.exe);;All Files (*)"));
 
     fileName = QDir::toNativeSeparators(fileName); // not needed, but better looking
 
