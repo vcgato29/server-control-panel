@@ -783,12 +783,14 @@ void MainWindow::openLog()
     QPushButton *button = (QPushButton *)sender();
     QString logfile = this->getLogfile(button->objectName());
 
-    QDesktopServices::setUrlHandler("file", this, "execEditor");
-
-    // if no UrlHandler is set, this executes the OS-dependend scheme handler
-    QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
-
-    QDesktopServices::unsetUrlHandler("file");
+    if(!QFile().exists(logfile)) {
+        QMessageBox::warning(this, tr("Warning"), tr("Log file not found: \n") + logfile, QMessageBox::Yes);
+    } else {
+       QDesktopServices::setUrlHandler("file", this, "execEditor");
+       // if no UrlHandler is set, this executes the OS-dependend scheme handler
+       QDesktopServices::openUrl(QUrl::fromLocalFile(logfile));
+       QDesktopServices::unsetUrlHandler("file");
+    }
 }
 
 void MainWindow::execEditor(QUrl logfile)
