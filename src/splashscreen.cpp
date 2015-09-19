@@ -48,7 +48,7 @@ SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
 
     // define texts
     QString titleText       = QString(QApplication::applicationName());
-    QString versionText     = QString("Version %1").arg(QString::fromStdString(APP_VERSION));
+    QString versionText     = QString("Version %1").arg(QString::fromStdString(APP_VERSION_SHORT));
     QString copyrightText   = QChar(0xA9)+QString(" 2010-%1 ").arg(QDate::currentDate().toString("yyyy")) + QString(tr("Jens-André Koch"));
     //QString madeinText      = QString("Made in Germany.");
 
