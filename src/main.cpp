@@ -51,26 +51,6 @@ int main(int argc, char * argv[])
     // else run as a normal QtGUI application
     QApplication app(argc, argv);
 
-    /**
-     * Assume the screen has a resolution of 96 DPI rather than using
-     * the OS-provided resolution. This will cause font rendering to
-     * be consistent in pixels-per-point across devices rather than
-     * defining 1 point as 1/72 inch.
-     */
-    QApplication::setAttribute(Qt::AA_Use96Dpi, true);
-
-    /**
-     * @brief Set Style: "Fusion Dark"
-     */
-    //QApplication::setStyle(QStyleFactory::create("Fusion"));
-    /*QPalette p;
-    p = qApp->palette();
-    p.setColor(QPalette::Window, QColor(53,53,53));
-    p.setColor(QPalette::Button, QColor(53,53,53));
-    p.setColor(QPalette::Highlight, QColor(142,45,197));
-    p.setColor(QPalette::ButtonText, QColor(255,255,255));
-    qApp->setPalette(p);*/
-
     /*
      * On windows an application is either a GUI application or Console application.
      * This application is a console application. It is compiled with "CONFIG += CONSOLE".
@@ -97,6 +77,26 @@ int main(int argc, char * argv[])
     app.setOrganizationName("Jens-André Koch");
     app.setOrganizationDomain("http://wpn-xm.org/");
     app.setWindowIcon(QIcon(":/wpnxm.ico"));
+
+    /**
+     * Assume the screen has a resolution of 96 DPI rather than using
+     * the OS-provided resolution. This will cause font rendering to
+     * be consistent in pixels-per-point across devices rather than
+     * defining 1 point as 1/72 inch.
+     */
+    QApplication::setAttribute(Qt::AA_Use96Dpi, true);
+
+    /**
+     * @brief Set Style: "Fusion Dark"
+     */
+    //QApplication::setStyle(QStyleFactory::create("Fusion"));
+    /*QPalette p;
+    p = qApp->palette();
+    p.setColor(QPalette::Window, QColor(53,53,53));
+    p.setColor(QPalette::Button, QColor(53,53,53));
+    p.setColor(QPalette::Highlight, QColor(142,45,197));
+    p.setColor(QPalette::ButtonText, QColor(255,255,255));
+    qApp->setPalette(p);*/
 
     // splash on
     #ifndef QT_DEBUG
