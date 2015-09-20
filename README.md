@@ -59,23 +59,10 @@ You have to build the libraries to be able to link successfully.
 
 ## Build and Deployment Instructions
 
-### 1 The "/build" directory must contain the following files:
+### 1 The "/build" directory must contain the Qt dependencies.
 
-* \platforms\qwindows.dll
-* \plugins\imageformats\qico.dll
-* ~~\plugins\imageformats\qwbmp.dll~~
-* ~~\icudt51.dll~~
-* ~~\icuin51.dll~~
-* ~~\icuuc51.dll~~
-* \libgcc_s_dw2-1.dll
-* \libstdc++-6.dll
-* \libwinphtread-1.dll
-* \Qt5Core.dll
-* \Qt5Network.dll
-* \Qt5Gui.dll
-* \Qt5Widgets.dll
-* \wpn-xm.exe
-* \wpn-xm.ini (auto-created, if not existant)
+We are using the Qt command `windeployqt` to automatically detect and copy the dependencies to the debug/release folder.
+You find the list of the files to copy at the end of the `.pro` file, in case you need to copy dependencies manually. 
 
 For deployment use the [Qt Minimal Deployment Kit](https://github.com/WPN-XM/qt-mini-deploy/).
 
