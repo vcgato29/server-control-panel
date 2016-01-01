@@ -401,8 +401,8 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
     label = label.toLower();
     if(label == "nginx")                        { ui->centralWidget->findChild<QLabel*>("label_Nginx_Status")->setEnabled(enabled); }
     if(label == "php" || label == "php-cgi")    { ui->centralWidget->findChild<QLabel*>("label_PHP_Status")->setEnabled(enabled); }
-    if(label == "mariadb")                      { ui->centralWidget->findChild<QLabel*>("label_MariaDb_Status")->setEnabled(enabled); }
-    if(label == "mongodb" || label == "mysqld") { ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->setEnabled(enabled); }
+    if(label == "mariadb" || label == "mysqld") { ui->centralWidget->findChild<QLabel*>("label_MariaDb_Status")->setEnabled(enabled); }
+    if(label == "mongodb")                      { ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->setEnabled(enabled); }
     if(label == "memcached")                    { ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->setEnabled(enabled); }
     if(label == "postgresql" || label == "postgres") { ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->setEnabled(enabled); }
 }
