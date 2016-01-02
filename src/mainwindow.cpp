@@ -521,11 +521,7 @@ QString MainWindow::getPHPVersion()
 
     qDebug() << "[PHP] Version: \n" << p_stdout;
 
-    QRegExp regex("PHP\\s((\\d+\\.\\d+\\.\\d+(?:(?:\\-)?(?:alpha|beta|RC))(?:\\.)?\\d+)?)\\s");
-
-    regex.indexIn(p_stdout); // match
-
-    return regex.cap(1);
+    return p_stdout.mid(4, p_stdout.lastIndexOf("cli)")).replace(" (cli)", "");
 }
 
 QString MainWindow::getMongoVersion()
@@ -803,6 +799,8 @@ QString MainWindow::getLogfile(QString obj)
     if(obj == "pushButton_ShowErrorLog_MariaDb") { logfile = logs + "/mariadb_error.log";}
     if(obj == "pushButton_ShowLog_MongoDb")      { logfile = logs + "/mongodb.log";}
     if(obj == "pushButton_ShowLog_PostgreSQL")   { logfile = logs + "/postgresql.log";}
+
+    qDebug() << logfile;
 
     return logfile;
 }
