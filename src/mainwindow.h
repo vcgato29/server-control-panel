@@ -68,7 +68,7 @@ public slots:
     void stopAllDaemons();
 
     void goToWebsite();
-    void goToGoogleGroup();
+    void goToForum();
     void goToReportIssue();
     void goToDonate();
 

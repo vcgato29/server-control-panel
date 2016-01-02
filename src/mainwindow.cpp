@@ -193,7 +193,7 @@ void MainWindow::createActions()
 
     // PushButtons:: Website, Mailinglist, ReportBug, Donate
     connect(ui->pushButton_Website, SIGNAL(clicked()), this, SLOT(goToWebsite()));
-    connect(ui->pushButton_GoogleGroup, SIGNAL(clicked()), this, SLOT(goToGoogleGroup()));
+    connect(ui->pushButton_Forum, SIGNAL(clicked()), this, SLOT(goToForum()));
     connect(ui->pushButton_ReportBug, SIGNAL(clicked()), this, SLOT(goToReportIssue()));
     connect(ui->pushButton_Donate, SIGNAL(clicked()), this, SLOT(goToDonate()));
 
@@ -643,9 +643,9 @@ void MainWindow::goToWebsite()
     QDesktopServices::openUrl(QUrl("http://wpn-xm.org/"));
 }
 
-void MainWindow::goToGoogleGroup()
+void MainWindow::goToForum()
 {
-    QDesktopServices::openUrl(QUrl("http://groups.google.com/group/wpn-xm/"));
+    QDesktopServices::openUrl(QUrl("http://wpn-xm.org/forum/"));
 }
 
 void MainWindow::goToReportIssue()

@@ -184,3 +184,4 @@ win32:contains($(TRAVIS), false) {
 #dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qico.dll
 #dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qwbmp.dll
 #INSTALLS   += dlls dllA dllB
+

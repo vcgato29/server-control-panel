@@ -32,5 +32,6 @@
         <file>pencil.png</file>
         <file alias="console">terminal.png</file>
         <file alias="explorer">folder-smiley.png</file>
+        <file>comment.png</file>
     </qresource>
 </RCC>
