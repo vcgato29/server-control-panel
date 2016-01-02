@@ -27,7 +27,7 @@ repackage($version, 'x86_64');
 function repackage($version, $bitsize)
 {
     // 1
-    download('https://github.com/WPN-XM/server-control-panel/releases/download/'. $version . '/wpnxm-scp-'. $version . '-'. $bitsize .'.zip',
+    download('https://github.com/WPN-XM/server-control-panel/releases/download/v'. $version . '/wpnxm-scp-'. $version . '-'. $bitsize .'.zip',
              'wpnxm-scp-'. $bitsize .'.zip');
     // 2
     unzip('wpnxm-scp-'. $bitsize .'.zip', __DIR__ . '/wpnxm-scp-'. $bitsize);
