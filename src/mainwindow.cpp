@@ -340,8 +340,12 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
                 activateWindow();
             }
             break;
-        default:
+        case QSystemTrayIcon::Trigger:
             break;
+        case QSystemTrayIcon::MiddleClick:
+            break;
+        default:
+            return;
     }
 }
 
@@ -405,6 +409,32 @@ void MainWindow::setLabelStatusActive(QString label, bool enabled)
     if(label == "mongodb")                      { ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->setEnabled(enabled); }
     if(label == "memcached")                    { ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->setEnabled(enabled); }
     if(label == "postgresql" || label == "postgres") { ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->setEnabled(enabled); }
+
+    updateTrayIconTooltip();
+}
+
+void MainWindow::updateTrayIconTooltip()
+{
+   //qDebug() << "updating TrayIcon Tooltip";
+
+   QString tip = "";
+           tip.append(APP_NAME_AND_VERSION);
+           tip.append("\n\n");
+
+   if(ui->centralWidget->findChild<QLabel*>("label_Nginx_Status")->isEnabled())      { tip.append(" - Nginx: running\n"); }
+   if(ui->centralWidget->findChild<QLabel*>("label_PHP_Status")->isEnabled())        { tip.append(" - PHP: running\n"); }
+   if(ui->centralWidget->findChild<QLabel*>("label_MariaDb_Status")->isEnabled())    { tip.append(" - MariaDb: running\n"); }
+
+   if(ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status") &&
+      ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->isEnabled())    { tip.append(" - MongoDb: running\n"); }
+
+   if(ui->centralWidget->findChild<QLabel*>("label_Memcached_Status") &&
+      ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->isEnabled())  { tip.append(" - Memcached: running\n"); }
+
+   if(ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status") &&
+      ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->isEnabled()) { tip.append(" - PostgreSQL: running\n"); }
+
+   tray->setToolTip(tip);
 }
 
 void MainWindow::quitApplication()

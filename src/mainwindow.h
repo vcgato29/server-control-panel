@@ -97,6 +97,7 @@ public slots:
 
     void setLabelStatusActive(QString label, bool enabled);
     void enableToolsPushButtons(bool enabled);
+    void updateTrayIconTooltip();
 
     void quitApplication();
 
