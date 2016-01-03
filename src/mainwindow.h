@@ -132,7 +132,7 @@ private:
 
     QString getVersion(QString server);
 
-    QString getLogfile(QString obj);
+    QString getLogfile(QString objectName);
     QString getServerNameFromPushButton(QPushButton *button);
 
 

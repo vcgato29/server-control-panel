@@ -264,7 +264,7 @@ void MainWindow::MainWindow_ShowEvent()
 
     for(int i = 0; i < allShowLogPushButtons.size(); ++i) {
         allShowLogPushButtons[i]->setEnabled(
-            QFile().exists(this->getLogfile(this->getServerNameFromPushButton(allShowLogPushButtons[i])))
+            QFile().exists(this->getLogfile(allShowLogPushButtons[i]->objectName()))
         );
     }
 
@@ -273,7 +273,7 @@ void MainWindow::MainWindow_ShowEvent()
 
     for(int i = 0; i < allShowErrorLogPushButtons.size(); ++i) {
         allShowErrorLogPushButtons[i]->setEnabled(
-            QFile().exists(this->getLogfile(this->getServerNameFromPushButton(allShowErrorLogPushButtons[i])))
+            QFile().exists(this->getLogfile(allShowErrorLogPushButtons[i]->objectName()))
         );
     }
 }
@@ -730,79 +730,66 @@ void MainWindow::openConfigurationDialog()
 
 void MainWindow::openConfigurationDialogNginx()
 {
-    // Open Configuration Dialog - Tab for Nginx
     QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#nginx"));
 }
 
 void MainWindow::openConfigurationDialogPHP()
 {
-    // Open Configuration Dialog - Tab for PHP
     QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#php"));
 }
 
 void MainWindow::openConfigurationDialogMariaDb()
 {
-    // Open Configuration Dialog - Tab for MariaDb
     QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#mariadb"));
 }
 
 void MainWindow::openConfigurationDialogMongoDb()
 {
-    // Open Configuration Dialog - Tab for MongoDb
     QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#mongodb"));
 }
 
 void MainWindow::openConfigurationDialogPostgresql()
 {
-    // Open Configuration Dialog - Tab for MongoDb
     QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#postgresql"));
 }
 
-// extract server name from pushbutton name (pushButton_ConfigurationEditor_server => server)
 QString MainWindow::getServerNameFromPushButton(QPushButton *button)
 {
-    QString obj = button->objectName();
-    QStringList pieces = obj.split("_");
-    return pieces.value(pieces.length() - 1);
+    return button->objectName().split("_").last(); // "pushButton_FooBar_Nginx" => "Nginx"
 }
 
 void MainWindow::openConfigurationInEditor()
 {
-    QPushButton *button = (QPushButton *)sender();
-    QString serverName = this->getServerNameFromPushButton(button);
+    QString serverName = this->getServerNameFromPushButton( (QPushButton *)sender() );
 
     // fetch config file for server from the ini
-    QString cfgfile = QDir(settings->get(serverName + "/config").toString()).absolutePath();
+    QString cfgFile = QDir(settings->get(serverName + "/config").toString()).absolutePath();
 
-    if(!QFile().exists(cfgfile)) {
-        QMessageBox::warning(this, tr("Warning"), tr("Config file not found: \n") + cfgfile, QMessageBox::Yes);
+    if(!QFile().exists(cfgFile)) {
+        QMessageBox::warning(this, tr("Warning"), tr("Config file not found: \n") + cfgFile, QMessageBox::Yes);
     } else {
        QDesktopServices::setUrlHandler("file", this, "execEditor");
-
        // if no UrlHandler is set, this executes the OS-dependend scheme handler
-       QDesktopServices::openUrl(QUrl::fromLocalFile(cfgfile));
-
+       QDesktopServices::openUrl(QUrl::fromLocalFile(cfgFile));
        QDesktopServices::unsetUrlHandler("file");
     }
 }
 
-QString MainWindow::getLogfile(QString obj)
+QString MainWindow::getLogfile(QString objectName)
 {
     // map objectName to fileName
 
-    QString logs = QDir(settings->get("paths/logs").toString()).absolutePath();
-    QString logfile = "";
+    QString logsDir = QDir(settings->get("paths/logs").toString()).absolutePath();
+    QString logFile = "";
 
-    if(obj == "pushButton_ShowLog_Nginx")        { logfile = logs + "/access.log";}
-    if(obj == "pushButton_ShowErrorLog_Nginx")   { logfile = logs + "/error.log";}
-    if(obj == "pushButton_ShowErrorLog_PHP")     { logfile = logs + "/php_error.log";}
-    if(obj == "pushButton_ShowErrorLog_MariaDb") { logfile = logs + "/mariadb_error.log";}
-    if(obj == "pushButton_ShowLog_MongoDb")      { logfile = logs + "/mongodb.log";}
-    if(obj == "pushButton_ShowLog_PostgreSQL")   { logfile = logs + "/postgresql.log";}
+    if(objectName == "pushButton_ShowLog_Nginx")        { logFile = logsDir + "/access.log";}
+    if(objectName == "pushButton_ShowErrorLog_Nginx")   { logFile = logsDir + "/error.log";}
+    if(objectName == "pushButton_ShowErrorLog_PHP")     { logFile = logsDir + "/php_error.log";}
+    if(objectName == "pushButton_ShowErrorLog_MariaDb") { logFile = logsDir + "/mariadb_error.log";}
+    if(objectName == "pushButton_ShowLog_MongoDb")      { logFile = logsDir + "/mongodb.log";}
+    if(objectName == "pushButton_ShowLog_PostgreSQL")   { logFile = logsDir + "/postgresql.log";}
 
-    qDebug() << logfile;
-
-    return logfile;
+    return logFile;
 }
 
 void MainWindow::openLog()
