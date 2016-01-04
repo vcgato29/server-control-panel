@@ -101,14 +101,23 @@ int main(int argc, char * argv[])
     // splash on
     #ifndef QT_DEBUG
     SplashScreen splash(QPixmap(), Qt::WindowStaysOnTopHint);
+    splash.setProgress(0);
     splash.show();
     #endif
 
     // do not leave application, until Quit is clicked in the tray menu
     app.setQuitOnLastWindowClosed(false);
 
+    #ifndef QT_DEBUG
+    splash.setProgress(50);
+    #endif
+
     MainWindow mainWindow;
     mainWindow.show();
+
+    #ifndef QT_DEBUG
+    splash.setProgress(100);
+    #endif
 
     // splash off
     #ifndef QT_DEBUG

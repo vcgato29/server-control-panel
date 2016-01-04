@@ -29,6 +29,8 @@
 #include <QDateTime>
 #include <QPicture>
 #include <QScreen>
+#include <QStyleOptionProgressBar>
+#include <QProgressBar>
 
 SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
     QSplashScreen(pixmap, f)
@@ -94,4 +96,32 @@ SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
     this->setPixmap(newPixmap);
 
     this->showMessage("Loading...", Qt::AlignBottom | Qt::AlignLeft, Qt::gray);
+}
+
+void SplashScreen::drawContents(QPainter *painter)
+{
+  QSplashScreen::drawContents(painter);
+
+  QString style = "QProgressBar::chunk { background-color: #BBB; margin: 0.5px; }";
+  style.append("QProgressBar { border: 1px solid #CCC; background: #EEE;}");
+
+  QProgressBar bar;
+  bar.setStyleSheet(style);
+
+  // Set base style for progressbar...
+  QStyleOptionProgressBar progressBar;
+  progressBar.initFrom(&bar);
+  progressBar.state = QStyle::State_Enabled | QStyle::State_Active;
+  progressBar.textVisible = false;
+  progressBar.minimum = 0;
+  progressBar.maximum = 100;
+  progressBar.progress = progress;
+  progressBar.invertedAppearance = false;
+  progressBar.rect = QRect(60, 308, 400, 6); // Position of the progressBar
+
+  painter->save();
+  QStyle *drawStyle = bar.style();
+  // draw the progress bar onto the view
+  drawStyle->drawControl(QStyle::CE_ProgressBar, &progressBar, painter, &bar);
+  painter->restore();
 }

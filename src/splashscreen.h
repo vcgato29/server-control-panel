@@ -34,6 +34,17 @@ class SplashScreen : public QSplashScreen
 
 public:
     explicit SplashScreen(const QPixmap &pixmap = QPixmap(), Qt::WindowFlags f = 0);
+    int progress;
+public slots:
+    void setProgress(int value)
+    {
+      progress = value;
+      if (progress > 100) progress = 100;
+      if (progress < 0) progress = 0;
+      update();
+    }
+protected:
+    void drawContents(QPainter *painter);
 };
 
 #endif // SPLASHSCREEN_H
