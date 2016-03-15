@@ -1,156 +1,133 @@
-/*
-    WPN-XM Server Control Panel
-
-    WPN-XM SCP is a GUI tool for managing server daemons under Windows.
-    It's a fork of Easy WEMP written by Yann Le Moigne and (c) 2010.
-    WPN-XM SCP is written by Jens-Andre Koch and (c) 2011 - onwards.
-
-    This file is part of WPN-XM Server Stack for Windows.
-
-    WPN-XM SCP is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    WPN-XM SCP is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with WPN-XM SCP. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-// local includes
-#include "tray.h"
-#include <QCloseEvent>
-class QCloseEvent;
-
-// global includes
 #include <QMainWindow>
-#include <QAction>
-#include <QLayoutItem>
-#include <QGridLayout>
-#include <QJsonDocument>
-#include <QPushButton>
+#include <QDialogButtonBox>
+#include <QCheckBox>
+#include <QSystemTrayIcon>
 
-namespace Ui {
-    class MainWindow;
-}
+#include "servers.h"
+#include "settings.h"
+#include "tray.h"
+#include "configurationdialog.h"
+#include "updater/updaterdialog.h"
 
-class MainWindow : public QMainWindow
+namespace ServerControlPanel
 {
-    Q_OBJECT  // Enables signals and slots
+    namespace Ui {
+        class MainWindow;
+    }
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    class MainWindow : public QMainWindow
+    {
+            Q_OBJECT  // Enables signals and slots
 
-    void setVisible(bool visible);
+        public:
+            explicit MainWindow(QWidget *parent = 0);
+            ~MainWindow();
 
-    QString getPHPVersion();
-    QString getNginxVersion();
-    QString getMariaVersion();
-    QString getMongoVersion();
-    QString getMemcachedVersion();
-    QString getPostgresqlVersion();
+            void setVisible(bool visible);
 
-    QString parseVersionNumber(QString stringWithVersion);
-    void updateVersion(QString server);
+            QString getPHPVersion();
+            QString getNginxVersion();
+            QString getMariaVersion();
+            QString getMongoVersion();
+            QString getMemcachedVersion();
+            QString getPostgresqlVersion();
 
-public slots:
+            QString parseVersionNumber(QString stringWithVersion);
 
-    // General Action Slots of the MainWindow
-    void startAllDaemons();
-    void stopAllDaemons();
+        public slots:
 
-    void goToWebsite();
-    void goToForum();
-    void goToReportIssue();
-    void goToDonate();
+            // General Action Slots of the MainWindow
+            void startAllDaemons();
+            void stopAllDaemons();
 
-    void openToolPHPInfo();
-    void openToolPHPMyAdmin();
-    void openToolWebgrind();
-    void openToolAdminer();
+            void goToWebsite();
+            void goToForum();
+            void goToReportIssue();
+            void goToDonate();
 
-    void openProjectFolderInBrowser();
-    void openProjectFolderInExplorer();
+            void openToolPHPInfo();
+            void openToolPHPMyAdmin();
+            void openToolWebgrind();
+            void openToolAdminer();
 
-    void openConsole();
-    void openWebinterface();
-    void openConfigurationDialog();
-    void openHelpDialog();
-    void openAboutDialog();
+            void openProjectFolderInBrowser();
+            void openProjectFolderInExplorer();
 
-    void openConfigurationDialogNginx();
-    void openConfigurationDialogPHP();
-    void openConfigurationDialogMariaDb();
-    void openConfigurationDialogMongoDb();
-    void openConfigurationDialogPostgresql();
+            void openConsole();
+            void openWebinterface();
+            void openConfigurationDialog();
+            void openHelpDialog();
+            void openAboutDialog();
+            void openUpdaterDialog();
 
-    void openLog();
-    void openConfigurationInEditor();
+            void openConfigurationDialogNginx();
+            void openConfigurationDialogPHP();
+            void openConfigurationDialogMariaDb();
+            void openConfigurationDialogMongoDb();
+            void openConfigurationDialogPostgresql();
 
-    void setLabelStatusActive(QString label, bool enabled);
-    void enableToolsPushButtons(bool enabled);
-    void updateTrayIconTooltip();
+            void openLog();
+            void openConfigurationInEditor();
 
-    void quitApplication();
+            void setLabelStatusActive(QString label, bool enabled);
+            void updateVersion(QString server);
 
-    void execEditor(QUrl logfile);
+            void enableToolsPushButtons(bool enabled);
+            void updateTrayIconTooltip();
 
-private:
-    Ui::MainWindow *ui;
+            void quitApplication();
 
-    Tray *tray;
+            void execEditor(QUrl logfile);
 
-    Settings *settings;
-    Servers *servers;
+        private:
+            Ui::MainWindow *ui;
 
-    QAction *minimizeAction;
-    QAction *restoreAction;
-    QAction *quitAction;
+            ServerControlPanel::Tray  *tray;
+            Settings::SettingsManager *settings;
+            Servers::Servers          *servers;
 
-    void checkAlreadyActiveDaemons();
-    void checkPorts();
-    void createActions();
-    void createTrayIcon();
-    void startMonitoringDaemonProcesses();
+            QAction *minimizeAction;
+            QAction *restoreAction;
+            QAction *quitAction;
 
-    void setDefaultSettings();
-    void autostartDaemons();
+            void checkAlreadyActiveDaemons();
+            void checkPorts();
+            void createActions();
+            void createTrayIcon();
+            void startMonitoringDaemonProcesses();
 
-    void renderInstalledDaemons();
+            void setDefaultSettings();
+            void autostartDaemons();
 
-    // Returns full path to project folder (appPath + www).
-    QString getProjectFolder() const;
-    void showPushButtonsOnlyForInstalledTools();
+            void renderInstalledDaemons();
 
-    QString getVersion(QString server);
+            QString getProjectFolder() const;
+            void showPushButtonsOnlyForInstalledTools();
 
-    QString getLogfile(QString objectName);
-    QString getServerNameFromPushButton(QPushButton *button);
+            QString getVersion(QString server);
 
+            QString getLogfile(QString objectName);
+            QString getServerNameFromPushButton(QPushButton *button);
 
-signals:
-    void mainwindow_show();
+        signals:
+            void mainwindow_show();
 
-private slots:
+        private slots:
+            void iconActivated(QSystemTrayIcon::ActivationReason reason);
+            //void execEditor(QUrl logfile);
 
-    // when tray icon is activated
-    void iconActivated(QSystemTrayIcon::ActivationReason reason);
-    //void execEditor(QUrl logfile);
+            void on_pushButton_Updater_clicked();
+            void MainWindow_ShowEvent();
 
-    void MainWindow_ShowEvent();
+        protected:
+            void closeEvent(QCloseEvent *event);
+            void changeEvent(QEvent *event);
+            void showEvent(QShowEvent *ev);
+    };
 
-protected:
-    void closeEvent(QCloseEvent *event);
-    void changeEvent(QEvent *event);
-    void showEvent(QShowEvent *ev);
-};
+}
 
 #endif // MAINWINDOW_H

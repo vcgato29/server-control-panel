@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>ServerControlPanel::MainWindow</class>
+ <widget class="QMainWindow" name="ServerControlPanel::MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -1758,6 +1758,19 @@ QPushButton:pressed
     <zorder>pushButton_Help</zorder>
     <zorder>pushButton_About</zorder>
     <zorder>pushButton_Close</zorder>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Updater">
+    <property name="geometry">
+     <rect>
+      <x>294</x>
+      <y>20</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Updater</string>
+    </property>
    </widget>
   </widget>
  </widget>

@@ -1,11 +1,7 @@
 #
 #    WPN-XM Server Control Panel
 #
-#    WPN-XM SCP is a GUI tool for managing server daemons under Windows.
-#    It's a fork of Easy WEMP written by Yann Le Moigne and (c) 2010.
-#    WPN-XM SCP is written by Jens-Andre Koch and (c) 2011 - onwards.
-#
-#    This file is part of WPN-XM Server Stack for Windows.
+#    Copyright (c) Jens-Andre Koch <jakoch@web.de>
 #
 #    WPN-XM SCP is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -43,15 +39,15 @@ QT += core network widgets
 LIBS += -luuid -lole32
 
 # this define disables qDebug() output to console in release mode
-@
-CONFIG(release, debug|release):DEFINES += QT_NO_WARNING_OUTPUT QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
-@
+#@
+#CONFIG(release, debug|release):DEFINES += QT_NO_WARNING_OUTPUT QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
+#@
 
 QMAKE_CXXFLAGS -= -fno-keep-inline-dllexport
 
 HEADERS += \
     src/version.h \
-    src/main.h \
+    src/app/main.h \
     src/tray.h \
     src/mainwindow.h \
     src/hostmanager/host.h \
@@ -63,10 +59,19 @@ HEADERS += \
     src/splashscreen.h \
     src/windowsapi.h \
     src/servers.h \
-    src/cli.h
+    src/cli.h \
+    src/updater/updaterdialog.h \
+    src/json.h \
+    src/selfupdater.h \
+    src/downloadthread.h \
+    src/downloadmanager.h \
+    src/filehandling.h \
+    src/updater/actioncolumnitemdelegate.h \
+    src/updater/softwarecolumnitemdelegate.h \
+    src/updater/registriesdownloader.h
 
 SOURCES += \
-    src/main.cpp \
+    src/app/main.cpp \
     src/tray.cpp \
     src/mainwindow.cpp \
     src/hostmanager/host.cpp \
@@ -78,14 +83,24 @@ SOURCES += \
     src/splashscreen.cpp \
     src/windowsapi.cpp \
     src/servers.cpp \
-    src/cli.cpp
+    src/cli.cpp \
+    src/updater/updaterdialog.cpp \
+    src/json.cpp \
+    src/selfupdater.cpp \
+    src/downloadthread.cpp \
+    src/downloadmanager.cpp \
+    src/filehandling.cpp \
+    src/updater/actioncolumnitemdelegate.cpp \
+    src/updater/softwarecolumnitemdelegate.cpp \
+    src/updater/registriesdownloader.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
 
 FORMS += \
     src/mainwindow.ui \
-    src/configurationdialog.ui
+    src/configurationdialog.ui \
+    src/updater/updaterdialog.ui
 
 # WINDOWS RC-FILE (sets the executable attributes)
 exists(C:\Windows\System32\cmd.exe) {

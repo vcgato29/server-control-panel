@@ -2,3 +2,8 @@ build/
 Makefile*
 *.*~
 *.pro.user
+
+# Windows Stuff
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
