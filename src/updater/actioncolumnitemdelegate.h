@@ -27,6 +27,10 @@ namespace Updater
 
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
+    signals:
+        void downloadButtonClicked(const QModelIndex &index);
+        void installButtonClicked(const QModelIndex &index);
+
     private:
         void drawDownloadPushButton(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const ;
         void drawDownloadProgressBar(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

@@ -14,7 +14,6 @@ namespace Downloader
         connect(thread, SIGNAL(fileReceived(const QString &)), this, SLOT(downloadReceived(const QString&)));
         connect(thread, SIGNAL(fileStarted(const QString &)), this, SLOT(downloadStarted(const QString &)));
         connect(thread, SIGNAL(fileFailed(const QString &)), this, SLOT(downloadFailed(const QString&)));
-        //connect(thread, SIGNAL(finished()), this, SIGNAL(finished()));
         connect(thread, SIGNAL(finished()), this, SLOT(moveFinishedDownloads()));
     }
 

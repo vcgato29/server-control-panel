@@ -9,7 +9,7 @@ namespace SoftwareRegistry
 
     void Manager::download()
     {
-        /**
+        /**         
          * foreach registry
          *   if (not JSON file exists) and (JSON file not older than updateInterval)
          *     fetch API data as JSON

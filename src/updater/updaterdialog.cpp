@@ -115,10 +115,10 @@ namespace Updater
              * These UserRoles are set as data to the model and tell the view what to render.
              * This allows to easily update the model and get the matching action buttons.
              */
-            QStandardItem *action = new QStandardItem("Action1");
-            action->setData(true, Updater::ActionColumnItemDelegate::IsDownloadPushButtonRole);
+            QStandardItem *action = new QStandardItem("ActionCell");
+            action->setData(false, Updater::ActionColumnItemDelegate::IsDownloadPushButtonRole);
             //action->setData(39, Updater::ActionColumnItemDelegate::IsDownloadProgressBarRole);
-            //action->setData(true, Updater::ActionColumnItemDelegate::IsInstallPushButtonRole);
+            //action->setData(false, Updater::ActionColumnItemDelegate::IsInstallPushButtonRole);
             rowItems.append(action);
 
             model->appendRow(rowItems);
@@ -236,14 +236,14 @@ namespace Updater
 
     void UpdaterDialog::updateMainDownloadProgressBar()
     {
-         ui->mainProgressBar->setValue(ui->mainProgressBar->value()+1);
+         //ui->mainProgressBar->setValue(ui->mainProgressBar->value()+1);
     }
 
     void UpdaterDialog::resetProgressBar()
     {
-        ui->mainProgressBar->setMinimum(0);
-        ui->mainProgressBar->setValue(0);
-        ui->mainProgressBar->setVisible(true);
+        //ui->mainProgressBar->setMinimum(0);
+        //ui->mainProgressBar->setValue(0);
+        //ui->mainProgressBar->setVisible(true);
 
         ui->progressBar->setMinimum(0);
         ui->progressBar->setValue(0);

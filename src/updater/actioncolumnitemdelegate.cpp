@@ -51,35 +51,28 @@ void ActionColumnItemDelegate::drawDownloadPushButton(QPainter *painter, const Q
     opt.initFrom(btn);
     opt.rect = option.rect.adjusted(2,2,-2,-2);
     opt.text = "Download";
-    opt.state = QStyle::State_Active | QStyle::State_Enabled;
+    opt.state = QStyle::State_Enabled;
     opt.features |= QStyleOptionButton::DefaultButton;
 
-    // button clicked - based on boolean value in the model
-    bool pushButtonClicked = index.data(IsDownloadPushButtonRole).value<bool>();
-    opt.state |= pushButtonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
+    // change style of button, when clicked. based on boolean value in the model. see setData() in editorEvent().
+    bool buttonClicked = index.data(IsDownloadPushButtonRole).value<bool>();
+    opt.state |= buttonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
 
     btn->style()->drawControl(QStyle::CE_PushButton,&opt,painter,btn);
 }
 
 void ActionColumnItemDelegate::drawInstallPushButton(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(index);
-
     QStyleOptionButton opt;
     opt.initFrom(btn);
     opt.rect = option.rect.adjusted(2,2,-2,-2);
     opt.text = "Install";
-    opt.state = QStyle::State_Active | QStyle::State_Enabled;
+    opt.state = QStyle::State_Enabled;
     opt.features |= QStyleOptionButton::DefaultButton;
 
-    /*if(option.state & QStyle::State_HasFocus) { opt.state |= QStyle::State_HasFocus; }
-    opt.state |= QStyle::State_Enabled;
-    if (index.data(IsInstallPushButtonRole).canConvert<bool>()) {
-
-        bool pushButtonClicked = index.data(IsInstallPushButtonRole).value<bool>();
-        opt.state |= pushButtonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
-    }
-    opt.features |= QStyleOptionButton::DefaultButton;*/
+    // change style of button, when clicked. based on boolean value in the model. see setData() in editorEvent().
+    bool buttonClicked = index.data(IsInstallPushButtonRole).value<bool>();
+    opt.state |= buttonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
 
     btn->style()->drawControl(QStyle::CE_PushButton,&opt,painter,btn);
 }
@@ -127,28 +120,49 @@ void ActionColumnItemDelegate::setProgressBarStyle(QProgressBar *bar) const
  */
 bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,const QStyleOptionViewItem &option,const QModelIndex &index)
 {
-    if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonDblClick) {
-      //emit onClickedOpenURL(index);
-        if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {
-            qDebug() << "Download Role";
-            qDebug() << "Download Button clicked";
-            qDebug() << "Row"<< index.row();
-            qDebug() << "DownloadURL"<< index.model()->data(index.model()->index(index.row(), UpdaterDialog::Columns::DownloadURL)).toString();
-            //emit DownloadSoftware();
-        }
+    if (event->type() == QEvent::MouseButtonPress) {
 
-        if(index.data(IsDownloadProgressBarRole).canConvert<bool>()) {
-            qDebug() << "ProgressBar Role";
+        if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {
+            qDebug() << "Action Cell in Row " << index.row() << "has Download Role and Download Button clicked..";
+            qDebug() << "DownloadURL"<< index.model()->data(index.model()->index(index.row(), UpdaterDialog::Columns::DownloadURL)).toString();
+            model->setData(index, true, IsDownloadPushButtonRole);
+            emit downloadButtonClicked(index);
+            return true;
         }
 
         if(index.data(IsInstallPushButtonRole).canConvert<bool>()) {
-            qDebug() << "Install Role";
-            //emit InstallSoftware();
+            qDebug() << "Action Cell in Row " << index.row() << "has Install Role and Install Button clicked...";
+            model->setData(index, true, IsInstallPushButtonRole);
+            emit installButtonClicked(index);
+            return true;
         }
-
-        //QString modelvalue = index.model()->data(index, Qt::EditRole).toString();
-
     }
+
+    if(event->type() == QEvent::MouseButtonRelease) {
+        if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {
+            model->setData(index, false, IsDownloadPushButtonRole);
+        }
+        if(index.data(IsInstallPushButtonRole).canConvert<bool>()) {
+            model->setData(index, false, IsInstallPushButtonRole);
+        }
+    }
+/*
+    // MouseMove disables Clicked state
+    QRect buttonRect(option.rect);
+    buttonRect.setY(option.rect.y()+ 35);
+    buttonRect.setHeight( 30);
+
+    QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+    if( !buttonRect.contains( mouseEvent->pos()) ) {
+        if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {
+            model->setData(index, false, IsDownloadPushButtonRole);
+        }
+        if(index.data(IsInstallPushButtonRole).canConvert<bool>()) {
+            model->setData(index, false, IsInstallPushButtonRole);
+        }
+        return true;
+    }*/
+
     return 0;
 }
 
