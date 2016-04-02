@@ -58,6 +58,11 @@ void ActionColumnItemDelegate::drawDownloadPushButton(QPainter *painter, const Q
     bool buttonClicked = index.data(IsDownloadPushButtonRole).value<bool>();
     opt.state |= buttonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
 
+    // hover on MouseOver
+    if (option.state & QStyle::State_MouseOver) {
+        painter->fillRect(option.rect.adjusted(+1,+1,-1,-1), Qt::darkGray);
+    }
+
     btn->style()->drawControl(QStyle::CE_PushButton,&opt,painter,btn);
 }
 
@@ -73,6 +78,11 @@ void ActionColumnItemDelegate::drawInstallPushButton(QPainter *painter, const QS
     // change style of button, when clicked. based on boolean value in the model. see setData() in editorEvent().
     bool buttonClicked = index.data(IsInstallPushButtonRole).value<bool>();
     opt.state |= buttonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
+
+    // hover on MouseOver
+    if (option.state & QStyle::State_MouseOver) {
+        painter->fillRect(option.rect.adjusted(+1,+1,-1,-1), Qt::darkGray);
+    }
 
     btn->style()->drawControl(QStyle::CE_PushButton,&opt,painter,btn);
 }
