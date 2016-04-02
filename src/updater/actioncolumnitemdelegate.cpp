@@ -156,22 +156,6 @@ bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *mo
             model->setData(index, false, IsInstallPushButtonRole);
         }
     }
-/*
-    // MouseMove disables Clicked state
-    QRect buttonRect(option.rect);
-    buttonRect.setY(option.rect.y()+ 35);
-    buttonRect.setHeight( 30);
-
-    QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-    if( !buttonRect.contains( mouseEvent->pos()) ) {
-        if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {
-            model->setData(index, false, IsDownloadPushButtonRole);
-        }
-        if(index.data(IsInstallPushButtonRole).canConvert<bool>()) {
-            model->setData(index, false, IsInstallPushButtonRole);
-        }
-        return true;
-    }*/
 
     return 0;
 }
