@@ -59,7 +59,9 @@ namespace Updater
             void clicked(const QString &websiteLink);
 
         public slots:
-            void downloadButtonClicked();
+            void doDownload(const QModelIndex &index);
+            void doInstall(const QModelIndex &index);
+
             void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
             void updateMainDownloadProgressBar();
             void downloadsFinished();

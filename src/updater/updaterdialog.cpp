@@ -157,6 +157,9 @@ namespace Updater
         actionDelegate = new Updater::ActionColumnItemDelegate;
         ui->tableView_1->setItemDelegateForColumn(Columns::Action, actionDelegate);
 
+        connect(actionDelegate, SIGNAL(downloadButtonClicked(QModelIndex)), this, SLOT(doDownload(QModelIndex)));
+        connect(actionDelegate, SIGNAL(installButtonClicked(QModelIndex)), this, SLOT(doInstall(QModelIndex)));
+
         /**
          * Configure view
          */
@@ -186,15 +189,15 @@ namespace Updater
         ui->tableView_1->setColumnWidth(Columns::Action, 180);
     }
 
-    void UpdaterDialog::downloadButtonClicked()
+    void UpdaterDialog::doInstall(const QModelIndex &index)
     {
-        int row = sender()->property("row").toInt();
-        QString downloadURL = sender()->property("url").toString();
 
-        //QStandardItem *item = model->itemFromIndex(row);
-        //qDebug() << item;
+    }
 
-        qDebug()<<"row"<<row<<"url"; //<<downloadURL<<"item row"<<item->row();
+    void UpdaterDialog::doDownload(const QModelIndex &index)
+    {
+        QModelIndex indexURL = index.model()->index(index.row(), Columns::DownloadURL, QModelIndex());
+        QString downloadURL = ui->tableView_1->model()->data(indexURL).toString();
 
         QMessageBox::information(this, "", "Download clicked " + downloadURL);
 
