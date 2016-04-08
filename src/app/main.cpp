@@ -44,6 +44,14 @@ int main(int argc, char * argv[])
 
     // Single Instance Check
     ServerControlPanel::Main::exitIfAlreadyRunning();
+    
+    // Setup Translator for Localization
+    /*QTranslator translator;
+    QString locale = QLocale::system().name(); // locale = "de_DE";
+    qDebug() << "Translator uses System Locale:" << locale;
+    translator.load(QString(":languages/lang_") + locale + QString(".qm"));
+    app.installTranslator(&translator);
+    app.setLayoutDirection(QObject::tr("LTR") == "RTL" ? Qt::RightToLeft : Qt::LeftToRight);*/
 
     // Application Meta Data and Settings
     app.setApplicationName(APP_NAME);
@@ -108,14 +116,15 @@ namespace ServerControlPanel
 {
     /*
      * Single Instance Check
+     *
      * Although some people tend to solve this problem by using QtSingleApplication,
      * this approach uses a GUID stored into shared memory.
+     *
+     * The GUID needs to be "static", because the QSharedMemory instance gets destroyed
+     * at the end of the function and so does the shared memory segment.
      */
     void Main::exitIfAlreadyRunning()
     {
-        // Set GUID for WPN-XM Server Control Panel to memory
-        // It needs to be "static", because the QSharedMemory instance gets destroyed
-        // at the end of the function and so does the shared memory segment.
         static QSharedMemory shared("004d54f6-7d00-4478-b612-f242f081b023");
 
         // already running
@@ -123,8 +132,8 @@ namespace ServerControlPanel
         {
           QMessageBox msgBox;
           msgBox.setWindowTitle(APP_NAME);
-          msgBox.setText( QObject::tr("WPN-XM is already running.") );
-          msgBox.setIcon( QMessageBox::Critical );
+          msgBox.setText(QObject::tr("WPN-XM is already running."));
+          msgBox.setIcon(QMessageBox::Critical);
           msgBox.exec();
 
           exit(0);
