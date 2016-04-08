@@ -39,14 +39,14 @@ script:
   - which qmake
   - qmake -query
   - qmake -v
-  - qmake wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
+  - qmake -Wall wpnxm-servercontrolpanel.pro CONFIG+=release QMAKE_CC=$CC QMAKE_CXX=$CXX
   - gcc -v
   - gcc -dumpmachine
   # insert version
   - ant main
   - cat /home/travis/build/WPN-XM/server-control-panel/src/version.h
   # build
-  - make -j2 VERBOSE=1
+  - make -j$(nproc) VERBOSE=1
 
 after_success:
   # install wine
