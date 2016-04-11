@@ -63,12 +63,10 @@ HEADERS += \
     src/updater/updaterdialog.h \
     src/json.h \
     src/selfupdater.h \
-    src/downloadthread.h \
-    src/downloadmanager.h \
     src/filehandling.h \
     src/updater/actioncolumnitemdelegate.h \
     src/updater/softwarecolumnitemdelegate.h \
-    src/updater/registriesdownloader.h
+    src/registry/registrymanager.h
 
 SOURCES += \
     src/app/main.cpp \
@@ -87,12 +85,10 @@ SOURCES += \
     src/updater/updaterdialog.cpp \
     src/json.cpp \
     src/selfupdater.cpp \
-    src/downloadthread.cpp \
-    src/downloadmanager.cpp \
     src/filehandling.cpp \
     src/updater/actioncolumnitemdelegate.cpp \
     src/updater/softwarecolumnitemdelegate.cpp \
-    src/updater/registriesdownloader.cpp
+    src/registry/registrymanager.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
