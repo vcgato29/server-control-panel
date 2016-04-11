@@ -55,6 +55,9 @@ void SoftwareColumnItemDelegate::paint(QPainter *painter, const QStyleOptionView
  */
 bool SoftwareColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,const QStyleOptionViewItem &option,const QModelIndex &index)
 {
+    Q_UNUSED(model);
+    Q_UNUSED(option);
+
     if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonDblClick) {
       emit onClickedOpenURL(index);
     }

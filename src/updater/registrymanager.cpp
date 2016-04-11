@@ -1,4 +1,4 @@
-#include "registriesdownloader.h"
+#include "registrymanager.h"
 
 namespace SoftwareRegistry
 {
@@ -25,7 +25,7 @@ namespace SoftwareRegistry
             downloadRegistry(QUrl("http://wpn-xm.org/updatecheck.php?s=all"), stackRegistryFile);
         } else {
             qDebug() << "[Loading from Cache] Server Stack Software Registry";
-            this->stackSoftwareRegistry = File::JSON::load(stackRegistryFile);
+            stackSoftwareRegistry = File::JSON::load(stackRegistryFile);
         }
 
         // php registry

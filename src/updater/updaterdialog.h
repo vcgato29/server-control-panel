@@ -14,10 +14,9 @@
 #include <QDir>
 
 #include "src/json.h"
-#include "registriesdownloader.h"
+#include "registrymanager.h"
 
-#include "src/downloadmanager.h"
-#include "src/downloadthread.h"
+//#include "src/downloadmanager.h"
 
 #include "actioncolumnitemdelegate.h"
 #include "softwarecolumnitemdelegate.h"
@@ -46,7 +45,7 @@ namespace Updater
         protected:
             QStandardItemModel           *model;
             QSortFilterProxyModel        *myFilterProxyModel;
-            Downloader::DownloadManager  *downloadManager;
+            //Downloader::DownloadManager  *downloadManager;
             SoftwareRegistry::Manager    *softwareRegistry;
 
         private:
@@ -54,6 +53,7 @@ namespace Updater
             void resetProgressBar();
             Updater::SoftwareColumnItemDelegate *softwareDelegate;
             Updater::ActionColumnItemDelegate   *actionDelegate;
+            QString getDownloadUrl(const QModelIndex &index);
 
         signals:
             void clicked(const QString &websiteLink);

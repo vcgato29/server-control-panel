@@ -116,11 +116,13 @@ void ActionColumnItemDelegate::setPushButtonStyle(QPushButton *btn) const
 }
 
 void ActionColumnItemDelegate::setProgressBarStyle(QProgressBar *bar) const
-{
+{    
     QString style = "QProgressBar {border: 1px solid #CCC; background-color: #EEE; text-align: center;}";
         style += "QProgressBar::chunk {background-color: #d1d7da; margin: 0.5px;}";
 
     bar->setStyleSheet(style);
+
+    //bar->setStyleSheet(QString("QProgressBar::chunk:horizontal {background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 grey, stop: 1 grey);}")+QString("QProgressBar::horizontal {border: 1px solid gray; border-radius: 3px; background: yellow; padding: 0px; text-align: left; margin-right: 4ex;}"));
 }
 
 /**
@@ -130,6 +132,8 @@ void ActionColumnItemDelegate::setProgressBarStyle(QProgressBar *bar) const
  */
 bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,const QStyleOptionViewItem &option,const QModelIndex &index)
 {
+    Q_UNUSED(option);
+
     if (event->type() == QEvent::MouseButtonPress) {
 
         if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {

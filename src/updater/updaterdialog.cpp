@@ -18,7 +18,7 @@ namespace Updater
         // remove question mark from the title bar
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-        downloadManager   = new Downloader::DownloadManager();
+        //downloadManager   = new Downloader::DownloadManager();
         softwareRegistry  = new SoftwareRegistry::Manager();
 
         setJsonToServerStackTable(softwareRegistry->getStackSoftwareRegistry());
@@ -81,7 +81,7 @@ namespace Updater
 
             // Installed Version (= Your current version)
             QString installedVersionString = "1.2.3"; // @todo detect currently installed versions
-            QStandardItem *installedVersion = new QStandardItem(installedVersionString);
+            QStandardItem *installedVersion = new QStandardItem( installedVersionString );
             installedVersion->setTextAlignment(Qt::AlignCenter);
             rowItems.append(installedVersion);
 
@@ -189,19 +189,10 @@ namespace Updater
         ui->tableView_1->setColumnWidth(Columns::Action, 180);
     }
 
-    void UpdaterDialog::doInstall(const QModelIndex &index)
-    {
-
-    }
-
     void UpdaterDialog::doDownload(const QModelIndex &index)
     {
-        QModelIndex indexURL = index.model()->index(index.row(), Columns::DownloadURL, QModelIndex());
-        QString downloadURL = ui->tableView_1->model()->data(indexURL).toString();
-
-        QMessageBox::information(this, "", "Download clicked " + downloadURL);
-
-        QString downloadFolder = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/temp"); /*QDir::tempPath();*/
+        QString downloadURL    = getDownloadUrl(index);
+        QString downloadFolder = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/temp");
         QString targetFolder   = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/data/downloads");
         QString targetName     = "test.zip";
 
@@ -210,21 +201,37 @@ namespace Updater
         /**
          * Download
          */
-        downloadManager->addURL(
+        /*downloadManager->addURL(
             QUrl(downloadURL),
             downloadFolder,
-            targetFolder, targetName
-        );
+            targetFolder,
+            targetName
+        );*/
 
         /*if (i>0)
         {
             ui->progressBar->setRange(0, i);*/
             //connect(downloadManager, SIGNAL(finished()), this, SLOT(downloadsFinished()));
-            connect(downloadManager, SIGNAL(fileReceived(const QString&)), this, SLOT(updateMainDownloadProgressBar()));
-            connect(downloadManager, SIGNAL(fileFailed(const QString&)), this, SLOT(updateMainDownloadProgressBar()));
+            //connect(downloadManager, SIGNAL(fileReceived(const QString&)), this, SLOT(updateMainDownloadProgressBar()));
+            //connect(downloadManager, SIGNAL(fileFailed(const QString&)), this, SLOT(updateMainDownloadProgressBar()));
 
-            downloadManager->startDownloads();
+            //downloadManager->startDownloads();
         //}
+    }
+
+    QString UpdaterDialog::getDownloadUrl(const QModelIndex &index)
+    {
+        QModelIndex indexURL = index.model()->index(index.row(), Columns::DownloadURL, QModelIndex());
+        QString downloadURL = ui->tableView_1->model()->data(indexURL).toString();
+
+        //QMessageBox::information(this, "", "Download clicked " + downloadURL);
+
+        return downloadURL;
+    }
+
+    void UpdaterDialog::doInstall(const QModelIndex &index)
+    {
+
     }
 
     /*
@@ -281,25 +288,6 @@ namespace Updater
     {
         qDebug() << "UpdaterDialog::downloadsFinished \n Triggering post-download tasks";
     }
-
-    /*
-    void UpdaterDialog::updateSoftwareRegistry()
-    {
-        availListDownloadButton->setEnabled(false);
-        ScQApp->dlManager()->addURL("http://services.scribus.net/scribus_spell_dicts.xml", true, downloadLocation, downloadLocation);
-        connect(ScQApp->dlManager(), SIGNAL(finished()), this, SLOT(downloadDictListFinished()));
-        ScQApp->dlManager()->startDownloads();
-    }
-
-    void UpdaterDialog::updatePHPSoftwareRegistry()
-    {
-        availListDownloadButton->setEnabled(false);
-        ScQApp->dlManager()->addURL("http://services.scribus.net/scribus_spell_dicts.xml", true, downloadLocation, downloadLocation);
-        connect(ScQApp->dlManager(), SIGNAL(finished()), this, SLOT(downloadDictListFinished()));
-        ScQApp->dlManager()->startDownloads();
-    }
-    */
-
 
     void UpdaterDialog::on_searchLineEdit_textChanged(const QString &arg1)
     {
