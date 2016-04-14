@@ -27,16 +27,19 @@ ActionColumnItemDelegate::~ActionColumnItemDelegate()
 
 void ActionColumnItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {    
-    if (index.data(IsDownloadPushButtonRole).canConvert<bool>())
+    if (index.data(DownloadPushButtonRole).toString() != "hide")
     {
+        //qDebug() << "DownloadButton";
         drawDownloadPushButton(painter,option,index);
     }
-    else if(index.data(IsDownloadProgressBarRole).canConvert<bool>())
+    else if(index.data(DownloadProgressBarRole).toString() != "hide" && index.data(DownloadPushButtonRole).toString() == "hide")
     {
+        //qDebug() << "ProgressBar";
         drawDownloadProgressBar(painter,option,index);
     }
-    else if(index.data(IsInstallPushButtonRole).canConvert<bool>())
+    else if(index.data(InstallPushButtonRole).toString() != "hide" && index.data(DownloadProgressBarRole).toString() == "hide")
     {
+        //qDebug() << "InstallButton";
         drawInstallPushButton(painter,option,index);
     }
     else
@@ -55,8 +58,8 @@ void ActionColumnItemDelegate::drawDownloadPushButton(QPainter *painter, const Q
     opt.features |= QStyleOptionButton::DefaultButton;
 
     // change style of button, when clicked. based on boolean value in the model. see setData() in editorEvent().
-    bool buttonClicked = index.data(IsDownloadPushButtonRole).value<bool>();
-    opt.state |= buttonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
+    opt.state |= (index.data(DownloadPushButtonRole).toString() == "show-clicked") ?
+                 QStyle::State_Sunken : QStyle::State_Raised;
 
     // hover on MouseOver
     if (option.state & QStyle::State_MouseOver) {
@@ -76,8 +79,8 @@ void ActionColumnItemDelegate::drawInstallPushButton(QPainter *painter, const QS
     opt.features |= QStyleOptionButton::DefaultButton;
 
     // change style of button, when clicked. based on boolean value in the model. see setData() in editorEvent().
-    bool buttonClicked = index.data(IsInstallPushButtonRole).value<bool>();
-    opt.state |= buttonClicked ? QStyle::State_Sunken : QStyle::State_Raised;
+    opt.state |= (index.data(InstallPushButtonRole).toString() == "show-clicked") ?
+                 QStyle::State_Sunken : QStyle::State_Raised;
 
     // hover on MouseOver
     if (option.state & QStyle::State_MouseOver) {
@@ -96,10 +99,10 @@ void ActionColumnItemDelegate::drawDownloadProgressBar(QPainter *painter, const 
     opt.textVisible = true;
     opt.state = QStyle::State_Enabled | QStyle::State_Active;
 
-    // progress
+    // progress    
     opt.minimum = 0;
     opt.maximum = 100;
-    opt.progress = index.model()->data(index, IsDownloadProgressBarRole).toInt();
+    opt.progress = index.model()->data(index, DownloadProgressBarRole).toInt();
     opt.text = QString("%1%").arg(opt.progress);
 
     bar->style()->drawControl(QStyle::CE_ProgressBar,&opt,painter,bar);
@@ -134,34 +137,46 @@ bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *mo
 {
     Q_UNUSED(option);
 
+    if(event->type() != QEvent::MouseButtonRelease && event->type() != QEvent::MouseButtonPress ) {
+       return false;
+    }
+
     if (event->type() == QEvent::MouseButtonPress) {
 
-        if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {
+        if(index.data(DownloadPushButtonRole).toString() != "hide") {
             qDebug() << "Action Cell in Row " << index.row() << "has Download Role and Download Button clicked..";
-            qDebug() << "DownloadURL"<< index.model()->data(index.model()->index(index.row(), UpdaterDialog::Columns::DownloadURL)).toString();
-            model->setData(index, true, IsDownloadPushButtonRole);
+            //QModelIndex urlIndex = index.model()->index(index.row(), UpdaterDialog::Columns::DownloadURL);
+            //qDebug() << "DownloadURL"<< index.model()->data(urlIndex).toString();
+            model->setData(index, "show-clicked", DownloadPushButtonRole);
             emit downloadButtonClicked(index);
+            model->setData(index, 0, DownloadProgressBarRole);
+            emit model->dataChanged(index, index);
+            /*qDebug() << index.data(DownloadPushButtonRole);
+            qDebug() << index.data(DownloadProgressBarRole);
+            qDebug() << index.data(InstallPushButtonRole);*/
             return true;
         }
-
-        if(index.data(IsInstallPushButtonRole).canConvert<bool>()) {
+        if(index.data(InstallPushButtonRole).toString() != "hide") {
             qDebug() << "Action Cell in Row " << index.row() << "has Install Role and Install Button clicked...";
-            model->setData(index, true, IsInstallPushButtonRole);
+            model->setData(index, 1, InstallPushButtonRole);
             emit installButtonClicked(index);
             return true;
         }
     }
 
     if(event->type() == QEvent::MouseButtonRelease) {
-        if(index.data(IsDownloadPushButtonRole).canConvert<bool>()) {
-            model->setData(index, false, IsDownloadPushButtonRole);
+
+        if(index.data(DownloadPushButtonRole).toString() == "show-clicked") {
+            model->setData(index, "hide", DownloadPushButtonRole);
+            return true;
         }
-        if(index.data(IsInstallPushButtonRole).canConvert<bool>()) {
-            model->setData(index, false, IsInstallPushButtonRole);
+        if(index.data(InstallPushButtonRole).toString() == "shown-clicked") {
+            model->setData(index, "hide", InstallPushButtonRole);
+            return true;
         }
     }
 
-    return 0;
+    return false;
 }
 
 }

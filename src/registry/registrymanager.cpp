@@ -19,7 +19,7 @@ namespace SoftwareRegistry
         /**
          * Server Stack Software Registry
          */
-        QString stackRegistryFile = QDir::currentPath() + "/bin/updatecheck.json";
+        QString stackRegistryFile = QDir::currentPath() + "/bin/stack-registry.json";
 
         if(fileNotExistingOrOutdated(stackRegistryFile)) {
             downloadRegistry(QUrl("http://wpn-xm.org/updatecheck.php?s=all"), stackRegistryFile);
@@ -36,7 +36,8 @@ namespace SoftwareRegistry
     {
         QNetworkAccessManager network;
 
-        // create custom temporary event loop on stack
+        // QNAM is non-blocking / non-synchronous, but we want to wait until reply has been received
+        // create custom temporary event loop on stack to block the stack until finished received
         QEventLoop eventLoop;
 
         // "quit()" the event-loop, when the network request "finished()"
@@ -59,7 +60,12 @@ namespace SoftwareRegistry
             File::JSON::save(jsonResponse, file);
         }
         else {
+            // QNetworkReply::HostNotFoundError
             qDebug() << "Request Failure: " << updateCheckResponse->errorString();
+
+            QMessageBox::critical( QApplication::activeWindow(),
+                "Request Failure", updateCheckResponse->errorString(), QMessageBox::Ok
+            );
         }
 
         // cleanup pointer
@@ -68,10 +74,12 @@ namespace SoftwareRegistry
 
     bool Manager::fileNotExistingOrOutdated(QString fileName)
     {
+        // if the file doesn't exist, we need to update
         if(!QFile::exists(fileName)) {
-            return false;
+            return true;
         }
 
+        // if the file exists, we need to check if it is old
         QDateTime fileModificationDate = QFileInfo(fileName).lastModified();
         QDateTime today                = QDateTime::currentDateTime();
 

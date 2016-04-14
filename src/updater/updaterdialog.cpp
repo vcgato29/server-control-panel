@@ -2,6 +2,7 @@
 #include "ui_updaterdialog.h"
 
 #include <QDebug>
+#include <QNetworkProxy>
 
 namespace Updater
 {
@@ -111,17 +112,21 @@ namespace Updater
              * Finally, i came up with using an ItemDelegate to render the widgets in the action column.
              * The rendering is done by the delegate's paint function.
              * To render multiple widgets (Download Button, Download ProgressBar, Install Button)
-             * i've added custom UserRoles (Qt::ItemDataRole) (IsDownloadButtonRole, etc.).
+             * i've added custom UserRoles (Qt::ItemDataRole) (DownloadButtonRole, etc.).
              * These UserRoles are set as data to the model and tell the view what to render.
              * This allows to easily update the model and get the matching action buttons.
+             *
+             * Data:
+             * - Buttons: hide || show-not-clicked || show-clicked
+             * - ProgressBar: hide || <int> progress
              */
             QStandardItem *action = new QStandardItem("ActionCell");
-            action->setData(false, Updater::ActionColumnItemDelegate::IsDownloadPushButtonRole);
-            //action->setData(39, Updater::ActionColumnItemDelegate::IsDownloadProgressBarRole);
-            //action->setData(false, Updater::ActionColumnItemDelegate::IsInstallPushButtonRole);
+            action->setData("show-not-clicked", Updater::ActionColumnItemDelegate::DownloadPushButtonRole);
+            action->setData("hide", Updater::ActionColumnItemDelegate::DownloadProgressBarRole);
+            action->setData("hide", Updater::ActionColumnItemDelegate::InstallPushButtonRole);
             rowItems.append(action);
 
-            model->appendRow(rowItems);
+            model->appendRow(rowItems);            
         }
 
         /**
@@ -191,96 +196,77 @@ namespace Updater
 
     void UpdaterDialog::doDownload(const QModelIndex &index)
     {
-        QString downloadURL    = getDownloadUrl(index);
-        QString downloadFolder = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/temp");
-        QString targetFolder   = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/data/downloads");
-        QString targetName     = "test.zip";
+        QUrl downloadURL = getDownloadUrl(index);
+
+        if (!validateURL(downloadURL)) {
+            return;
+        }
+
+        qDebug() << "doDownload()" << downloadURL;
+
+        //QString targetFolder = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/data/downloads");
+        //QString targetName   = "test.zip";
 
         resetProgressBar();
 
         /**
-         * Download
+         * Download Request
          */
-        /*downloadManager->addURL(
-            QUrl(downloadURL),
-            downloadFolder,
-            targetFolder,
-            targetName
-        );*/
 
-        /*if (i>0)
-        {
-            ui->progressBar->setRange(0, i);*/
-            //connect(downloadManager, SIGNAL(finished()), this, SLOT(downloadsFinished()));
-            //connect(downloadManager, SIGNAL(fileReceived(const QString&)), this, SLOT(updateMainDownloadProgressBar()));
-            //connect(downloadManager, SIGNAL(fileFailed(const QString&)), this, SLOT(updateMainDownloadProgressBar()));
+        // setup Proxy
+        // use system proxy (by default) "--use-proxy=on"
+        //QNetworkProxyFactory::setUseSystemConfiguration(true);
 
-            //downloadManager->startDownloads();
-        //}
+        // setup Network Request
+        QNetworkRequest request(downloadURL);
+        // request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+        // request->setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+        // only SSL request->setAttribute(QNetworkRequest::SpdyAllowedAttribute, true);
+
+        downloadManager.setQueueMode(Downloader::DownloadManager::Parallel);
+        downloadManager.get(request);
+        qDebug() << "FilesDownloadedCounter" << downloadManager.FilesDownloadedCounter;
+        qDebug() << "FilesToDownloadCounter" << downloadManager.FilesToDownloadCounter;
+
+        connect(&downloadManager, SIGNAL(signalProgress(QMap<QString,QString>)),
+                this, SLOT(updateDownloadProgress(QMap<QString,QString>)));
+
+        QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
     }
 
-    QString UpdaterDialog::getDownloadUrl(const QModelIndex &index)
+    QUrl UpdaterDialog::getDownloadUrl(const QModelIndex &index)
     {
         QModelIndex indexURL = index.model()->index(index.row(), Columns::DownloadURL, QModelIndex());
-        QString downloadURL = ui->tableView_1->model()->data(indexURL).toString();
-
-        //QMessageBox::information(this, "", "Download clicked " + downloadURL);
-
+        QUrl downloadURL = ui->tableView_1->model()->data(indexURL).toString();
+        //QMessageBox::information(this, "", "Download clicked " + downloadURL.toString());
         return downloadURL;
     }
 
     void UpdaterDialog::doInstall(const QModelIndex &index)
     {
-
-    }
-
-    /*
-    void UpdaterDialog::renderComponentDownloadProgressBar(int row)
-    {
-        qDebug()<<"row: "<<row;
-
-        QModelIndex index = ui->tableView_1->model()->index(row, TableColumn::Action);
-
-        ui->tableView_1->update();
-    }*/
-
-    void UpdaterDialog::updateMainDownloadProgressBar()
-    {
-         //ui->mainProgressBar->setValue(ui->mainProgressBar->value()+1);
+        Q_UNUSED(index);
     }
 
     void UpdaterDialog::resetProgressBar()
     {
-        //ui->mainProgressBar->setMinimum(0);
-        //ui->mainProgressBar->setValue(0);
-        //ui->mainProgressBar->setVisible(true);
-
         ui->progressBar->setMinimum(0);
         ui->progressBar->setValue(0);
         ui->progressBar->setVisible(true);
     }
 
-    void UpdaterDialog::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+    void UpdaterDialog::updateDownloadProgress(QMap<QString, QString> progress)
     {
-        ui->progressBar->setMaximum(bytesTotal);
-        ui->progressBar->setValue(bytesReceived);
+        qDebug() << "UpdaterDialog::updateDownloadProgress";
+        qDebug() << progress;
 
-        // calculate the download speed
-        double speed = bytesReceived * 1000.0 / 100 /*downloadTime.elapsed()*/;
-        QString unit;
-        if (speed < 1024) {
-            unit = "bytes/sec";
-        } else if (speed < 1024*1024) {
-            speed /= 1024;
-            unit = "kB/s";
-        } else {
-            speed /= 1024*1024;
-            unit = "MB/s";
-        }
+        ui->progressBar->setMaximum(progress["bytesTotal"].toFloat());
+        ui->progressBar->setValue(progress["bytesReceived"].toFloat());
 
-        QString text = QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit);
+        QString text = QString::fromLatin1("%1 %2 %3 %4")
+                .arg(progress["percentage"]).arg(progress["size"])
+                .arg(progress["speed"]).arg(progress["time"]);
+
         ui->progressBar->setFormat(text);
-
         ui->progressBar->update();
     }
 
@@ -293,6 +279,15 @@ namespace Updater
     {
        //myFilterProxyModel->setFilterRegExp(QRegExp(arg1, Qt::CaseInsensitive, QRegExp::FixedString));
        myFilterProxyModel->setFilterFixedString(arg1);
+    }
+
+    bool UpdaterDialog::validateURL(QUrl url)
+    {
+        if (!url.isValid() || url.isEmpty() || url.host().isEmpty()) {
+            qDebug() << "URL invalid:" << url;
+            return false;
+        }
+        return true;
     }
 
 }

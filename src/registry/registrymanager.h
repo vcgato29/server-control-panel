@@ -16,6 +16,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include <QMessageBox>
+#include <QApplication>
+
 namespace SoftwareRegistry
 {
     class Manager

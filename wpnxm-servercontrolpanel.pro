@@ -66,7 +66,8 @@ HEADERS += \
     src/filehandling.h \
     src/updater/actioncolumnitemdelegate.h \
     src/updater/softwarecolumnitemdelegate.h \
-    src/registry/registrymanager.h
+    src/registry/registrymanager.h \
+    src/updater/downloadmanager.h
 
 SOURCES += \
     src/app/main.cpp \
@@ -88,7 +89,9 @@ SOURCES += \
     src/filehandling.cpp \
     src/updater/actioncolumnitemdelegate.cpp \
     src/updater/softwarecolumnitemdelegate.cpp \
-    src/registry/registrymanager.cpp
+    src/registry/registrymanager.cpp \
+    src/updater/downloadmanager.cpp \
+    src/updater/transferitem.cpp
 
 RESOURCES += \
     src/resources/resources.qrc

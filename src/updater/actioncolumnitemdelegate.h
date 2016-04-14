@@ -9,6 +9,9 @@
 #include <QStylePainter>
 #include <QApplication>
 
+#include <QTableView>
+#include <QSortFilterProxyModel>
+
 namespace Updater
 {
     class ActionColumnItemDelegate : public QStyledItemDelegate
@@ -20,11 +23,6 @@ namespace Updater
         ~ActionColumnItemDelegate();
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-        static const int IsDownloadPushButtonRole  = Qt::UserRole + 101;
-        static const int IsDownloadProgressBarRole = Qt::UserRole + 102;
-        static const int IsInstallPushButtonRole   = Qt::UserRole + 103;
-
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
     signals:
@@ -35,12 +33,17 @@ namespace Updater
         void drawDownloadPushButton(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const ;
         void drawDownloadProgressBar(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
         void drawInstallPushButton(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
         QPushButton *btn;
         QProgressBar *bar;
-
         void setPushButtonStyle(QPushButton *btn) const;
         void setProgressBarStyle(QProgressBar *bar) const;
+     public:
+
+        enum ColumnRoles {
+            DownloadPushButtonRole = Qt::UserRole,
+            DownloadProgressBarRole,
+            InstallPushButtonRole
+        };
     };
 
 }

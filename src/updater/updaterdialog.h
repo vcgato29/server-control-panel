@@ -14,9 +14,9 @@
 #include <QDir>
 
 #include "src/json.h"
-#include "registrymanager.h"
+#include "src/registry/registrymanager.h"
 
-//#include "src/downloadmanager.h"
+#include "src/updater/downloadmanager.h"
 
 #include "actioncolumnitemdelegate.h"
 #include "softwarecolumnitemdelegate.h"
@@ -44,16 +44,17 @@ namespace Updater
 
         protected:
             QStandardItemModel           *model;
-            QSortFilterProxyModel        *myFilterProxyModel;
-            //Downloader::DownloadManager  *downloadManager;
+            QSortFilterProxyModel        *myFilterProxyModel;            
             SoftwareRegistry::Manager    *softwareRegistry;
+            Downloader::DownloadManager   downloadManager;
 
         private:
             Ui::UpdaterDialog *ui;
             void resetProgressBar();
             Updater::SoftwareColumnItemDelegate *softwareDelegate;
             Updater::ActionColumnItemDelegate   *actionDelegate;
-            QString getDownloadUrl(const QModelIndex &index);
+            QUrl getDownloadUrl(const QModelIndex &index);
+            bool validateURL(QUrl url);
 
         signals:
             void clicked(const QString &websiteLink);
@@ -62,8 +63,7 @@ namespace Updater
             void doDownload(const QModelIndex &index);
             void doInstall(const QModelIndex &index);
 
-            void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-            void updateMainDownloadProgressBar();
+            void updateDownloadProgress(QMap<QString, QString> progress);
             void downloadsFinished();
 
         private slots:
