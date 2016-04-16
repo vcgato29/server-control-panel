@@ -117,13 +117,13 @@ namespace Updater
              * This allows to easily update the model and get the matching action buttons.
              *
              * Data:
-             * - Buttons: hide || show-not-clicked || show-clicked
+             * - Buttons: hide || show || show-clicked
              * - ProgressBar: hide || <int> progress
              */
             QStandardItem *action = new QStandardItem("ActionCell");
-            action->setData("show-not-clicked", Updater::ActionColumnItemDelegate::DownloadPushButtonRole);
-            action->setData("hide", Updater::ActionColumnItemDelegate::DownloadProgressBarRole);
-            action->setData("hide", Updater::ActionColumnItemDelegate::InstallPushButtonRole);
+            action->setData("show", ActionColumnItemDelegate::DownloadPushButtonRole);
+            action->setData("hide", ActionColumnItemDelegate::DownloadProgressBarRole);
+            action->setData("hide", ActionColumnItemDelegate::InstallPushButtonRole);
             rowItems.append(action);
 
             model->appendRow(rowItems);            
@@ -191,23 +191,19 @@ namespace Updater
         ui->tableView_1->setColumnWidth(Columns::SoftwareComponent, 150);
         ui->tableView_1->setColumnWidth(Columns::LatestVersion, 80);
         ui->tableView_1->setColumnWidth(Columns::YourVersion, 80);
-        ui->tableView_1->setColumnWidth(Columns::Action, 180);
+        ui->tableView_1->setColumnWidth(Columns::Action, 200);
     }
 
     void UpdaterDialog::doDownload(const QModelIndex &index)
     {
         QUrl downloadURL = getDownloadUrl(index);
-
         if (!validateURL(downloadURL)) {
             return;
         }
-
         qDebug() << "doDownload()" << downloadURL;
 
         //QString targetFolder = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/data/downloads");
         //QString targetName   = "test.zip";
-
-        resetProgressBar();
 
         /**
          * Download Request
@@ -219,17 +215,21 @@ namespace Updater
 
         // setup Network Request
         QNetworkRequest request(downloadURL);
-        // request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
-        // request->setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-        // only SSL request->setAttribute(QNetworkRequest::SpdyAllowedAttribute, true);
+        QString appVersion(qApp->applicationName()+qApp->applicationVersion());
+        request.setRawHeader("User-Agent", QByteArray(appVersion.toStdString().c_str()));
+        request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
         downloadManager.setQueueMode(Downloader::DownloadManager::Parallel);
         downloadManager.get(request);
+
         qDebug() << "FilesDownloadedCounter" << downloadManager.FilesDownloadedCounter;
         qDebug() << "FilesToDownloadCounter" << downloadManager.FilesToDownloadCounter;
 
-        connect(&downloadManager, SIGNAL(signalProgress(QMap<QString,QString>)),
-                this, SLOT(updateDownloadProgress(QMap<QString,QString>)));
+        // fetch the bubbled up download progress
+        connect(&downloadManager, SIGNAL(signalProgress(QMap<QString, QVariant>)),
+                this, SLOT(updateDownloadProgress(QMap<QString, QVariant>)));
+
+        currentIndexRow = index.row();
 
         QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
     }
@@ -237,9 +237,7 @@ namespace Updater
     QUrl UpdaterDialog::getDownloadUrl(const QModelIndex &index)
     {
         QModelIndex indexURL = index.model()->index(index.row(), Columns::DownloadURL, QModelIndex());
-        QUrl downloadURL = ui->tableView_1->model()->data(indexURL).toString();
-        //QMessageBox::information(this, "", "Download clicked " + downloadURL.toString());
-        return downloadURL;
+        return QUrl(ui->tableView_1->model()->data(indexURL).toString());
     }
 
     void UpdaterDialog::doInstall(const QModelIndex &index)
@@ -247,27 +245,33 @@ namespace Updater
         Q_UNUSED(index);
     }
 
-    void UpdaterDialog::resetProgressBar()
-    {
-        ui->progressBar->setMinimum(0);
-        ui->progressBar->setValue(0);
-        ui->progressBar->setVisible(true);
-    }
-
-    void UpdaterDialog::updateDownloadProgress(QMap<QString, QString> progress)
+    void UpdaterDialog::updateDownloadProgress(QMap<QString, QVariant> progress)
     {
         qDebug() << "UpdaterDialog::updateDownloadProgress";
-        qDebug() << progress;
 
-        ui->progressBar->setMaximum(progress["bytesTotal"].toFloat());
-        ui->progressBar->setValue(progress["bytesReceived"].toFloat());
+        QModelIndex actionIndex = ui->tableView_1->model()->index(currentIndexRow, Columns::Action);
 
-        QString text = QString::fromLatin1("%1 %2 %3 %4")
-                .arg(progress["percentage"]).arg(progress["size"])
-                .arg(progress["speed"]).arg(progress["time"]);
+        // hide DownloadButton
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole).toString() != "hide") {
+            ui->tableView_1->model()->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadPushButtonRole);
+        }
 
-        ui->progressBar->setFormat(text);
-        ui->progressBar->update();
+        // update the "progress" data in the model
+        QVariant progressVariant = QVariant::fromValue(progress);
+        ui->tableView_1->model()->setData(actionIndex, progressVariant, ActionColumnItemDelegate::DownloadProgressBarRole);
+
+        // "hide" progressBar when we reach 100% and "show" Install Button
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toInt() == 100) {
+            ui->tableView_1->model()->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
+            ui->tableView_1->model()->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
+        }
+
+        qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
+        qDebug() << "ProgressBar Data" << actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole);
+        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);
+
+        ui->tableView_1->model()->dataChanged(actionIndex, actionIndex);
+        ui->tableView_1->repaint();
     }
 
     void UpdaterDialog::downloadsFinished()

@@ -34,6 +34,7 @@ namespace Downloader
         connect(dl, SIGNAL(downloadFinished(TransferItem*)), SLOT(downloadFinished(TransferItem*)));
     }
 
+    // We re-emit the download progress from the subclasses until it bubbles up to the GUI.
     // Signal/Slots for the Download Progress:
     // 1. TransferItem::downloadProgress    -> TransferItem::updateDownloadProgress (get progress and do calculations)
     // 2. DownloadItem::downloadProgress    -> DownloadManager::downloadProgress    (move data from item to manager)

@@ -48,13 +48,15 @@ namespace Updater
             SoftwareRegistry::Manager    *softwareRegistry;
             Downloader::DownloadManager   downloadManager;
 
+            int currentIndexRow;
+
         private:
             Ui::UpdaterDialog *ui;
-            void resetProgressBar();
-            Updater::SoftwareColumnItemDelegate *softwareDelegate;
-            Updater::ActionColumnItemDelegate   *actionDelegate;
             QUrl getDownloadUrl(const QModelIndex &index);
             bool validateURL(QUrl url);
+
+            Updater::SoftwareColumnItemDelegate *softwareDelegate;
+            Updater::ActionColumnItemDelegate   *actionDelegate;
 
         signals:
             void clicked(const QString &websiteLink);
@@ -63,7 +65,7 @@ namespace Updater
             void doDownload(const QModelIndex &index);
             void doInstall(const QModelIndex &index);
 
-            void updateDownloadProgress(QMap<QString, QString> progress);
+            void updateDownloadProgress(QMap<QString, QVariant> progress);
             void downloadsFinished();
 
         private slots:

@@ -28,7 +28,7 @@ namespace Downloader
             QFile *outputFile;
             QList<QUrl> redirects;
             QElapsedTimer timer;
-            QMap<QString, QString> progress;
+            QMap<QString, QVariant> progress;
         private:
             QString getSizeHumanReadable(qint64 bytes);
     };
@@ -55,7 +55,7 @@ namespace Downloader
             void setQueueMode(QueueMode mode);
 
         signals:
-            QMap<QString, QString> signalProgress(QMap<QString, QString> progress);
+            QMap<QString, QVariant> signalProgress(QMap<QString, QVariant> progress);
 
         public slots:
             void checkForAllDone();

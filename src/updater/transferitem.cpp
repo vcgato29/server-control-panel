@@ -116,12 +116,13 @@ namespace Downloader
         emit downloadFinished(this);
     }
 
+    // SLOT
     void TransferItem::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
     {
         progress["bytesReceived"] = QString::number(bytesReceived);
         progress["bytesTotal"]    = QString::number(bytesTotal);
         progress["size"]          = getSizeHumanReadable(outputFile->size());
-        progress["speed"]         = QString::number((double)outputFile->size()/timer.elapsed(),'f',2).append(" KB/s");
+        progress["speed"]         = QString::number((double)outputFile->size()/timer.elapsed(),'f',0).append(" KB/s");
         progress["time"]          = QString::number((double)timer.elapsed()/1000,'f',2).append("s");
         progress["percentage"]    = (bytesTotal > 0) ? QString::number(bytesReceived*100/bytesTotal).append("%") : "0 %";
 

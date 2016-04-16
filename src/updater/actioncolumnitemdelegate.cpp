@@ -29,17 +29,14 @@ void ActionColumnItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 {    
     if (index.data(DownloadPushButtonRole).toString() != "hide")
     {
-        //qDebug() << "DownloadButton";
         drawDownloadPushButton(painter,option,index);
     }
     else if(index.data(DownloadProgressBarRole).toString() != "hide" && index.data(DownloadPushButtonRole).toString() == "hide")
     {
-        //qDebug() << "ProgressBar";
         drawDownloadProgressBar(painter,option,index);
     }
     else if(index.data(InstallPushButtonRole).toString() != "hide" && index.data(DownloadProgressBarRole).toString() == "hide")
     {
-        //qDebug() << "InstallButton";
         drawInstallPushButton(painter,option,index);
     }
     else
@@ -95,15 +92,25 @@ void ActionColumnItemDelegate::drawDownloadProgressBar(QPainter *painter, const 
     QStyleOptionProgressBarV2 opt;
     opt.initFrom(bar);
     opt.rect = option.rect;
-    opt.rect.adjust(5,5,-5,-5);
+    opt.rect.adjust(3,3,-3,-3);
     opt.textVisible = true;
+    opt.textAlignment = Qt::AlignCenter;
     opt.state = QStyle::State_Enabled | QStyle::State_Active;
 
-    // progress    
-    opt.minimum = 0;
-    opt.maximum = 100;
-    opt.progress = index.model()->data(index, DownloadProgressBarRole).toInt();
-    opt.text = QString("%1%").arg(opt.progress);
+    // get progress
+    QMap<QString, QVariant> progress = index.model()->data(index, DownloadProgressBarRole).toMap();
+    //qDebug() << progress;
+
+    QString text = QString::fromLatin1(" %1 %2 %3 %4 ").arg(progress["percentage"].toString())
+                                                       .arg(progress["size"].toString())
+                                                       .arg(progress["speed"].toString())
+                                                       .arg(progress["time"].toString());
+
+    // set progress
+    opt.minimum  = 0;
+    opt.maximum  = progress["bytesTotal"].toFloat();
+    opt.progress = progress["bytesReceived"].toFloat();
+    opt.text     = text;
 
     bar->style()->drawControl(QStyle::CE_ProgressBar,&opt,painter,bar);
 }
@@ -144,20 +151,13 @@ bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *mo
     if (event->type() == QEvent::MouseButtonPress) {
 
         if(index.data(DownloadPushButtonRole).toString() != "hide") {
-            qDebug() << "Action Cell in Row " << index.row() << "has Download Role and Download Button clicked..";
-            //QModelIndex urlIndex = index.model()->index(index.row(), UpdaterDialog::Columns::DownloadURL);
-            //qDebug() << "DownloadURL"<< index.model()->data(urlIndex).toString();
+            //qDebug() << "Action Cell in Row " << index.row() << "has Download Role and Download Button clicked..";
             model->setData(index, "show-clicked", DownloadPushButtonRole);
             emit downloadButtonClicked(index);
-            model->setData(index, 0, DownloadProgressBarRole);
-            emit model->dataChanged(index, index);
-            /*qDebug() << index.data(DownloadPushButtonRole);
-            qDebug() << index.data(DownloadProgressBarRole);
-            qDebug() << index.data(InstallPushButtonRole);*/
             return true;
         }
         if(index.data(InstallPushButtonRole).toString() != "hide") {
-            qDebug() << "Action Cell in Row " << index.row() << "has Install Role and Install Button clicked...";
+            //qDebug() << "Action Cell in Row " << index.row() << "has Install Role and Install Button clicked...";
             model->setData(index, 1, InstallPushButtonRole);
             emit installButtonClicked(index);
             return true;
