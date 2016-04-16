@@ -6,7 +6,7 @@ namespace Downloader
     TransferItem::TransferItem(const QNetworkRequest &r, QNetworkAccessManager &n)
         : request(r), reply(0), nam(n), inputFile(0), outputFile(0), progress()
     {
-        qDebug() << "New TransferItem instantiated";
+        //qDebug() << "New TransferItem instantiated";
     }
 
     void TransferItem::startRequest()
@@ -33,14 +33,14 @@ namespace Downloader
 
     void DownloadItem::readyRead()
     {
-        qDebug() << "DownloadItem::readyRead() ...";
+        //qDebug() << "DownloadItem::readyRead() ...";
 
         if (!outputFile) {
             outputFile = new QFile(this);
         }
 
         if (!outputFile->isOpen()) {
-            qDebug() << reply->header(QNetworkRequest::ContentTypeHeader) << reply->header(QNetworkRequest::ContentLengthHeader);
+            //qDebug() << reply->header(QNetworkRequest::ContentTypeHeader) << reply->header(QNetworkRequest::ContentLengthHeader);
 
             // get filename from URL
             QString path = reply->url().path();
