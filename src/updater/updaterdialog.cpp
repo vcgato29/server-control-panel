@@ -257,11 +257,10 @@ namespace Updater
         }
 
         // update the "progress" data in the model
-        QVariant progressVariant = QVariant::fromValue(progress);
-        ui->tableView_1->model()->setData(actionIndex, progressVariant, ActionColumnItemDelegate::DownloadProgressBarRole);
+        ui->tableView_1->model()->setData(actionIndex, progress, ActionColumnItemDelegate::DownloadProgressBarRole);
 
         // "hide" progressBar when we reach 100% and "show" Install Button
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100 %") {
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100%") {
             ui->tableView_1->model()->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
             ui->tableView_1->model()->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
         }
