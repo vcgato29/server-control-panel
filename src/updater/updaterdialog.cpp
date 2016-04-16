@@ -261,14 +261,14 @@ namespace Updater
         ui->tableView_1->model()->setData(actionIndex, progressVariant, ActionColumnItemDelegate::DownloadProgressBarRole);
 
         // "hide" progressBar when we reach 100% and "show" Install Button
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toInt() == 100) {
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100 %") {
             ui->tableView_1->model()->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
             ui->tableView_1->model()->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
         }
 
-        qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
+        /*qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
         qDebug() << "ProgressBar Data" << actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole);
-        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);
+        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);*/
 
         ui->tableView_1->model()->dataChanged(actionIndex, actionIndex);
         ui->tableView_1->repaint();
