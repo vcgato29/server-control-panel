@@ -158,7 +158,7 @@ bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *mo
         }
         if(index.data(InstallPushButtonRole).toString() != "hide") {
             //qDebug() << "Action Cell in Row " << index.row() << "has Install Role and Install Button clicked...";
-            model->setData(index, 1, InstallPushButtonRole);
+            model->setData(index, "show-clicked", InstallPushButtonRole);
             emit installButtonClicked(index);
             return true;
         }
