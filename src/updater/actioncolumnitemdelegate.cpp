@@ -29,20 +29,20 @@ void ActionColumnItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 {    
     if (index.data(DownloadPushButtonRole).toString() != "hide")
     {
-        drawDownloadPushButton(painter,option,index);
+        return drawDownloadPushButton(painter,option,index);
     }
-    else if(index.data(DownloadProgressBarRole).toString() != "hide" && index.data(DownloadPushButtonRole).toString() == "hide")
+
+    if(index.data(DownloadProgressBarRole).toString() != "hide")
     {
-        drawDownloadProgressBar(painter,option,index);
+        return drawDownloadProgressBar(painter,option,index);
     }
-    else if(index.data(InstallPushButtonRole).toString() != "hide" && index.data(DownloadProgressBarRole).toString() == "hide")
+
+    if(index.data(InstallPushButtonRole).toString() != "hide")
     {
-        drawInstallPushButton(painter,option,index);
+        return drawInstallPushButton(painter,option,index);
     }
-    else
-    {
-        QStyledItemDelegate::paint(painter, option, index);
-    }
+
+    //QStyledItemDelegate::paint(painter, option, index);
 }
 
 void ActionColumnItemDelegate::drawDownloadPushButton(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -99,7 +99,6 @@ void ActionColumnItemDelegate::drawDownloadProgressBar(QPainter *painter, const 
 
     // get progress
     QMap<QString, QVariant> progress = index.model()->data(index, DownloadProgressBarRole).toMap();
-    //qDebug() << progress;
 
     QString text = QString::fromLatin1(" %1 %2 %3 %4 ").arg(progress["percentage"].toString())
                                                        .arg(progress["size"].toString())
@@ -170,7 +169,7 @@ bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *mo
             model->setData(index, "hide", DownloadPushButtonRole);
             return true;
         }
-        if(index.data(InstallPushButtonRole).toString() == "shown-clicked") {
+        if(index.data(InstallPushButtonRole).toString() == "show-clicked") {
             model->setData(index, "hide", InstallPushButtonRole);
             return true;
         }

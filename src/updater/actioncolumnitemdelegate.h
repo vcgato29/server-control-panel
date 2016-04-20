@@ -26,6 +26,10 @@ namespace Updater
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
     signals:
+        /**
+         *  Signal that is emitted when the button has been clicked.
+         *  @param index - index whose button was clicked
+         */
         void downloadButtonClicked(const QModelIndex &index);
         void installButtonClicked(const QModelIndex &index);
 

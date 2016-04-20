@@ -34,44 +34,45 @@ namespace Updater
         public:
             explicit UpdaterDialog(QWidget *parent = 0);
             ~UpdaterDialog();
-
-            void setJsonToServerStackTable(QJsonObject json);
-
+            void initModel(QJsonObject json);
+            void initView();
             enum Columns {
              // Column   0             1             2             3            4         5
                 SoftwareComponent, WebsiteURL, YourVersion,  LatestVersion, DownloadURL,  Action
             };
-
+            Ui::UpdaterDialog *ui;
         protected:
             QStandardItemModel           *model;
-            QSortFilterProxyModel        *myFilterProxyModel;            
+            QSortFilterProxyModel        *sortFilterProxyModel;
             SoftwareRegistry::Manager    *softwareRegistry;
-            Downloader::DownloadManager   downloadManager;
-
-            int currentIndexRow;
-
+            Downloader::DownloadManager  downloadManager;
         private:
-            Ui::UpdaterDialog *ui;
             QUrl getDownloadUrl(const QModelIndex &index);
             bool validateURL(QUrl url);
-
             Updater::SoftwareColumnItemDelegate *softwareDelegate;
             Updater::ActionColumnItemDelegate   *actionDelegate;
-
         signals:
             void clicked(const QString &websiteLink);
-
         public slots:
             void doDownload(const QModelIndex &index);
             void doInstall(const QModelIndex &index);
-
-            void updateDownloadProgress(QMap<QString, QVariant> progress);
             void downloadsFinished();
-
         private slots:
             void on_searchLineEdit_textChanged(const QString &arg1);
     };
 
+    class ProgressBarUpdater : public QObject
+    {
+        Q_OBJECT
+        public:
+            explicit ProgressBarUpdater(UpdaterDialog *parent = 0, int currentIndexRow = 0);
+        signals:
+        public slots:
+            void updateProgress(QMap<QString, QVariant> progress);
+        protected:
+            QAbstractItemModel *model;
+            const int          currentIndexRow;
+    };
 }
 
 #endif // UPDATERDIALOG_H

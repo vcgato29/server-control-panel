@@ -14,15 +14,15 @@ namespace Updater
         ui->setupUi(this);
 
         // disable resizing
-        setSizeGripEnabled(false);
-        setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+        setSizeGripEnabled(false);        
+        setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);        
         // remove question mark from the title bar
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-        //downloadManager   = new Downloader::DownloadManager();
         softwareRegistry  = new SoftwareRegistry::Manager();
 
-        setJsonToServerStackTable(softwareRegistry->getStackSoftwareRegistry());
+        initModel(softwareRegistry->getStackSoftwareRegistry());
+        initView();
     }
 
     UpdaterDialog::~UpdaterDialog()
@@ -30,11 +30,8 @@ namespace Updater
         delete ui;
     }
 
-    void UpdaterDialog::setJsonToServerStackTable(QJsonObject json)
+    void UpdaterDialog::initModel(QJsonObject json)
     {
-        /**
-         * The Model
-         */
         model = new QStandardItemModel(0,4,this);
 
         /**
@@ -114,7 +111,7 @@ namespace Updater
              * To render multiple widgets (Download Button, Download ProgressBar, Install Button)
              * i've added custom UserRoles (Qt::ItemDataRole) (DownloadButtonRole, etc.).
              * These UserRoles are set as data to the model and tell the view what to render.
-             * This allows to easily update the model and get the matching action buttons.
+             * This allows to easily update the model and get the matching widgets based on the role.
              *
              * Data:
              * - Buttons: hide || show || show-clicked
@@ -140,18 +137,21 @@ namespace Updater
         /**
          * Setup SortingProxy for the Model
          */
-        myFilterProxyModel = new QSortFilterProxyModel(this);
-        myFilterProxyModel->setSourceModel(model);
+        sortFilterProxyModel = new QSortFilterProxyModel(this);
+        sortFilterProxyModel->setSourceModel(model);
         // sorting is case-insensitive
-        myFilterProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+        sortFilterProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
         // filtering is case-insensitive and using the software name column
-        myFilterProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-        myFilterProxyModel->setFilterKeyColumn(Columns::SoftwareComponent);
+        sortFilterProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+        sortFilterProxyModel->setFilterKeyColumn(Columns::SoftwareComponent);
+    }
 
+    void UpdaterDialog::initView()
+    {
         /**
-         * Set "sort/filter-proxied" Model to View
+         * Set "sortFilterProxy" Model to View
          */
-        ui->tableView_1->setModel(myFilterProxyModel);
+        ui->tableView_1->setModel(sortFilterProxyModel);
 
         /**
          * Set Item Delegates for "SoftwareComponent" and "Action" Columns
@@ -195,7 +195,7 @@ namespace Updater
     }
 
     void UpdaterDialog::doDownload(const QModelIndex &index)
-    {
+    {        
         QUrl downloadURL = getDownloadUrl(index);
         if (!validateURL(downloadURL)) {
             return;
@@ -216,7 +216,8 @@ namespace Updater
         // setup Network Request
         QNetworkRequest request(downloadURL);
         QString appVersion(qApp->applicationName()+qApp->applicationVersion());
-        request.setRawHeader("User-Agent", QByteArray(appVersion.toStdString().c_str()));
+        const static QByteArray userAgent(QByteArray(appVersion.toStdString().c_str()));
+        request.setRawHeader("User-Agent", userAgent);
         request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
         downloadManager.setQueueMode(Downloader::DownloadManager::Parallel);
@@ -225,11 +226,14 @@ namespace Updater
         qDebug() << "FilesDownloadedCounter" << downloadManager.FilesDownloadedCounter;
         qDebug() << "FilesToDownloadCounter" << downloadManager.FilesToDownloadCounter;
 
-        // fetch the bubbled up download progress
-        connect(&downloadManager, SIGNAL(signalProgress(QMap<QString, QVariant>)),
-                this, SLOT(updateDownloadProgress(QMap<QString, QVariant>)));
+        // each download has its own update object (to connect "index.row" to "progress").
+        // fetch the bubbled up download progress and pump it into the updater object
 
-        currentIndexRow = index.row();
+        ProgressBarUpdater *progressBar = new ProgressBarUpdater(this, index.row());
+        progressBar->setObjectName("ProgressBar_in_Row_" + QString::number(index.row()) );
+
+        connect(&downloadManager, SIGNAL(signalProgress(QMap<QString, QVariant>)),
+                progressBar, SLOT(updateProgress(QMap<QString, QVariant>)));
 
         QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
     }
@@ -245,34 +249,6 @@ namespace Updater
         Q_UNUSED(index);
     }
 
-    void UpdaterDialog::updateDownloadProgress(QMap<QString, QVariant> progress)
-    {
-        qDebug() << "UpdaterDialog::updateDownloadProgress";
-
-        QModelIndex actionIndex = ui->tableView_1->model()->index(currentIndexRow, Columns::Action);
-
-        // hide DownloadButton
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole).toString() != "hide") {
-            ui->tableView_1->model()->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadPushButtonRole);
-        }
-
-        // update the "progress" data in the model
-        ui->tableView_1->model()->setData(actionIndex, progress, ActionColumnItemDelegate::DownloadProgressBarRole);
-
-        // "hide" progressBar when we reach 100% and "show" Install Button
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100%") {
-            ui->tableView_1->model()->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
-            ui->tableView_1->model()->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
-        }
-
-        /*qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
-        qDebug() << "ProgressBar Data" << actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole);
-        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);*/
-
-        ui->tableView_1->model()->dataChanged(actionIndex, actionIndex);
-        ui->tableView_1->repaint();
-    }
-
     void UpdaterDialog::downloadsFinished()
     {
         qDebug() << "UpdaterDialog::downloadsFinished \n Triggering post-download tasks";
@@ -281,7 +257,7 @@ namespace Updater
     void UpdaterDialog::on_searchLineEdit_textChanged(const QString &arg1)
     {
        //myFilterProxyModel->setFilterRegExp(QRegExp(arg1, Qt::CaseInsensitive, QRegExp::FixedString));
-       myFilterProxyModel->setFilterFixedString(arg1);
+       sortFilterProxyModel->setFilterFixedString(arg1);
     }
 
     bool UpdaterDialog::validateURL(QUrl url)
@@ -291,6 +267,45 @@ namespace Updater
             return false;
         }
         return true;
+    }
+
+    ProgressBarUpdater::ProgressBarUpdater(UpdaterDialog *parent, int currentIndexRow) :
+        QObject(parent), currentIndexRow(currentIndexRow)
+    {
+        model = parent->ui->tableView_1->model();
+    }
+
+    void ProgressBarUpdater::updateProgress(QMap<QString, QVariant> progress)
+    {
+        //qDebug() << "UpdaterDialog::updateDownloadProgress";
+
+        QModelIndex actionIndex = model->index(currentIndexRow, UpdaterDialog::Columns::Action);
+
+        qDebug() << "ObjectName" << this->objectName();
+        qDebug() << "CurrentIndex" << currentIndexRow;
+        qDebug() << "ActionIndex" << actionIndex;
+
+        // hide DownloadButton
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole).toString() != "hide") {
+            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadPushButtonRole);
+        }
+
+        // update the "progress" data in the model
+        model->setData(actionIndex, progress, ActionColumnItemDelegate::DownloadProgressBarRole);
+
+        // "hide" progressBar when we reach 100% and "show" Install Button
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100%") {
+            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
+            model->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
+        }
+
+        /*qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
+        qDebug() << "ProgressBar Data" << actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole);
+        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);*/
+
+        model->dataChanged(actionIndex, actionIndex);
+
+        //tableView->repaint();
     }
 
 }

@@ -28,7 +28,7 @@ namespace Downloader
         qDebug() << "DownloadManager::get()" << "Download enqueued.";
         DownloadItem *dl = new DownloadItem(request, nam);
         transfers.append(dl);
-        ++FilesToDownloadCounter;
+        FilesToDownloadCounter = transfers.count();
 
         connect(dl, SIGNAL(downloadProgress(TransferItem*)), SLOT(downloadProgress(TransferItem*)));
         connect(dl, SIGNAL(downloadFinished(TransferItem*)), SLOT(downloadFinished(TransferItem*)));
@@ -57,6 +57,7 @@ namespace Downloader
             qDebug() << "and error: " << item->reply->error() << item->reply->errorString();
         }
         transfers.removeOne(item);
+        FilesToDownloadCounter = transfers.count();
         ++FilesDownloadedCounter;
         item->deleteLater();
         checkForAllDone();
