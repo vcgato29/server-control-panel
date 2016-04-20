@@ -743,6 +743,11 @@ namespace ServerControlPanel
         QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#postgresql"));
     }
 
+    void MainWindow::openConfigurationDialogRedis()
+    {
+        QDesktopServices::openUrl(QUrl("http://localhost/tools/webinterface/index.php?page=config#redis"));
+    }
+
     QString MainWindow::getServerNameFromPushButton(QPushButton *button)
     {
         return button->objectName().split("_").last(); // "pushButton_FooBar_Nginx" => "Nginx"
