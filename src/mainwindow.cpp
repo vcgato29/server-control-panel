@@ -166,6 +166,7 @@ namespace ServerControlPanel
         connect(ui->pushButton_tools_phpmyadmin, SIGNAL(clicked()), this, SLOT(openToolPHPMyAdmin()));
         connect(ui->pushButton_tools_webgrind,   SIGNAL(clicked()), this, SLOT(openToolWebgrind()));
         connect(ui->pushButton_tools_adminer,    SIGNAL(clicked()), this, SLOT(openToolAdminer()));
+        connect(ui->pushButton_tools_robomongo,  SIGNAL(clicked()), this, SLOT(openToolRobomongo()));
 
         // Actions - Open Projects Folder
         connect(ui->pushButton_OpenProjects_Browser,  SIGNAL(clicked()), this, SLOT(openProjectFolderInBrowser()));
@@ -353,11 +354,12 @@ namespace ServerControlPanel
             allPushButtonsButtons[i]->setVisible(false);
         }
 
-        // if "component" exists in "tools" directory, show pushButtons in the Tools Groupbox
+        // if "component" exists in "tools" or "bin" directory, show pushButtons in the Tools Groupbox
         if(QDir(getProjectFolder() + "/tools/webinterface").exists()) { ui->pushButton_tools_phpinfo->setVisible(true);  }
         if(QDir(getProjectFolder() + "/tools/phpmyadmin").exists())   { ui->pushButton_tools_phpmyadmin->setVisible(true); }
         if(QDir(getProjectFolder() + "/tools/adminer").exists())      { ui->pushButton_tools_adminer->setVisible(true); }
         if(QDir(getProjectFolder() + "/tools/webgrind").exists())     { ui->pushButton_tools_webgrind->setVisible(true); }
+        if(QDir(getProjectFolder() + "/bin/robomongo").exists())      { ui->pushButton_tools_robomongo->setVisible(true); }
     }
 
     void MainWindow::setLabelStatusActive(QString label, bool enabled)
@@ -632,6 +634,18 @@ namespace ServerControlPanel
     void MainWindow::openToolAdminer()
     {
         QDesktopServices::openUrl(QUrl("http://localhost/tools/adminer/adminer.php"));
+    }
+
+    void MainWindow::openToolRobomongo()
+    {
+        QString command("./bin/robomongo/robomongo.exe");
+
+        if(!QFile().exists(command)) {
+            return;
+        }
+
+        QProcess *process = new QProcess(this);
+        process->startDetached(command);
     }
 
     void MainWindow::openWebinterface()

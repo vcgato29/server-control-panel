@@ -52,6 +52,7 @@ namespace ServerControlPanel
             void openToolPHPMyAdmin();
             void openToolWebgrind();
             void openToolAdminer();
+            void openToolRobomongo();
 
             void openProjectFolderInBrowser();
             void openProjectFolderInExplorer();

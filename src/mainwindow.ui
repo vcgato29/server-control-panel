@@ -365,6 +365,19 @@
        <string>adminer</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_tools_robomongo">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>50</y>
+        <width>101</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Robomongo</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QGroupBox" name="OpenProjectFolderGroupBox">
      <property name="geometry">
