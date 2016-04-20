@@ -11,17 +11,13 @@ namespace ServerControlPanel
         ui->setupUi(this);
 
         // The tray icon is an instance of the QSystemTrayIcon class.
-        // To check whether a system tray is present on the user's desktop,
-        // we call the static QSystemTrayIcon::isSystemTrayAvailable() function.
-        if ( false == QSystemTrayIcon::isSystemTrayAvailable())
-        {
+        // check whether a system tray is present on the user's desktop
+        if ( false == QSystemTrayIcon::isSystemTrayAvailable()) {
             QMessageBox::critical(0, APP_NAME, tr("You don't have a system tray."));
             QApplication::exit(1);
         }
 
         setDefaultSettings();
-
-        // overrides the window title defined in mainwindow.ui
         setWindowTitle(APP_NAME_AND_VERSION);
 
         // start minimized to tray
@@ -64,9 +60,6 @@ namespace ServerControlPanel
         }
 
         // set window size fixed
-        //qDebug() << ui->ToolsGroupBox->geometry();
-        //qDebug() << ui->ToolsGroupBox->frameGeometry();
-        //qDebug() << height();
         setFixedSize(width(), height());
     }
 
@@ -92,13 +85,13 @@ namespace ServerControlPanel
         connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                 this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
-        // Connect Actions for Status Table - Column Status
-        // if process state of a daemon changes, then change the label status in UI::MainWindow too
+        // Status Table - Column Status
+        // if process state of a server changes, then change the label status in UI::MainWindow too
         connect(servers, SIGNAL(signalMainWindow_ServerStatusChange(QString,bool)),
                 this, SLOT(setLabelStatusActive(QString, bool)));
 
-        // Connect Action for, if process state of NGINX and PHP changes,
-        // then change the disabled/ enabled state of pushButtons too
+        // if process state of NGINX and PHP changes,
+        // then change the disabled/enabled state of pushButtons, too
         connect(servers, SIGNAL(signalMainWindow_EnableToolsPushButtons(bool)),
                 this, SLOT(enableToolsPushButtons(bool)));
 
@@ -179,12 +172,12 @@ namespace ServerControlPanel
         connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PHP"),     SIGNAL(clicked()), this, SLOT(openConfigurationDialogPHP()));
         connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MariaDb"), SIGNAL(clicked()), this, SLOT(openConfigurationDialogMariaDb()));
 
-        QPushButton *buttonConfigureMongoDb =  ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MongoDb");
+        QPushButton *buttonConfigureMongoDb = ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_MongoDb");
         if(buttonConfigureMongoDb != 0) {
             connect(buttonConfigureMongoDb, SIGNAL(clicked()), this, SLOT(openConfigurationDialogMongoDb()));
         }
 
-        QPushButton *buttonConfigurePostgresql =  ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PostgreSQL");
+        QPushButton *buttonConfigurePostgresql = ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PostgreSQL");
         if(buttonConfigurePostgresql != 0) {
             connect(buttonConfigurePostgresql, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPostgresql()));
         }
@@ -377,22 +370,16 @@ namespace ServerControlPanel
 
     void MainWindow::updateTrayIconTooltip()
     {
-       //qDebug() << "updating TrayIcon Tooltip";
-
-       QString tip = "";
-               tip.append(APP_NAME_AND_VERSION);
+       QString tip(APP_NAME_AND_VERSION);
                tip.append("\n\n");
 
        if(ui->centralWidget->findChild<QLabel*>("label_Nginx_Status")->isEnabled())      { tip.append(" - Nginx: running\n"); }
        if(ui->centralWidget->findChild<QLabel*>("label_PHP_Status")->isEnabled())        { tip.append(" - PHP: running\n"); }
        if(ui->centralWidget->findChild<QLabel*>("label_MariaDb_Status")->isEnabled())    { tip.append(" - MariaDb: running\n"); }
-
        if(ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status") &&
           ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->isEnabled())    { tip.append(" - MongoDb: running\n"); }
-
        if(ui->centralWidget->findChild<QLabel*>("label_Memcached_Status") &&
           ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->isEnabled())  { tip.append(" - Memcached: running\n"); }
-
        if(ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status") &&
           ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->isEnabled()) { tip.append(" - PostgreSQL: running\n"); }
 
@@ -415,16 +402,16 @@ namespace ServerControlPanel
             return "0.0.0";
         }
 
-        QProcess processNginx;
-        processNginx.setProcessChannelMode(QProcess::MergedChannels);
-        processNginx.start("./bin/nginx/nginx.exe -v");
+        QProcess process;
+        process.setProcessChannelMode(QProcess::MergedChannels);
+        process.start("./bin/nginx/nginx.exe -v");
 
-        if (!processNginx.waitForFinished()) {
-            qDebug() << "[Nginx] Version failed:" << processNginx.errorString();
+        if (!process.waitForFinished()) {
+            qDebug() << "[Nginx] Version failed:" << process.errorString();
             return "";
         }
 
-        QByteArray p_stdout = processNginx.readAll();
+        QByteArray p_stdout = process.readAll();
 
         // string for regexp testing
         //QString p_stdout = "nginx version: nginx/1.2.1";
@@ -441,16 +428,16 @@ namespace ServerControlPanel
             return "0.0.0";
         }
 
-        QProcess processMaria;
-        processMaria.setProcessChannelMode(QProcess::MergedChannels);
-        processMaria.start("./bin/mariadb/bin/mysql.exe -V"); // upper-case V
+        QProcess process;
+        process.setProcessChannelMode(QProcess::MergedChannels);
+        process.start("./bin/mariadb/bin/mysql.exe -V"); // upper-case V
 
-        if (!processMaria.waitForFinished()) {
-            qDebug() << "[MariaDb] Version failed:" << processMaria.errorString();
+        if (!process.waitForFinished()) {
+            qDebug() << "[MariaDb] Version failed:" << process.errorString();
             return "";
         }
 
-        QByteArray p_stdout = processMaria.readAll();
+        QByteArray p_stdout = process.readAll();
 
         // string for regexp testing
         //QString p_stdout = "mysql  Ver 15.1 Distrib 5.5.24-MariaDB, for Win32 (x86)";
@@ -466,16 +453,16 @@ namespace ServerControlPanel
             return "0.0.0";
         }
 
-        QProcess processPhp;
-        processPhp.setProcessChannelMode(QProcess::MergedChannels);
-        processPhp.start("./bin/php/php.exe -v");
+        QProcess process;
+        process.setProcessChannelMode(QProcess::MergedChannels);
+        process.start("./bin/php/php.exe -v");
 
-        if (!processPhp.waitForFinished()) {
-            qDebug() << "[PHP] Version failed:" << processPhp.errorString();
+        if (!process.waitForFinished()) {
+            qDebug() << "[PHP] Version failed:" << process.errorString();
             return "";
         }
 
-        QByteArray p_stdout = processPhp.readAll();
+        QByteArray p_stdout = process.readAll();
 
         // string for regexp testing
         //QString p_stdout = "PHP 5.4.3 (cli) (built: Feb 29 2012 19:06:50)";
@@ -488,18 +475,15 @@ namespace ServerControlPanel
 
     QString MainWindow::getMongoVersion()
     {
-        QProcess processMongoDB;
-        processMongoDB.start("./bin/mongodb/bin/mongod.exe --version");
+        QProcess process;
+        process.start("./bin/mongodb/bin/mongod.exe --version");
 
-        if (!processMongoDB.waitForFinished()) {
-            qDebug() << "[MongoDB] Version failed:" << processMongoDB.errorString();
+        if (!process.waitForFinished()) {
+            qDebug() << "[MongoDB] Version failed:" << process.errorString();
             return "";
         }
 
-        QByteArray p_stdout = processMongoDB.readLine();
-
-        // string for regexp testing
-        //QString p_stdout = "----";
+        QByteArray p_stdout = process.readLine();
 
         qDebug() << "[MongoDb] Version: \n" << p_stdout;
 
@@ -525,15 +509,15 @@ namespace ServerControlPanel
 
     QString MainWindow::getMemcachedVersion()
     {
-        QProcess processMemcached;
-        processMemcached.start("./bin/memcached/memcached.exe -h");
+        QProcess process;
+        process.start("./bin/memcached/memcached.exe -h");
 
-        if (!processMemcached.waitForFinished()) {
-            qDebug() << "[Memcached] Version failed:" << processMemcached.errorString();
+        if (!process.waitForFinished()) {
+            qDebug() << "[Memcached] Version failed:" << process.errorString();
             return "";
         }
 
-        QByteArray p_stdout = processMemcached.readLine();
+        QByteArray p_stdout = process.readLine();
 
         qDebug() << "[Memcached] Version: \n" << p_stdout;
 
@@ -553,7 +537,7 @@ namespace ServerControlPanel
 
         return regex.cap(0);
 
-    // Leave this for debugging reasons
+    // Leave this for debugging purposes
     //    int pos = 0;
     //    while((pos = regex.indexIn(stringWithVersion, pos)) != -1)
     //    {
@@ -840,12 +824,15 @@ namespace ServerControlPanel
         if(settings->get("autostart/postgresql").toBool()) servers->startPostgreSQL();
     }
 
+    /**
+     * @brief MainWindow::checkPorts
+     *
+     * check for ports, which are already in use
+     * based on "netstat -abno | grep "80\|8080\|443""
+     * port and service name identification
+     */
     void MainWindow::checkPorts()
     {
-        // check for ports, which are already in use
-        // based on "netstat -abno | grep "80\|8080\|443""
-        // port and service name identification
-
         QProcess process;
         process.setReadChannel(QProcess::StandardOutput);
         process.setReadChannelMode(QProcess::MergedChannels);
@@ -985,12 +972,10 @@ namespace ServerControlPanel
                            }
                        }
 
-                       QProcess::startDetached("cmd.exe",
-                        // taskkill parameters:
-                        // /f = force shutdown, /t = structure shutdown, /im = the name of the process
-                        // nginx and mariadb need a forced shutdown !
-                        QStringList() << "/c" << "taskkill /f /t /im " + cb->text() + ".exe"
-                       );
+                       // taskkill parameters:
+                       // /f = force shutdown, /t = structure shutdown, /im = the name of the process
+                       // nginx and mariadb need a forced shutdown !
+                       QProcess::startDetached("cmd.exe", QStringList()<<"/c"<<"taskkill /f /t /im "+cb->text()+".exe");
                    }
                    delete cb;
                 }
@@ -1002,18 +987,14 @@ namespace ServerControlPanel
                 int c = processesFoundList.size();
                 for(int i = 0; i < c; ++i) {
                     QString procname = processesFoundList.at(i);
-
                     QString servername = this->servers->getCamelCasedServerName(procname).toLocal8Bit().constData();
-
                     Servers::Server *server = this->servers->getServer(servername.toLocal8Bit().constData());
-
                     qDebug() << "[Processes Running] The process" << procname << " has the Server" << server->name;
 
                     if(server->name != "Not Installed") {
-                        // set indicator in main window
+                        // set indicator - main window
                         setLabelStatusActive(servername, true);
-
-                        // set indicator in tray menu
+                        // set indicator - tray menu
                         server->trayMenu->setIcon(QIcon(":/status_run"));
                     }
                 }
@@ -1036,15 +1017,6 @@ namespace ServerControlPanel
         // if the INI is not existing yet, set defaults, they will be written to file
         // if the INI exists, do not set the defaults but read them from file
         if(false == QFile(settings->file()).exists()) {
-
-            // The MainWindow position. Default value is screen center.
-            //QPoint center = QApplication::desktop()->screenGeometry().center();
-            //settings->set("mainwindow/position", center);
-
-            //QMap<QString, QVariant> languages;
-            //languages[str::sLanguageEnglishTitle] = str::sLanguageEnglishKey;
-            //languages[str::sLanguageRussianTitle] = str::sLanguageRussianKey;
-            //m_defaultManager.addProperty(str::sDefLanguages, languages, languages);
 
             settings->set("global/runonstartup",               0);
             settings->set("global/autostartdaemons",           0);
@@ -1330,12 +1302,12 @@ namespace ServerControlPanel
         }
 
         /**
-         * DaemonsGridLayout Size depends on installed Components.
-         * So the BottomWidget has to move down (y + height of DaemonsGridLayout + margin)
+         * The DaemonsGridLayout size depends on the number of installed Components.
+         * The BottomWidget has to move down (y + height of DaemonsGridLayout + margin)
          * The RightSideWidget moves up, if there are only 3-4 elements,
          * the "Webinterface" PushButton will be on par with the Labels.
          * If there are more then 4 elements, the "webinterface" PushButton
-         * is on par with the first daemon.
+         * is on par with the first server.
          */
 
         QRect DaemonsBox = DaemonStatusGroupBox->frameGeometry();
@@ -1390,7 +1362,6 @@ namespace ServerControlPanel
     void MainWindow::openUpdaterDialog()
     {
         Updater::UpdaterDialog updaterDialog;
-        //updaterDialog.setServers(this->servers);
         updaterDialog.setWindowTitle("WPN-XM Server Control Panel - Updater");
         updaterDialog.exec();
     }
