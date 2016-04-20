@@ -642,7 +642,7 @@ namespace Servers
 
     void Servers::startRedis()
     {
-        QString const redisStartCommand = getServer("Redis")->exe;
+        QString const redisStartCommand = getServer("Redis")->exe + " redis.windows.conf";
 
         // if not installed, skip
         if(!QFile().exists(getServer("Redis")->exe)) {
