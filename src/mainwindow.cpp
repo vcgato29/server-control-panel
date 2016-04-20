@@ -124,6 +124,8 @@ namespace ServerControlPanel
         if(buttonStartMemcached != 0) { connect(buttonStartMemcached, SIGNAL(clicked()), servers, SLOT(startMemcached())); }
         QPushButton *buttonStartPostgreSQL =  ui->centralWidget->findChild<QPushButton*>("pushButton_Start_PostgreSQL");
         if(buttonStartPostgreSQL != 0) { connect(buttonStartPostgreSQL, SIGNAL(clicked()), servers, SLOT(startPostgreSQL())); }
+        QPushButton *buttonStartRedis =  ui->centralWidget->findChild<QPushButton*>("pushButton_Start_Redis");
+        if(buttonStartRedis != 0) { connect(buttonStartRedis, SIGNAL(clicked()), servers, SLOT(startRedis())); }
 
         // Connect Actions for Status Table - Column Action (Stop)
         connect(ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_Nginx"), SIGNAL(clicked()), servers, SLOT(stopNginx()));
@@ -135,6 +137,8 @@ namespace ServerControlPanel
         if(buttonStopMemcached != 0) { connect(buttonStopMemcached, SIGNAL(clicked()), servers, SLOT(stopMemcached())); }
         QPushButton *buttonStopPostgreSQL =  ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_PostgreSQL");
         if(buttonStopPostgreSQL != 0) { connect(buttonStopPostgreSQL, SIGNAL(clicked()), servers, SLOT(stopPostgreSQL())); }
+        QPushButton *buttonStopRedis =  ui->centralWidget->findChild<QPushButton*>("pushButton_Stop_Redis");
+        if(buttonStopRedis != 0) { connect(buttonStopRedis, SIGNAL(clicked()), servers, SLOT(stopRedis())); }
 
         // Connect Actions for Status Table - AllDaemons Start, Stop
         connect(ui->pushButton_AllDaemons_Start, SIGNAL(clicked()), this, SLOT(startAllDaemons()));
@@ -180,6 +184,11 @@ namespace ServerControlPanel
         QPushButton *buttonConfigurePostgresql = ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_PostgreSQL");
         if(buttonConfigurePostgresql != 0) {
             connect(buttonConfigurePostgresql, SIGNAL(clicked()), this, SLOT(openConfigurationDialogPostgresql()));
+        }
+
+        QPushButton *buttonConfigureRedis = ui->centralWidget->findChild<QPushButton*>("pushButton_Configure_Redis");
+        if(buttonConfigureRedis != 0) {
+            connect(buttonConfigureRedis, SIGNAL(clicked()), this, SLOT(openConfigurationDialogRedis()));
         }
     }
 
@@ -364,6 +373,7 @@ namespace ServerControlPanel
         if(label == "mongodb")                      { ui->centralWidget->findChild<QLabel*>("label_MongoDb_Status")->setEnabled(enabled); }
         if(label == "memcached")                    { ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->setEnabled(enabled); }
         if(label == "postgresql" || label == "postgres") { ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->setEnabled(enabled); }
+        if(label == "redis" || label == "redis-server") { ui->centralWidget->findChild<QLabel*>("label_Redis_Status")->setEnabled(enabled); }
 
         updateTrayIconTooltip();
     }
@@ -382,6 +392,8 @@ namespace ServerControlPanel
           ui->centralWidget->findChild<QLabel*>("label_Memcached_Status")->isEnabled())  { tip.append(" - Memcached: running\n"); }
        if(ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status") &&
           ui->centralWidget->findChild<QLabel*>("label_PostgreSQL_Status")->isEnabled()) { tip.append(" - PostgreSQL: running\n"); }
+       if(ui->centralWidget->findChild<QLabel*>("label_Redis_Status") &&
+          ui->centralWidget->findChild<QLabel*>("label_Redis_Status")->isEnabled())      { tip.append(" - Redis: running\n"); }
 
        tray->setToolTip(tip);
     }
@@ -524,6 +536,24 @@ namespace ServerControlPanel
         return parseVersionNumber(p_stdout.mid(2)); //10
     }
 
+    QString MainWindow::getRedisVersion()
+    {
+        QProcess process;
+        process.start("./bin/redis/redis-cli.exe -v");
+
+        if (!process.waitForFinished()) {
+            qDebug() << "[Redis] Version failed:" << process.errorString();
+            return "";
+        }
+
+        QByteArray p_stdout = process.readLine();
+
+        qDebug() << "[Redis] Version: \n" << p_stdout;
+
+        // Redis server v=2.8.21 sha
+        return p_stdout.mid(15, p_stdout.lastIndexOf("sha=")).replace(" sha=", "");
+    }
+
     QString MainWindow::parseVersionNumber(QString stringWithVersion)
     {
         //qDebug() << stringWithVersion;
@@ -560,6 +590,7 @@ namespace ServerControlPanel
         servers->startMongoDb();
         servers->startMemcached();
         servers->startPostgreSQL();
+        servers->startRedis();
 
         if(settings->get("global/OnStartAllOpenWebinterface").toBool()) {
             openWebinterface();
@@ -578,6 +609,7 @@ namespace ServerControlPanel
         servers->stopMongoDb();
         servers->stopMemcached();
         servers->stopPostgreSQL();
+        servers->stopRedis();
     }
 
     void MainWindow::goToWebsite()
@@ -746,6 +778,7 @@ namespace ServerControlPanel
         if(objectName == "pushButton_ShowErrorLog_MariaDb") { logFile = logsDir + "/mariadb_error.log";}
         if(objectName == "pushButton_ShowLog_MongoDb")      { logFile = logsDir + "/mongodb.log";}
         if(objectName == "pushButton_ShowLog_PostgreSQL")   { logFile = logsDir + "/postgresql.log";}
+        if(objectName == "pushButton_ShowLog_Redis")        { logFile = logsDir + "/redis.log";}
 
         return logFile;
     }
@@ -822,6 +855,7 @@ namespace ServerControlPanel
         if(settings->get("autostart/mongodb").toBool()) servers->startMongoDb();
         if(settings->get("autostart/memcached").toBool()) servers->startMemcached();
         if(settings->get("autostart/postgresql").toBool()) servers->startPostgreSQL();
+        if(settings->get("autostart/redis").toBool()) servers->startRedis();
     }
 
     /**
@@ -876,7 +910,8 @@ namespace ServerControlPanel
                           << "mysqld"
                           << "php-cgi"
                           << "mongod"
-                          << "postgres";
+                          << "postgres"
+                          << "redis-server";
 
         // init a list for found processes
         QStringList processesFoundList;
@@ -1036,6 +1071,7 @@ namespace ServerControlPanel
             settings->set("paths/mongodb",          "./bin/mongodb/bin");
             settings->set("paths/memcached",        "./bin/memcached");
             settings->set("paths/postgresql",       "./bin/pgsql/bin");
+            settings->set("paths/redis",            "./bin/redis");
 
             settings->set("autostart/nginx",        1);
             settings->set("autostart/php",          1);
@@ -1043,6 +1079,7 @@ namespace ServerControlPanel
             settings->set("autostart/mongodb",      0);
             settings->set("autostart/memcached",    0);
             settings->set("autostart/postgresql",   0);
+            settings->set("autostart/redis",        0);
 
             settings->set("php/config",             "./bin/php/php.ini");
             settings->set("php/fastcgi-host",       "localhost");
@@ -1063,6 +1100,9 @@ namespace ServerControlPanel
 
             settings->set("postgresql/config",      "./bin/pgsql/data/postgresql.conf");
             settings->set("postgresql/port",        5432);
+
+            settings->set("redis/config",           "./bin/redis/redis.windows.conf");
+            settings->set("redis/port",             6379);
 
             //settings->set("updater/mode",         "manual");
             //settings->set("updater/interval",     "1w");
@@ -1341,6 +1381,7 @@ namespace ServerControlPanel
         if(s == "mariadb")   { return getMariaVersion(); }
         if(s == "php")       { return getPHPVersion(); }
         if(s == "postgresql"){ return getPostgresqlVersion(); }
+        if(s == "redis")     { return getRedisVersion(); }
 
         return "The function for fetching the version for " + s + "is not implemented, yet.";
     }

@@ -34,6 +34,7 @@ namespace ServerControlPanel
             QString getMongoVersion();
             QString getMemcachedVersion();
             QString getPostgresqlVersion();
+            QString getRedisVersion();
 
             QString parseVersionNumber(QString stringWithVersion);
 
@@ -69,6 +70,7 @@ namespace ServerControlPanel
             void openConfigurationDialogMariaDb();
             void openConfigurationDialogMongoDb();
             void openConfigurationDialogPostgresql();
+            void openConfigurationDialogRedis();
 
             void openLog();
             void openConfigurationInEditor();

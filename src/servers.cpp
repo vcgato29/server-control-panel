@@ -77,6 +77,7 @@ namespace Servers
         if(serverName == "mariadb" or serverName == "mysqld") { return "MariaDb"; }
         if(serverName == "php" or serverName == "php-cgi") { return "PHP"; }
         if(serverName == "postgresql" or serverName == "postgres") { return "PostgreSQL"; }
+        if(serverName == "redis" or serverName == "redis-server") { return "Redis"; }
 
         return QString("Unknown");
     }
@@ -94,6 +95,7 @@ namespace Servers
         if(s == "mariadb")   { logfiles << logs + "/mariadb_error.log"; }
         if(s == "php")       { logfiles << logs + "/php_error.log"; }
         if(s == "postgresql"){ logfiles << logs + "/postgresql.log"; }
+        if(s == "redis")     { logfiles << logs + "/redis.log"; }
 
         return logfiles;
     }
@@ -108,19 +110,15 @@ namespace Servers
         if(s == "mariadb")   { exe = "mysqld.exe"; }
         if(s == "php")       { exe = "php-cgi.exe"; }
         if(s == "postgresql"){ exe = "pg_ctl.exe"; }
+        if(s == "redis")     { exe = "redis-server.exe"; }
 
         return QDir::toNativeSeparators(settings->get("paths/" + serverName).toString() + "/" + exe);
     }
 
     QStringList Servers::getListOfServerNames() const
     {
-        // get daemons names from .ini's autostart group
-        //Settings *settings = new Settings();
-        //QStringList list = settings->getKeys("autostart");
-
         QStringList list;
-        list << "nginx" << "php" << "mariadb" << "mongodb" << "memcached" << "postgresql";
-
+        list << "nginx" << "php" << "mariadb" << "mongodb" << "memcached" << "postgresql" << "redis";
         return list;
     }
 
@@ -153,7 +151,6 @@ namespace Servers
          QString name = QString(serverName).toLocal8Bit().constData();
 
          foreach(Server *server, serverList) {
-             //qDebug() << server->name;
              if(server->name == name)
                  return server;
          }
@@ -641,6 +638,57 @@ namespace Servers
     {
         stopMemcached();
         startMemcached();
+    }
+
+    void Servers::startRedis()
+    {
+        QString const redisStartCommand = getServer("Redis")->exe;
+
+        // if not installed, skip
+        if(!QFile().exists(getServer("Redis")->exe)) {
+            qDebug() << "[Redis] Is not installed. Skipping start command.";
+            return;
+        }
+
+        // if already running, skip
+        if(getProcessState("Redis") != QProcess::NotRunning){
+            QMessageBox::warning(0, tr("Redis"), tr("Redis already running."));
+            return;
+        }
+
+        emit signalMainWindow_updateVersion("Redis");
+
+        // start
+        qDebug() << "[Redis] Starting...\n" << redisStartCommand;
+
+        getProcess("Redis")->start(redisStartCommand);
+    }
+
+    void Servers::stopRedis()
+    {
+        QString const redisCli("./bin/redis/redis-cli.exe");
+
+        // if not installed, skip
+        if(!QFile().exists(redisCli)) {
+            qDebug() << "[Redis] Is not installed. Skipping stop command.";
+            return;
+        }
+
+        // if not running, skip
+        if(getProcessState("Redis") == QProcess::NotRunning) {
+            qDebug() << "[Redis] Not running... Skipping stop command.";
+            return;
+        }
+
+        QProcess * p = new QProcess();
+        p->startDetached(redisCLI + " shutdown");
+        delete p;
+    }
+
+    void Servers::restartRedis()
+    {
+        stopRedis();
+        startRedis();
     }
 
     /*

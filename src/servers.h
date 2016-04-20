@@ -96,16 +96,19 @@ namespace Servers
             // PostgreSQL Action Slots
             void startPostgreSQL();
             void stopPostgreSQL();
-            void restartPostgreSQL();           
+            void restartPostgreSQL();
+
+            // Redis Action Slots
+            void startRedis();
+            void stopRedis();
+            void restartRedis();
 
         signals:
-
             void signalMainWindow_ServerStatusChange(QString label, bool enabled);
             void signalMainWindow_EnableToolsPushButtons(bool enabled);
             void signalMainWindow_updateVersion(QString server);
 
         private:
-
             QList<Server*> serverList;
             QString getProcessErrorMessage(QProcess::ProcessError);
     };
