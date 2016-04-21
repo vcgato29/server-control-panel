@@ -77,7 +77,7 @@ namespace ServerControlPanel
 
     void MainWindow::createTrayIcon()
     {
-        tray = new ServerControlPanel::Tray(qApp);
+        tray = new ServerControlPanel::Tray(qApp, settings, servers);
 
         tray->setIcon(QIcon(":/wpnxm"));
 

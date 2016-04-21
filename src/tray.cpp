@@ -2,9 +2,10 @@
 
 namespace ServerControlPanel
 {
-    Tray::Tray(QApplication *parent) : QSystemTrayIcon(QIcon(":/wpnxm.png"), parent),
-                                       settings(new Settings::SettingsManager),
-                                       servers(new Servers::Servers)
+    Tray::Tray(QApplication *parent, Settings::SettingsManager *settings, Servers::Servers *servers) :
+        QSystemTrayIcon(QIcon(":/wpnxm.png"), parent),
+        settings(settings),
+        servers(servers)
     {
         createTrayMenu();
     }

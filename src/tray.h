@@ -35,7 +35,7 @@ namespace ServerControlPanel
         Q_OBJECT
 
         public:
-            explicit Tray(QApplication *parent); //, Servers::Servers *servers, Settings::SettingsManager *settings);
+            explicit Tray(QApplication *parent, Settings::SettingsManager *settings, Servers::Servers *servers);
 
         public slots:
             void startAllDaemons();
