@@ -680,9 +680,11 @@ namespace Servers
             return;
         }
 
-        QProcess * p = new QProcess();
-        p->startDetached(redisCli + " shutdown");
-        delete p;
+        // disconnect process monitoring before sending shutdown
+        disconnect(getProcess("Redis"), SIGNAL(error(QProcess::ProcessError)),
+                       this, SLOT(showProcessError(QProcess::ProcessError)));
+
+        QProcess::execute(redisCli + " shutdown");
     }
 
     void Servers::restartRedis()
