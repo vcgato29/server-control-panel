@@ -539,7 +539,7 @@ namespace ServerControlPanel
     QString MainWindow::getRedisVersion()
     {
         QProcess process;
-        process.start("./bin/redis/redis-cli.exe -v");
+        process.start("./bin/redis/redis-server.exe -v");
 
         if (!process.waitForFinished()) {
             qDebug() << "[Redis] Version failed:" << process.errorString();
@@ -551,7 +551,7 @@ namespace ServerControlPanel
         qDebug() << "[Redis] Version: \n" << p_stdout;
 
         // Redis server v=2.8.21 sha
-        return p_stdout.mid(15, p_stdout.lastIndexOf("sha=")).replace(" sha=", "");
+        return parseVersionNumber(p_stdout);
     }
 
     QString MainWindow::parseVersionNumber(QString stringWithVersion)
