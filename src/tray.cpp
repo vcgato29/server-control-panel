@@ -122,46 +122,5 @@ namespace ServerControlPanel
     {
         HostsFileManager::HostsManagerDialog dlg;
         dlg.exec();
-    }
-
-    /*
-    void Tray::openNginxSites()
-    {
-        QDir dir(QDir::currentPath());
-        QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(
-            settings->get("paths/nginx").toString()+settings->get("nginx/sites").toString())
-        );
-        // start as own process ( not as a child process), will live after Tray terminates
-        QProcess::startDetached("explorer", QStringList() << strDir);
-    }
-
-    void Tray::openNginxConfig()
-    {
-        QDir dir(QDir::currentPath());
-        QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("nginx/config").toString()));
-        QProcess::startDetached("explorer", QStringList() << strDir);
-    }
-
-    void Tray::openMariaDbClient()
-    {
-        QProcess::startDetached(
-            settings->get("paths/mariadb").toString()+MARIADB_CLIENT_EXEC,
-            QStringList(),
-            settings->get("paths/mariadb").toString()
-        );
-    }
-
-    void Tray::openMariaDbConfig()
-    {
-        QDir dir(QDir::currentPath());
-        QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("mariadb/config").toString()));
-        QProcess::startDetached("cmd", QStringList() << "/c" << "start "+strDir);
-    }
-
-    void Tray::openPhpConfig()
-    {
-        QDir dir(QDir::currentPath());
-        QString strDir = QDir::toNativeSeparators(dir.absoluteFilePath(settings->get("php/config").toString()));
-        QProcess::startDetached("cmd", QStringList() << "/c" << "start "+strDir);
-    }*/
+    }   
 }

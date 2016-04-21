@@ -44,11 +44,6 @@ namespace ServerControlPanel
             void goToReportIssue();
             void goToWebinterface();
             void openHostManagerDialog();
-            //void openNginxSites();
-            //void openNginxConfig();
-            //void openPhpConfig();
-            //void openMariaDbClient();
-            //void openMariaDbConfig();
 
         private:
             void createTrayMenu();
