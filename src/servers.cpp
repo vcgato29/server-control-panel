@@ -681,7 +681,7 @@ namespace Servers
         }
 
         QProcess * p = new QProcess();
-        p->startDetached(redisCLI + " shutdown");
+        p->startDetached(redisCli + " shutdown");
         delete p;
     }
 
