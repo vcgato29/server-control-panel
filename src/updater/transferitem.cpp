@@ -128,7 +128,7 @@ namespace Downloader
 
         //qDebug() << progress;
 
-        emit downloadProgress(this);
+        emit downloadProgress(progress);
     }
 
     QString TransferItem::getSizeHumanReadable(qint64 bytes)

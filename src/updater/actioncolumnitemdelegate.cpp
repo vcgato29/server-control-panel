@@ -32,17 +32,20 @@ void ActionColumnItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         return drawDownloadPushButton(painter,option,index);
     }
 
-    if(index.data(DownloadProgressBarRole).toString() != "hide")
+    else if(index.data(DownloadProgressBarRole).toString() != "hide")
     {
         return drawDownloadProgressBar(painter,option,index);
     }
 
-    if(index.data(InstallPushButtonRole).toString() != "hide")
+    else if(index.data(InstallPushButtonRole).toString() != "hide")
     {
         return drawInstallPushButton(painter,option,index);
     }
-
-    //QStyledItemDelegate::paint(painter, option, index);
+    
+    else 
+    { 
+        QStyledItemDelegate::paint(painter, option, index);
+    }
 }
 
 void ActionColumnItemDelegate::drawDownloadPushButton(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

@@ -17,7 +17,7 @@ namespace Downloader
             void startRequest();
         signals:
             void downloadFinished(TransferItem *self);
-            void downloadProgress(TransferItem *self);
+            void downloadProgress(QMap<QString, QVariant>);
         public slots:
             void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
         public:
@@ -29,6 +29,7 @@ namespace Downloader
             QList<QUrl> redirects;
             QElapsedTimer timer;
             QMap<QString, QVariant> progress;
+
         private:
             QString getSizeHumanReadable(qint64 bytes);
     };
@@ -38,7 +39,7 @@ namespace Downloader
             Q_OBJECT
         public:
             DownloadItem(const QNetworkRequest &r, QNetworkAccessManager &nam);
-            ~DownloadItem();
+            ~DownloadItem();           
         private slots:
             void readyRead();
             void finished();
@@ -53,13 +54,10 @@ namespace Downloader
             void get(const QNetworkRequest &request);
             enum QueueMode { Parallel, Serial };
             void setQueueMode(QueueMode mode);
-
-        signals:
-            QMap<QString, QVariant> signalProgress(QMap<QString, QVariant> progress);
+            TransferItem *findTransfer(QUrl url);
 
         public slots:
             void checkForAllDone();
-            void downloadProgress(TransferItem *item);
 
         private slots:
             void finished(QNetworkReply *reply);
@@ -72,11 +70,12 @@ namespace Downloader
 
             QNetworkAccessManager nam;
             QList<TransferItem*> transfers;
-            QueueMode queueMode;
+            QueueMode queueMode;           
 
         public:
             int FilesDownloadedCounter;
             int FilesToDownloadCounter;
     };
 }
+
 #endif // DOWNLOADMANAGER_H

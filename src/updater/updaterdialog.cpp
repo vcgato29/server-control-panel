@@ -220,22 +220,50 @@ namespace Updater
         request.setRawHeader("User-Agent", userAgent);
         request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
-        downloadManager.setQueueMode(Downloader::DownloadManager::Parallel);
         downloadManager.get(request);
 
-        qDebug() << "FilesDownloadedCounter" << downloadManager.FilesDownloadedCounter;
-        qDebug() << "FilesToDownloadCounter" << downloadManager.FilesToDownloadCounter;
-
-        // each download has its own update object (to connect "index.row" to "progress").
-        // fetch the bubbled up download progress and pump it into the updater object
-
+        Downloader::TransferItem *transfer = downloadManager.findTransfer(downloadURL);
         ProgressBarUpdater *progressBar = new ProgressBarUpdater(this, index.row());
         progressBar->setObjectName("ProgressBar_in_Row_" + QString::number(index.row()) );
-
-        connect(&downloadManager, SIGNAL(signalProgress(QMap<QString, QVariant>)),
+        connect(transfer, SIGNAL(downloadProgress(QMap<QString, QVariant>)),
                 progressBar, SLOT(updateProgress(QMap<QString, QVariant>)));
 
         QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
+    }
+
+    ProgressBarUpdater::ProgressBarUpdater(UpdaterDialog *parent, int indexRow) :
+        QObject(parent), currentIndexRow(indexRow)
+    {
+        model    = parent->ui->tableView_1->model();
+    }
+
+    void ProgressBarUpdater::updateProgress(QMap<QString, QVariant> progress)
+    {
+        QModelIndex actionIndex = model->index(currentIndexRow, UpdaterDialog::Columns::Action);
+
+        qDebug() << "ObjectName" << this->objectName();
+        qDebug() << "CurrentIndex" << currentIndexRow;
+        qDebug() << "ActionIndex" << actionIndex;
+
+        // hide DownloadButton
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole).toString() != "hide") {
+            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadPushButtonRole);
+        }
+
+        // update the "progress" data in the model
+        model->setData(actionIndex, progress, ActionColumnItemDelegate::DownloadProgressBarRole);
+
+        // "hide" progressBar when we reach 100% and "show" Install Button
+        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100%") {
+            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
+            model->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
+        }
+
+        /*qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
+        qDebug() << "ProgressBar Data" << actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole);
+        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);*/
+
+        model->dataChanged(actionIndex, actionIndex);
     }
 
     QUrl UpdaterDialog::getDownloadUrl(const QModelIndex &index)
@@ -268,44 +296,4 @@ namespace Updater
         }
         return true;
     }
-
-    ProgressBarUpdater::ProgressBarUpdater(UpdaterDialog *parent, int currentIndexRow) :
-        QObject(parent), currentIndexRow(currentIndexRow)
-    {
-        model = parent->ui->tableView_1->model();
-    }
-
-    void ProgressBarUpdater::updateProgress(QMap<QString, QVariant> progress)
-    {
-        //qDebug() << "UpdaterDialog::updateDownloadProgress";
-
-        QModelIndex actionIndex = model->index(currentIndexRow, UpdaterDialog::Columns::Action);
-
-        qDebug() << "ObjectName" << this->objectName();
-        qDebug() << "CurrentIndex" << currentIndexRow;
-        qDebug() << "ActionIndex" << actionIndex;
-
-        // hide DownloadButton
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole).toString() != "hide") {
-            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadPushButtonRole);
-        }
-
-        // update the "progress" data in the model
-        model->setData(actionIndex, progress, ActionColumnItemDelegate::DownloadProgressBarRole);
-
-        // "hide" progressBar when we reach 100% and "show" Install Button
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100%") {
-            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
-            model->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
-        }
-
-        /*qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
-        qDebug() << "ProgressBar Data" << actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole);
-        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);*/
-
-        model->dataChanged(actionIndex, actionIndex);
-
-        //tableView->repaint();
-    }
-
 }

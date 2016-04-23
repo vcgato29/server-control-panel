@@ -66,9 +66,10 @@ namespace Updater
         Q_OBJECT
         public:
             explicit ProgressBarUpdater(UpdaterDialog *parent = 0, int currentIndexRow = 0);
-        signals:
         public slots:
             void updateProgress(QMap<QString, QVariant> progress);
+        private:
+            QMap<QString, QVariant>  progress;
         protected:
             QAbstractItemModel *model;
             const int          currentIndexRow;

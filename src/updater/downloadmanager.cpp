@@ -30,19 +30,7 @@ namespace Downloader
         transfers.append(dl);
         FilesToDownloadCounter = transfers.count();
 
-        connect(dl, SIGNAL(downloadProgress(TransferItem*)), SLOT(downloadProgress(TransferItem*)));
         connect(dl, SIGNAL(downloadFinished(TransferItem*)), SLOT(downloadFinished(TransferItem*)));
-    }
-
-    // We re-emit the download progress from the subclasses until it bubbles up to the GUI.
-    // Signal/Slots for the Download Progress:
-    // 1. TransferItem::downloadProgress    -> TransferItem::updateDownloadProgress (get progress and do calculations)
-    // 2. DownloadItem::downloadProgress    -> DownloadManager::downloadProgress    (move data from item to manager)
-    // 3. DownloadManager::downloadProgress -> DownloadManager::signalProgress      (signal data from manager)
-    // 4. UpdaterDialog::signalProgress     -> updateProgressBar                    (grab data from manager in dialog)
-    void DownloadManager::downloadProgress(TransferItem *item)
-    {
-        emit signalProgress(item->progress);
     }
 
     void DownloadManager::finished(QNetworkReply *)
@@ -93,6 +81,16 @@ namespace Downloader
         }
     }
     #endif
+
+    TransferItem *DownloadManager::findTransfer(QUrl url)
+    {
+        foreach (TransferItem *item, transfers) {
+            if (item->request.url() == url) {
+                return item;
+            }
+        }
+        return 0;
+    }
 
     TransferItem *DownloadManager::findTransfer(QNetworkReply *reply)
     {
