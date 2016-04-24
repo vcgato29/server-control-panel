@@ -66,6 +66,7 @@ namespace Configuration
             QCheckBox *checkbox_autostart_Nginx;
             QCheckBox *checkbox_autostart_Memcached;
             QCheckBox *checkbox_autostart_PostgreSQL;
+            QCheckBox *checkbox_autostart_Redis;
 
             void readSettings();
             void writeSettings();

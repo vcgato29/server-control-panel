@@ -49,6 +49,7 @@ namespace Configuration
        ui->checkbox_autostart_MongoDb->setChecked(settings->get("autostart/mongodb", false).toBool());
        ui->checkbox_autostart_Memcached->setChecked(settings->get("autostart/memcached", false).toBool());
        ui->checkbox_autostart_Postgresql->setChecked(settings->get("autostart/postgresql", false).toBool());
+       ui->checkbox_autostart_Redis->setChecked(settings->get("autostart/redis", false).toBool());
 
        ui->checkbox_clearLogsOnStart->setChecked(settings->get("global/clearlogsonstart", false).toBool());
        ui->checkbox_stopDaemonsOnQuit->setChecked(settings->get("global/stopdaemonsonquit", false).toBool());
@@ -74,6 +75,7 @@ namespace Configuration
         settings->set("autostart/mongodb",        int(ui->checkbox_autostart_MongoDb->isChecked()));
         settings->set("autostart/memcached",      int(ui->checkbox_autostart_Memcached->isChecked()));
         settings->set("autostart/postgresql",     int(ui->checkbox_autostart_Postgresql->isChecked()));
+        settings->set("autostart/redis",          int(ui->checkbox_autostart_Redis->isChecked()));
 
         settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
         settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
