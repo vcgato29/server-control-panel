@@ -22,6 +22,42 @@ namespace Downloader
         timer.start();
     }
 
+    void TransferItem::finished()
+    {
+        emit downloadFinished(this);
+    }
+
+    // SLOT
+    void TransferItem::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+    {
+        progress["bytesReceived"] = QString::number(bytesReceived);
+        progress["bytesTotal"]    = QString::number(bytesTotal);
+        progress["size"]          = getSizeHumanReadable(outputFile->size());
+        progress["speed"]         = QString::number((double)outputFile->size()/timer.elapsed(),'f',0).append(" KB/s");
+        //progress["time"]          = QString::number((double)timer.elapsed()/1000,'f',2).append("s");
+        //progress["eta"]           =
+        progress["percentage"]    = (bytesTotal > 0) ? QString::number(bytesReceived*100/bytesTotal).append("%") : "0 %";
+
+        emit downloadProgress(progress);
+    }
+
+    QString TransferItem::getSizeHumanReadable(qint64 bytes)
+    {
+         float num = bytes;
+         QStringList list;
+         list << "KB" << "MB" << "GB" << "TB";
+
+         QStringListIterator i(list);
+         QString unit("bytes");
+
+         while(num >= 1024.0 && i.hasNext())
+          {
+             unit = i.next();
+             num /= 1024.0;
+         }
+         return QString::fromLatin1("%1 %2").arg(num, 3, 'f', 1).arg(unit);
+    }
+
     DownloadItem::DownloadItem(const QNetworkRequest &r, QNetworkAccessManager &manager)
         : TransferItem(r, manager)
     {
@@ -115,37 +151,4 @@ namespace Downloader
 
         emit downloadFinished(this);
     }
-
-    // SLOT
-    void TransferItem::updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
-    {
-        progress["bytesReceived"] = QString::number(bytesReceived);
-        progress["bytesTotal"]    = QString::number(bytesTotal);
-        progress["size"]          = getSizeHumanReadable(outputFile->size());
-        progress["speed"]         = QString::number((double)outputFile->size()/timer.elapsed(),'f',0).append(" KB/s");
-        progress["time"]          = QString::number((double)timer.elapsed()/1000,'f',2).append("s");
-        progress["percentage"]    = (bytesTotal > 0) ? QString::number(bytesReceived*100/bytesTotal).append("%") : "0 %";
-
-        //qDebug() << progress;
-
-        emit downloadProgress(progress);
-    }
-
-    QString TransferItem::getSizeHumanReadable(qint64 bytes)
-    {
-         float num = bytes;
-         QStringList list;
-         list << "KB" << "MB" << "GB" << "TB";
-
-         QStringListIterator i(list);
-         QString unit("bytes");
-
-         while(num >= 1024.0 && i.hasNext())
-          {
-             unit = i.next();
-             num /= 1024.0;
-         }
-         return QString::fromLatin1("%1 %2").arg(num, 3, 'f', 1).arg(unit);
-    }
-
 }

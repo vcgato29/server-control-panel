@@ -18,8 +18,11 @@ namespace Downloader
         signals:
             void downloadFinished(TransferItem *self);
             void downloadProgress(QMap<QString, QVariant>);
+            void finished(TransferItem *self);
         public slots:
             void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+        private slots:
+            void finished();
         public:
             QNetworkRequest request;
             QNetworkReply *reply;

@@ -109,18 +109,13 @@ namespace Updater
              * Finally, i came up with using an ItemDelegate to render the widgets in the action column.
              * The rendering is done by the delegate's paint function.
              * To render multiple widgets (Download Button, Download ProgressBar, Install Button)
-             * i've added custom UserRoles (Qt::ItemDataRole) (DownloadButtonRole, etc.).
-             * These UserRoles are set as data to the model and tell the view what to render.
+             * i've added a custom UserRole "WidgetRole" and three Roles:
+             * DownloadPushButton, DownloadProgressBar, InstallPushButton.
+             * These roles are set as data to the model and tell the view what to render.
              * This allows to easily update the model and get the matching widgets based on the role.
-             *
-             * Data:
-             * - Buttons: hide || show || show-clicked
-             * - ProgressBar: hide || <int> progress
              */
             QStandardItem *action = new QStandardItem("ActionCell");
-            action->setData("show", ActionColumnItemDelegate::DownloadPushButtonRole);
-            action->setData("hide", ActionColumnItemDelegate::DownloadProgressBarRole);
-            action->setData("hide", ActionColumnItemDelegate::InstallPushButtonRole);
+            action->setData(ActionColumnItemDelegate::DownloadPushButton, ActionColumnItemDelegate::WidgetRole);
             rowItems.append(action);
 
             model->appendRow(rowItems);            
@@ -200,7 +195,6 @@ namespace Updater
         if (!validateURL(downloadURL)) {
             return;
         }
-        qDebug() << "doDownload()" << downloadURL;
 
         //QString targetFolder = QDir::toNativeSeparators(QApplication::applicationDirPath() + "/data/downloads");
         //QString targetName   = "test.zip";
@@ -220,50 +214,46 @@ namespace Updater
         request.setRawHeader("User-Agent", userAgent);
         request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
-        downloadManager.get(request);
+        // enqueue download request
+        //downloadManager.get(request);
 
+        // setup progressbar
         Downloader::TransferItem *transfer = downloadManager.findTransfer(downloadURL);
-        ProgressBarUpdater *progressBar = new ProgressBarUpdater(this, index.row());
-        progressBar->setObjectName("ProgressBar_in_Row_" + QString::number(index.row()) );
+        ProgressBarUpdater *progressBar = new ProgressBarUpdater(this, index.row());        
         connect(transfer, SIGNAL(downloadProgress(QMap<QString, QVariant>)),
                 progressBar, SLOT(updateProgress(QMap<QString, QVariant>)));
+        connect(transfer, SIGNAL(downloadFinished(Downloader::TransferItem*)),
+                progressBar, SLOT(downloadFinished(Downloader::TransferItem*)));
 
+        // finally: invoke downloading
         QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
     }
 
     ProgressBarUpdater::ProgressBarUpdater(UpdaterDialog *parent, int indexRow) :
-        QObject(parent), currentIndexRow(indexRow)
+        QObject(parent), currentRow(indexRow)
     {
-        model    = parent->ui->tableView_1->model();
+        model = parent->ui->tableView_1->model();
+        index = model->index(currentRow, UpdaterDialog::Columns::Action);
     }
 
     void ProgressBarUpdater::updateProgress(QMap<QString, QVariant> progress)
     {
-        QModelIndex actionIndex = model->index(currentIndexRow, UpdaterDialog::Columns::Action);
-
-        qDebug() << "ObjectName" << this->objectName();
-        qDebug() << "CurrentIndex" << currentIndexRow;
-        qDebug() << "ActionIndex" << actionIndex;
-
-        // hide DownloadButton
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole).toString() != "hide") {
-            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadPushButtonRole);
-        }
-
         // update the "progress" data in the model
-        model->setData(actionIndex, progress, ActionColumnItemDelegate::DownloadProgressBarRole);
+        model->setData(index, progress);
+        model->dataChanged(index, index);
+    }
 
-        // "hide" progressBar when we reach 100% and "show" Install Button
-        if(actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole).toMap()["percentage"] == "100%") {
-            model->setData(actionIndex, "hide", ActionColumnItemDelegate::DownloadProgressBarRole);
-            model->setData(actionIndex, "show", ActionColumnItemDelegate::InstallPushButtonRole);
+    void ProgressBarUpdater::downloadFinished(Downloader::TransferItem *transfer)
+    {
+        Q_UNUSED(transfer);
+
+        qDebug() << "ProgressBarUpdater::downloadFinished";
+
+        // when we reach 100%, "hide" progressBar and "show" Install Button
+        if(progress["bytesReceived"] == progress["bytesTotal"]) {
+            model->setData(index, ActionColumnItemDelegate::InstallPushButton, ActionColumnItemDelegate::WidgetRole);
         }
-
-        /*qDebug() << "Download Button Data" << actionIndex.data(ActionColumnItemDelegate::DownloadPushButtonRole);
-        qDebug() << "ProgressBar Data" << actionIndex.data(ActionColumnItemDelegate::DownloadProgressBarRole);
-        qDebug() << "Install Button Data" << actionIndex.data(ActionColumnItemDelegate::InstallPushButtonRole);*/
-
-        model->dataChanged(actionIndex, actionIndex);
+        model->dataChanged(index, index);
     }
 
     QUrl UpdaterDialog::getDownloadUrl(const QModelIndex &index)

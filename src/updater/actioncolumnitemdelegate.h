@@ -41,12 +41,15 @@ namespace Updater
         QProgressBar *bar;
         void setPushButtonStyle(QPushButton *btn) const;
         void setProgressBarStyle(QProgressBar *bar) const;
+        int currentRow;        
      public:
-
-        enum ColumnRoles {
-            DownloadPushButtonRole = Qt::UserRole,
-            DownloadProgressBarRole,
-            InstallPushButtonRole
+        enum WidgetRole {
+            WidgetRole = Qt::UserRole + 1
+        };
+        enum WidgetTypes {
+            DownloadPushButton = 1,
+            DownloadProgressBar,
+            InstallPushButton
         };
     };
 

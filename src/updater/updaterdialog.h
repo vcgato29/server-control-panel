@@ -65,14 +65,16 @@ namespace Updater
     {
         Q_OBJECT
         public:
-            explicit ProgressBarUpdater(UpdaterDialog *parent = 0, int currentIndexRow = 0);
+            explicit ProgressBarUpdater(UpdaterDialog *parent = 0, int currentRow = 0);
         public slots:
             void updateProgress(QMap<QString, QVariant> progress);
+            void downloadFinished(Downloader::TransferItem *transfer);
         private:
             QMap<QString, QVariant>  progress;
         protected:
+            QModelIndex        index;
             QAbstractItemModel *model;
-            const int          currentIndexRow;
+            const int          currentRow;
     };
 }
 

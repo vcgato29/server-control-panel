@@ -40,7 +40,8 @@ namespace Downloader
 
     void DownloadManager::downloadFinished(TransferItem *item)
     {
-        qDebug() << "Download finished " << item->reply->url() << " with HTTP Status: " << item->reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        qDebug() << "Download finished " << item->reply->url();
+        qDebug() << " with HTTP Status: " << item->reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         if (item->reply->error() != QNetworkReply::NoError) {
             qDebug() << "and error: " << item->reply->error() << item->reply->errorString();
         }

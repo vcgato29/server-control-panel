@@ -17,6 +17,8 @@ ActionColumnItemDelegate::ActionColumnItemDelegate(QObject *parent)
     bar = new QProgressBar;
     bar->setVisible(false);
     setProgressBarStyle(bar);
+
+    currentRow = -1;
 }
 
 ActionColumnItemDelegate::~ActionColumnItemDelegate()
@@ -27,24 +29,18 @@ ActionColumnItemDelegate::~ActionColumnItemDelegate()
 
 void ActionColumnItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {    
-    if (index.data(DownloadPushButtonRole).toString() != "hide")
-    {
-        return drawDownloadPushButton(painter,option,index);
-    }
+    int type = index.data(WidgetRole).toInt();
 
-    else if(index.data(DownloadProgressBarRole).toString() != "hide")
+    switch (type)
     {
-        return drawDownloadProgressBar(painter,option,index);
-    }
-
-    else if(index.data(InstallPushButtonRole).toString() != "hide")
-    {
-        return drawInstallPushButton(painter,option,index);
-    }
-    
-    else 
-    { 
-        QStyledItemDelegate::paint(painter, option, index);
+        case DownloadPushButton:
+            return drawDownloadPushButton(painter,option,index);
+        case DownloadProgressBar:
+            return drawDownloadProgressBar(painter,option,index);
+        case InstallPushButton:
+            return drawInstallPushButton(painter,option,index);
+        default:
+            QStyledItemDelegate::paint(painter, option, index);
     }
 }
 
@@ -53,13 +49,12 @@ void ActionColumnItemDelegate::drawDownloadPushButton(QPainter *painter, const Q
     QStyleOptionButton opt;
     opt.initFrom(btn);
     opt.rect = option.rect.adjusted(2,2,-2,-2);
-    opt.text = "Download";
-    opt.state = QStyle::State_Enabled;
+    opt.text = "Download";    
     opt.features |= QStyleOptionButton::DefaultButton;
+    opt.state = QStyle::State_Enabled | QStyle::State_Active | QStyle::State_Raised;
 
-    // change style of button, when clicked. based on boolean value in the model. see setData() in editorEvent().
-    opt.state |= (index.data(DownloadPushButtonRole).toString() == "show-clicked") ?
-                 QStyle::State_Sunken : QStyle::State_Raised;
+    // change style of button, when clicked. based on currentRow set in editorEvent().
+    opt.state |= (currentRow == index.row()) ? QStyle::State_Sunken : QStyle::State_Raised;
 
     // hover on MouseOver
     if (option.state & QStyle::State_MouseOver) {
@@ -78,9 +73,8 @@ void ActionColumnItemDelegate::drawInstallPushButton(QPainter *painter, const QS
     opt.state = QStyle::State_Enabled;
     opt.features |= QStyleOptionButton::DefaultButton;
 
-    // change style of button, when clicked. based on boolean value in the model. see setData() in editorEvent().
-    opt.state |= (index.data(InstallPushButtonRole).toString() == "show-clicked") ?
-                 QStyle::State_Sunken : QStyle::State_Raised;
+    // change style of button, when clicked. based on currentRow set in editorEvent().
+    opt.state |= (currentRow == index.row()) ? QStyle::State_Sunken : QStyle::State_Raised;
 
     // hover on MouseOver
     if (option.state & QStyle::State_MouseOver) {
@@ -98,15 +92,16 @@ void ActionColumnItemDelegate::drawDownloadProgressBar(QPainter *painter, const 
     opt.rect.adjust(3,3,-3,-3);
     opt.textVisible = true;
     opt.textAlignment = Qt::AlignCenter;
-    opt.state = QStyle::State_Enabled | QStyle::State_Active;
+    opt.state = QStyle::State_Enabled | QStyle::State_Active | QStyle::State_Raised;
 
     // get progress
-    QMap<QString, QVariant> progress = index.model()->data(index, DownloadProgressBarRole).toMap();
+    QMap<QString, QVariant> progress = index.model()->data(index).toMap();
 
-    QString text = QString::fromLatin1(" %1 %2 %3 %4 ").arg(progress["percentage"].toString())
+    QString text = QString::fromLatin1(" %1 %2 %3 ").arg(progress["percentage"].toString())
                                                        .arg(progress["size"].toString())
-                                                       .arg(progress["speed"].toString())
-                                                       .arg(progress["time"].toString());
+                                                       .arg(progress["speed"].toString());
+                                                       //.arg(progress["time"].toString());
+                                                       //.arg(progress["eta"].toString());
 
     // set progress
     opt.minimum  = 0;
@@ -139,12 +134,14 @@ void ActionColumnItemDelegate::setProgressBarStyle(QProgressBar *bar) const
 
 /**
  * Qt makes it really hard to add widgets and events to tableviews
- * The cell doesn't contain an editor, but this allows to bind to events...
- * so its a hack to intercept the mouseclick on the table cell.
+ * The cell doesn't contain an editor, but the editorEvent() allows to bind to events:
+ * so it's a hack to intercept the mouseClicks on the table cell.
  */
 bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,const QStyleOptionViewItem &option,const QModelIndex &index)
 {
     Q_UNUSED(option);
+
+    currentRow = -1;
 
     if(event->type() != QEvent::MouseButtonRelease && event->type() != QEvent::MouseButtonPress ) {
        return false;
@@ -152,29 +149,23 @@ bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *mo
 
     if (event->type() == QEvent::MouseButtonPress) {
 
-        if(index.data(DownloadPushButtonRole).toString() != "hide") {
-            //qDebug() << "Action Cell in Row " << index.row() << "has Download Role and Download Button clicked..";
-            model->setData(index, "show-clicked", DownloadPushButtonRole);
+        currentRow = index.row();
+
+        if(index.data(WidgetRole).toInt() == DownloadPushButton) {
             emit downloadButtonClicked(index);
-            return true;
         }
-        if(index.data(InstallPushButtonRole).toString() != "hide") {
-            //qDebug() << "Action Cell in Row " << index.row() << "has Install Role and Install Button clicked...";
-            model->setData(index, "show-clicked", InstallPushButtonRole);
+        if(index.data(WidgetRole).toInt() == InstallPushButton) {
             emit installButtonClicked(index);
-            return true;
         }
     }
 
     if(event->type() == QEvent::MouseButtonRelease) {
 
-        if(index.data(DownloadPushButtonRole).toString() == "show-clicked") {
-            model->setData(index, "hide", DownloadPushButtonRole);
-            return true;
+        if(index.data(WidgetRole).toInt() == DownloadPushButton) {
+            model->setData(index, DownloadProgressBar, WidgetRole);
         }
-        if(index.data(InstallPushButtonRole).toString() == "show-clicked") {
-            model->setData(index, "hide", InstallPushButtonRole);
-            return true;
+        if(index.data(WidgetRole).toInt() == DownloadProgressBar) {
+            model->setData(index, InstallPushButton, WidgetRole);
         }
     }
 
