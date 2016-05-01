@@ -21,13 +21,13 @@ You should be able to find everything at http://www.qt.io/download-open-source/ 
 
   http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe
 
-* Qt 5.5.x
+* Qt 5.6.x
 
-  http://download.qt.io/official_releases/qt/5.5/5.5.0/qt-opensource-windows-x86-mingw492-5.5.0.exe
+  http://download.qt.io/official_releases/qt/5.6/5.6.0/qt-opensource-windows-x86-mingw492-5.6.0.exe
 
 * Qt Creator
 
-  http://download.qt.io/official_releases/qtcreator/3.4/3.4.2/qt-creator-opensource-windows-x86-3.4.2.exe
+  http://download.qt.io/official_releases/qtcreator/3.6/3.6.1/qt-creator-opensource-windows-x86-3.6.1.exe
 
 ### Installation Steps and Requirements for Qt
 
@@ -64,7 +64,7 @@ You have to build the libraries to be able to link successfully.
 We are using the Qt command `windeployqt` to automatically detect and copy the dependencies to the debug/release folder.
 You find the list of the files to copy at the end of the `.pro` file, in case you need to copy dependencies manually. 
 
-For deployment use the [Qt Minimal Deployment Kit](https://github.com/WPN-XM/qt-mini-deploy/).
+For deployment we use our [Qt Minimal Deployment Kit](https://github.com/WPN-XM/qt-mini-deploy/). This is a packaged bundle of dependencies and allows a basic drop-in of dependencies, next to the executable.
 
 ### 2 Run environment
 
