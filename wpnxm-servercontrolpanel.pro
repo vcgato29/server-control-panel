@@ -67,7 +67,9 @@ HEADERS += \
     src/updater/actioncolumnitemdelegate.h \
     src/updater/softwarecolumnitemdelegate.h \
     src/registry/registrymanager.h \
-    src/updater/downloadmanager.h
+    src/updater/downloadmanager.h \
+    src/config/nginxaddpooldialog.h \
+    src/config/nginxaddserverdialog.h
 
 SOURCES += \
     src/app/main.cpp \
@@ -91,7 +93,9 @@ SOURCES += \
     src/updater/softwarecolumnitemdelegate.cpp \
     src/registry/registrymanager.cpp \
     src/updater/downloadmanager.cpp \
-    src/updater/transferitem.cpp
+    src/updater/transferitem.cpp \
+    src/config/nginxaddpooldialog.cpp \
+    src/config/nginxaddserverdialog.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
@@ -99,7 +103,9 @@ RESOURCES += \
 FORMS += \
     src/mainwindow.ui \
     src/config/configurationdialog.ui \
-    src/updater/updaterdialog.ui
+    src/updater/updaterdialog.ui \
+    src/config/nginxaddpooldialog.ui \
+    src/config/nginxaddserverdialog.ui
 
 # WINDOWS RC-FILE (sets the executable attributes)
 exists(C:\Windows\System32\cmd.exe) {

@@ -6,6 +6,9 @@
 #include <QFile>
 #include <QFileDialog>
 
+#include <QTreeWidgetItem>
+#include <QTableWidget>
+
 #include "../settings.h"
 #include "../windowsapi.h"
 #include "../servers.h"
@@ -42,6 +45,14 @@ namespace Configuration
             void setServers(Servers::Servers *servers);
             void hideAutostartCheckboxesOfNotInstalledServers();
 
+            void saveSettings_Nginx_Upstream();
+            QJsonValue serialize_toJSON_Nginx_Upstream_ServerTable(QTableWidget *servers);
+            QJsonValue serialize_toJSON_Nginx_Upstream_PoolsTable(QTableWidget *pools);
+
+            void writeNginxUpstreamConfigs(QJsonDocument jsonDoc);
+            QJsonObject getNginxUpstreamPoolByName(QString poolName);
+            void updateServersTable(QJsonObject jsonPool);
+
         private slots:
             void toggleAutostartDaemonCheckboxes(bool run = true);
             void onClickedButtonBoxOk();
@@ -49,8 +60,19 @@ namespace Configuration
             void on_toolButton_SelectEditor_clicked();
             void on_toolButton_ResetEditor_clicked();
 
-        private:
+            void on_configMenuTreeWidget_clicked(const QModelIndex &index);
+
+            void on_pushButton_Nginx_Upstream_AddPool_clicked();
+            void on_pushButton_Nginx_Upstream_AddServer_clicked();
+
+            void on_configMenuSearchLineEdit_textChanged(const QString &string);
+
+            void on_tableWidget_pools_itemSelectionChanged();
+
+    private:
             Ui::ConfigurationDialog *ui;
+
+            QSortFilterProxyModel     *configMenuFilterProxyModel;
 
             Settings::SettingsManager *settings;
             Servers::Servers          *servers;
@@ -71,6 +93,8 @@ namespace Configuration
             void readSettings();
             void writeSettings();
             void toggleRunOnStartup();
+
+            void loadNginxUpstreams();
     };
 
 }

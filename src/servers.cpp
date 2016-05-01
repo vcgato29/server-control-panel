@@ -378,21 +378,73 @@ namespace Servers
 
         emit signalMainWindow_updateVersion("PHP");
 
-        // start daemon
-        QString const startPHP = getServer("PHP")->exe
-                + " -b " + settings->get("php/fastcgi-host").toString()
-                + ":" + settings->get("php/fastcgi-port").toString();
-
         // disable PHP_FCGI_MAX_REQUESTS to go beyond the default request limit of 500 requests
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
         env.insert("PHP_FCGI_MAX_REQUESTS", "0");
-
         qDebug() << "[PHP] Set PHP_FCGI_MAX_REQUESTS \"0\" (disabled).";
-        qDebug() << "[PHP] Starting...\n" << startPHP;
 
         QProcess* process = getProcess("PHP");
         process->setEnvironment(env.toStringList());
-        process->start(startPHP);
+
+        // start daemon
+        /*QString const startPHP = getServer("PHP")->exe
+                + " -b " + settings->get("php/fastcgi-host").toString()
+                + ":" + settings->get("php/fastcgi-port").toString();
+        qDebug() << "[PHP] Starting...\n" << startPHP;*/
+
+        QString const startCmdWithPlaceholders("./bin/tools/spawn.exe ./bin/php/php-cgi.exe %1 %2");
+
+        QMapIterator<QString, QString> serversToStart( getServersFromUpstreamConfig() );
+
+        while(serversToStart.hasNext()) {
+            serversToStart.next();
+            QString port = serversToStart.key();
+            QString phpchildren = serversToStart.value();
+            QString startPHPCGI = QString(startCmdWithPlaceholders).arg(port, phpchildren);
+            qDebug() << "[PHP] Starting...\n" << startPHPCGI;
+
+            process->start(startPHPCGI);
+        }
+    }
+
+    QMap<QString, QString> Servers::getServersFromUpstreamConfig()
+    {
+        QMap<QString, QString> serversToStart;
+
+        // load JSON
+        QJsonDocument jsonDoc = File::JSON::load("./bin/wpnxm-scp/nginx-upstreams.json");
+        QJsonObject json = jsonDoc.object();
+        QJsonObject jsonPools = json["pools"].toObject();
+
+        // iterate over 1..n pools
+        for (QJsonObject:: Iterator iter = jsonPools.begin(); iter != jsonPools.end(); ++iter)
+        {
+            // get values for a "pool", we need the key "servers"
+            QJsonObject jsonPool    = iter.value().toObject();
+            QJsonObject jsonServers = jsonPool["servers"].toObject();
+
+            // iterate over 1..n jsonServers
+            for (int i = 0; i < jsonServers.count(); ++i)
+            {
+                // get values for a "server"
+                QJsonObject s = jsonServers.value(QString::number(i)).toObject();
+
+                // we want to start local servers only.
+                // external servers are possible, but the user has to start (and take care) of them.
+                if(s["address"].toString() == "localhost" or s["address"].toString() == "127.0.0.1") {
+
+                    // for starting local servers, we only need the Port and the number of PHP child processes to spawn
+                    serversToStart.insert(s["port"].toString(), s["phpchildren"].toString());
+                }
+            }
+        }
+
+        if(serversToStart.count() == 0) {
+            qDebug() << "[PHP] Found no servers to start. Check your upstream configuration.";
+            qDebug() << "[PHP] Some addresses must be localhost or 127.0.0.1.";
+        }
+
+        return serversToStart;
     }
 
     void Servers::stopPHP()

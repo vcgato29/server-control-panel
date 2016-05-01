@@ -9,7 +9,7 @@
 #include "servers.h"
 #include "settings.h"
 #include "tray.h"
-#include "configurationdialog.h"
+#include "config/configurationdialog.h"
 #include "updater/updaterdialog.h"
 
 namespace ServerControlPanel

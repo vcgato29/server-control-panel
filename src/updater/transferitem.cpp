@@ -9,7 +9,7 @@ namespace Downloader
         //qDebug() << "New TransferItem instantiated";
     }
 
-    void TransferItem::startRequest()
+    void TransferItem::startGetRequest()
     {
         qDebug() << "TransferItem::startRequest()";
 
@@ -21,6 +21,13 @@ namespace Downloader
 
         timer.start();
     }
+
+    // SLOT
+    void TransferItem::downloadFinished(TransferItem *self)
+    {
+
+    }
+
 
     void TransferItem::finished()
     {

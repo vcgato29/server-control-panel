@@ -14,13 +14,12 @@ namespace Downloader
             Q_OBJECT
         public:
             TransferItem(const QNetworkRequest &r, QNetworkAccessManager &n);
-            void startRequest();
+            void startGetRequest();
         signals:
-            void downloadFinished(TransferItem *self);
             void downloadProgress(QMap<QString, QVariant>);
-            void finished(TransferItem *self);
         public slots:
             void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+            void downloadFinished(TransferItem *self);
         private slots:
             void finished();
         public:
@@ -42,7 +41,9 @@ namespace Downloader
             Q_OBJECT
         public:
             DownloadItem(const QNetworkRequest &r, QNetworkAccessManager &nam);
-            ~DownloadItem();           
+            ~DownloadItem();
+        signals:
+            void downloadFinished(Downloader::TransferItem *self);
         private slots:
             void readyRead();
             void finished();

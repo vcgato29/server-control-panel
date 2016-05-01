@@ -153,19 +153,27 @@ bool ActionColumnItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *mo
 
         if(index.data(WidgetRole).toInt() == DownloadPushButton) {
             emit downloadButtonClicked(index);
+            return true;
         }
         if(index.data(WidgetRole).toInt() == InstallPushButton) {
             emit installButtonClicked(index);
+            return true;
         }
     }
 
     if(event->type() == QEvent::MouseButtonRelease) {
 
+        currentRow = -1;
+
         if(index.data(WidgetRole).toInt() == DownloadPushButton) {
             model->setData(index, DownloadProgressBar, WidgetRole);
+            model->dataChanged(index, index);
+            return true;
         }
         if(index.data(WidgetRole).toInt() == DownloadProgressBar) {
             model->setData(index, InstallPushButton, WidgetRole);
+            model->dataChanged(index, index);
+            return true;
         }
     }
 

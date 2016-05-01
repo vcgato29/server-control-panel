@@ -38,7 +38,7 @@ namespace Downloader
         qDebug() << "DownloadManager::finished()";
     }
 
-    void DownloadManager::downloadFinished(TransferItem *item)
+    void DownloadManager::downloadFinished(Downloader::TransferItem *item)
     {
         qDebug() << "Download finished " << item->reply->url();
         qDebug() << " with HTTP Status: " << item->reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -62,7 +62,7 @@ namespace Downloader
 
         foreach (TransferItem *item, transfers) {
             if (!item->reply) {
-                item->startRequest();
+                item->startGetRequest();
                 // by default multiple downloads are processed in parallel.
                 // but in serial mode, only one transfer starts at a time.
                 if (queueMode == Serial) {

@@ -78,7 +78,7 @@ namespace Updater
             rowItems.append(websiteURL);
 
             // Installed Version (= Your current version)
-            QString installedVersionString = "1.2.3"; // @todo detect currently installed versions
+            QString installedVersionString = "1.2.3"; // TODO: detect currently installed versions
             QStandardItem *installedVersion = new QStandardItem( installedVersionString );
             installedVersion->setTextAlignment(Qt::AlignCenter);
             rowItems.append(installedVersion);
@@ -215,15 +215,15 @@ namespace Updater
         request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
         // enqueue download request
-        //downloadManager.get(request);
+        downloadManager.get(request);
 
         // setup progressbar
         Downloader::TransferItem *transfer = downloadManager.findTransfer(downloadURL);
         ProgressBarUpdater *progressBar = new ProgressBarUpdater(this, index.row());        
         connect(transfer, SIGNAL(downloadProgress(QMap<QString, QVariant>)),
                 progressBar, SLOT(updateProgress(QMap<QString, QVariant>)));
-        connect(transfer, SIGNAL(downloadFinished(Downloader::TransferItem*)),
-                progressBar, SLOT(downloadFinished(Downloader::TransferItem*)));
+        connect(transfer, SIGNAL(downloadFinished(Downloader::TransferItem *t)),
+                progressBar, SLOT(downloadFinished(Downloader::TransferItem *t)));
 
         // finally: invoke downloading
         QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
@@ -245,14 +245,19 @@ namespace Updater
 
     void ProgressBarUpdater::downloadFinished(Downloader::TransferItem *transfer)
     {
-        Q_UNUSED(transfer);
-
         qDebug() << "ProgressBarUpdater::downloadFinished";
 
+        // if this transfer is a redirect, do not switch to the install button, when we reach 100%
+        // the progress bar is needed for possible other redirects and the final download indication
+        if(transfer->reply->attribute(QNetworkRequest::RedirectionTargetAttribute).isValid()) {
+            return;
+        }
+
         // when we reach 100%, "hide" progressBar and "show" Install Button
-        if(progress["bytesReceived"] == progress["bytesTotal"]) {
+        else if(progress["bytesReceived"] == progress["bytesTotal"]) {
             model->setData(index, ActionColumnItemDelegate::InstallPushButton, ActionColumnItemDelegate::WidgetRole);
         }
+
         model->dataChanged(index, index);
     }
 

@@ -64,7 +64,7 @@ namespace ServerControlPanel
 
         // -s, --service <daemon> <command>, where <command> is on|off
         if (parser.isSet(serviceOption)) {
-            // @todo install / uninstall daemon as service from CLI
+            // TODO: install / uninstall daemon as service from CLI
             // https://github.com/WPN-XM/WPN-XM/issues/39
         }
 

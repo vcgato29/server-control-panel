@@ -11,7 +11,11 @@
 #include <QProcess>
 #include <QMenu>
 
+#include <QJsonDocument>
+#include <QJsonObject>
+
 #include "settings.h"
+#include "json.h"
 
 namespace Servers
 {
@@ -111,6 +115,9 @@ namespace Servers
         private:
             QList<Server*> serverList;
             QString getProcessErrorMessage(QProcess::ProcessError);
+
+            QMap<QString, QString> getServersFromUpstreamConfig();
+
     };
 
 }
