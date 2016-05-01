@@ -6,9 +6,9 @@
 #include <QFile>
 #include <QFileDialog>
 
-#include "settings.h"
-#include "windowsapi.h"
-#include "servers.h"
+#include "../settings.h"
+#include "../windowsapi.h"
+#include "../servers.h"
 
 namespace Configuration
 {

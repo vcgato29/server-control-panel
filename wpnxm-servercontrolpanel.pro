@@ -54,7 +54,7 @@ HEADERS += \
     src/hostmanager/hosttablemodel.h \
     src/hostmanager/adddialog.h \
     src/hostmanager/hostmanagerdialog.h \
-    src/configurationdialog.h \
+    src/config/configurationdialog.h \
     src/settings.h \
     src/splashscreen.h \
     src/windowsapi.h \
@@ -77,7 +77,7 @@ SOURCES += \
     src/hostmanager/hosttablemodel.cpp \
     src/hostmanager/adddialog.cpp \
     src/hostmanager/hostmanagerdialog.cpp \
-    src/configurationdialog.cpp \
+    src/config/configurationdialog.cpp \
     src/settings.cpp \
     src/splashscreen.cpp \
     src/windowsapi.cpp \
@@ -98,7 +98,7 @@ RESOURCES += \
 
 FORMS += \
     src/mainwindow.ui \
-    src/configurationdialog.ui \
+    src/config/configurationdialog.ui \
     src/updater/updaterdialog.ui
 
 # WINDOWS RC-FILE (sets the executable attributes)
