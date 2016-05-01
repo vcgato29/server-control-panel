@@ -53,6 +53,8 @@ namespace Configuration
             QJsonObject getNginxUpstreamPoolByName(QString poolName);
             void updateServersTable(QJsonObject jsonPool);
 
+            void createNginxConfUpstreamFolderIfNotExists_And_clearOldConfigs();
+
         private slots:
             void toggleAutostartDaemonCheckboxes(bool run = true);
             void onClickedButtonBoxOk();

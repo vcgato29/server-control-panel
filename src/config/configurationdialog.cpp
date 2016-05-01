@@ -164,7 +164,9 @@ namespace Configuration
     }
 
     void ConfigurationDialog::writeNginxUpstreamConfigs(QJsonDocument jsonDoc)
-    {
+    {        
+        createNginxConfUpstreamFolderIfNotExists_And_clearOldConfigs();
+
         // build servers string by iterating over all pools
 
         QJsonObject json = jsonDoc.object();
@@ -210,7 +212,7 @@ namespace Configuration
                 "}\n"
             );
 
-            QString filename("./bin/"+poolName+".conf");
+            QString filename("./bin/nginx/conf/upstreams/"+poolName+".conf");
 
             QFile file(filename);
             if (file.open(QIODevice::ReadWrite | QFile::Truncate)) {
@@ -220,6 +222,23 @@ namespace Configuration
             file.close();
 
             qDebug() << "[Nginx Upstream Config] Saved: " << filename;
+        }
+    }
+
+    void ConfigurationDialog::createNginxConfUpstreamFolderIfNotExists_And_clearOldConfigs()
+    {
+        QDir dir("./bin/nginx/conf/upstreams");
+
+        // create Nginx Conf Upstream Folder If Not Exists
+        if(!dir.exists()) {
+            dir.mkpath(".");
+        }
+
+        // delete old upstream configs
+        dir.setNameFilters(QStringList() << "*.conf");
+        dir.setFilter(QDir::Files);
+        foreach(QString dirFile, dir.entryList()) {
+            dir.remove(dirFile);
         }
     }
 
