@@ -11,6 +11,7 @@
 #include "tray.h"
 #include "config/configurationdialog.h"
 #include "updater/updaterdialog.h"
+#include "selfupdater.h"
 
 namespace ServerControlPanel
 {
@@ -20,7 +21,7 @@ namespace ServerControlPanel
 
     class MainWindow : public QMainWindow
     {
-            Q_OBJECT  // Enables signals and slots
+        Q_OBJECT
 
         public:
             explicit MainWindow(QWidget *parent = 0);
@@ -92,6 +93,8 @@ namespace ServerControlPanel
             Settings::SettingsManager *settings;
             Servers::Servers          *servers;
 
+            Updater::SelfUpdater      *selfUpdater;
+
             QAction *minimizeAction;
             QAction *restoreAction;
             QAction *quitAction;
@@ -113,7 +116,7 @@ namespace ServerControlPanel
             QString getVersion(QString server);
 
             QString getLogfile(QString objectName);
-            QString getServerNameFromPushButton(QPushButton *button);
+            QString getServerNameFromPushButton(QPushButton *button);           
 
         signals:
             void mainwindow_show();
@@ -124,6 +127,8 @@ namespace ServerControlPanel
 
             void on_pushButton_Updater_clicked();
             void MainWindow_ShowEvent();
+
+            void showSelfUpdateNotification(QJsonObject versionInfo);
 
         protected:
             void closeEvent(QCloseEvent *event);

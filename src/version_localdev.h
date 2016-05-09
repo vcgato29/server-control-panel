@@ -3,9 +3,9 @@
 
 // Application version.
 // Its a token, replaced during the build process.
-#define VERSION = 1.2.3+githash
-#define APP_VERSION "1.2.3+githash"
-#define APP_VERSION_SHORT "1.2.3"
+#define VERSION = 0.8.5+githash
+#define APP_VERSION "0.8.5+githash"
+#define APP_VERSION_SHORT "0.8.5"
 
 // Application name
 #define APP_NAME "WPИ-XM Server Control Panel"

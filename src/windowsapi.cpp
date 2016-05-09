@@ -53,6 +53,34 @@ namespace WindowsAPI
         return shell_link;
     }
 
+    typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+
+    static BOOL IsWow64()
+    {
+        BOOL bIsWow64 = FALSE;
+        LPFN_ISWOW64PROCESS fnIsWow64Process = NULL;
+
+        fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+
+        if(NULL != fnIsWow64Process)
+        {
+            if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
+            {
+                //handle error
+            }
+        }
+        return bIsWow64;
+    }
+
+    bool running_on_64_bits_os()
+    {
+        #if defined(_M_X64) || defined(x86_64)
+        return true;
+        #else
+        return (IsWow64() == TRUE);
+        #endif
+    }
+
     /*QString getProcessPathByPid(QString pid)
     {
         // get process handle

@@ -25,9 +25,10 @@ namespace Downloader
     // SLOT
     void TransferItem::downloadFinished(TransferItem *self)
     {
+        Q_UNUSED(self);
 
+        // TODO TransferItem::downloadFinished
     }
-
 
     void TransferItem::finished()
     {

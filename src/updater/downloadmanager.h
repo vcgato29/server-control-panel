@@ -55,7 +55,7 @@ namespace Downloader
         public:
             DownloadManager();
             ~DownloadManager();
-            void get(const QNetworkRequest &request);
+            void get(QNetworkRequest &request);
             enum QueueMode { Parallel, Serial };
             void setQueueMode(QueueMode mode);
             TransferItem *findTransfer(QUrl url);

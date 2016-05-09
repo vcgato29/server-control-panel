@@ -383,9 +383,6 @@ namespace Servers
         env.insert("PHP_FCGI_MAX_REQUESTS", "0");
         qDebug() << "[PHP] Set PHP_FCGI_MAX_REQUESTS \"0\" (disabled).";
 
-        QProcess* process = getProcess("PHP");
-        process->setEnvironment(env.toStringList());
-
         // start daemon
         /*QString const startPHP = getServer("PHP")->exe
                 + " -b " + settings->get("php/fastcgi-host").toString()
@@ -403,7 +400,9 @@ namespace Servers
             QString startPHPCGI = QString(startCmdWithPlaceholders).arg(port, phpchildren);
             qDebug() << "[PHP] Starting...\n" << startPHPCGI;
 
-            process->start(startPHPCGI);
+            QProcess* process = getProcess("PHP");
+            process->setEnvironment(env.toStringList());
+            process->startDetached(startPHPCGI);
         }
     }
 

@@ -29,7 +29,7 @@ namespace ServerControlPanel
         trayMenu->addSeparator();
 
         // add local IPs to the tray menu
-        foreach(const QHostAddress &address, getLocalHostIPs()) {
+        foreach(const QHostAddress &address, NetworkUtils::getLocalHostIPs()) {
             trayMenu->addAction("IP: "+address.toString())->setFont(QFont("Arial", 9, QFont::Bold));
         }
         trayMenu->addSeparator();
@@ -52,37 +52,6 @@ namespace ServerControlPanel
         trayMenu->addAction(QIcon(":/report_bug"), tr("&Report Bug"), this, SLOT(goToReportIssue()), QKeySequence());
         trayMenu->addAction(QIcon(":/question"),tr("&Help"), this, SLOT(goToWebsiteHelp()), QKeySequence());
         trayMenu->addAction(QIcon(":/quit"),tr("&Quit"), qApp, SLOT(quit()), QKeySequence());
-    }
-
-    /**
-     * Note: this method depends on "QT += network" in the .pro file
-     */
-    QList<QHostAddress> Tray::getLocalHostIPs()
-    {
-        QList<QHostAddress> ips;
-        QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-
-        foreach(QNetworkInterface iface, interfaces)
-        {
-            if(iface.flags().testFlag(QNetworkInterface::IsUp) &&
-               iface.flags().testFlag(QNetworkInterface::IsRunning) &&
-              !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
-            {
-                foreach(const QNetworkAddressEntry &entry, iface.addressEntries())
-                {
-                    QHostAddress ip = entry.ip();
-                    // ignore local host IPs
-                    if (ip == QHostAddress::LocalHost || ip == QHostAddress::LocalHostIPv6) {
-                        continue;
-                    }
-                    if(ip.protocol() == QAbstractSocket::IPv4Protocol) {
-                        ips.append(ip);
-                    }
-                }
-            }
-        }
-
-        return ips;
     }
 
     void Tray::goToWebinterface()

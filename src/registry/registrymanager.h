@@ -25,7 +25,7 @@ namespace SoftwareRegistry
     {
         public:
             Manager();
-            QJsonObject getStackSoftwareRegistry();
+            QJsonObject getServerStackSoftwareRegistry();
             //QJsonObject getPhpSoftwareRegistry();
         private:
             void download();

@@ -21,7 +21,7 @@ namespace Updater
 
         softwareRegistry  = new SoftwareRegistry::Manager();
 
-        initModel(softwareRegistry->getStackSoftwareRegistry());
+        initModel(softwareRegistry->getServerStackSoftwareRegistry());
         initView();
     }
 
@@ -209,10 +209,6 @@ namespace Updater
 
         // setup Network Request
         QNetworkRequest request(downloadURL);
-        QString appVersion(qApp->applicationName()+qApp->applicationVersion());
-        const static QByteArray userAgent(QByteArray(appVersion.toStdString().c_str()));
-        request.setRawHeader("User-Agent", userAgent);
-        request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
         // enqueue download request
         downloadManager.get(request);

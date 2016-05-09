@@ -23,9 +23,17 @@ namespace Downloader
     {
     }
 
-    void DownloadManager::get(const QNetworkRequest &request)
+    void DownloadManager::get(QNetworkRequest &request)
     {
         qDebug() << "DownloadManager::get()" << "Download enqueued.";
+
+        // set Request Headers
+        QString appVersion(qApp->applicationName()+qApp->applicationVersion());
+        const static QByteArray userAgent(QByteArray(appVersion.toStdString().c_str()));
+        request.setRawHeader("User-Agent", userAgent);
+        request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+
+        // enqueue the download
         DownloadItem *dl = new DownloadItem(request, nam);
         transfers.append(dl);
         FilesToDownloadCounter = transfers.count();

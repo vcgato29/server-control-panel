@@ -19,7 +19,7 @@ namespace SoftwareRegistry
         /**
          * Server Stack Software Registry
          */
-        QString stackRegistryFile = QDir::currentPath() + "/bin/stack-registry.json";
+        QString stackRegistryFile = QDir::currentPath() + "/bin/wpnxm-scp/stack-registry.json";
 
         if(fileNotExistingOrOutdated(stackRegistryFile)) {
             downloadRegistry(QUrl("http://wpn-xm.org/updatecheck.php?s=all"), stackRegistryFile);
@@ -28,8 +28,17 @@ namespace SoftwareRegistry
             stackSoftwareRegistry = File::JSON::load(stackRegistryFile);
         }
 
-        // php registry
-        // metadata
+        /**
+         * PHP Application Registry
+         */
+
+        // TODO download PHP Application Registry
+
+        /**
+         * Registry Metadata
+         */
+
+        // TODO download Registry Metadata
     }
 
     void Manager::downloadRegistry(QUrl url, QString file)
@@ -91,7 +100,7 @@ namespace SoftwareRegistry
         return false;
     }
 
-    QJsonObject Manager::getStackSoftwareRegistry()
+    QJsonObject Manager::getServerStackSoftwareRegistry()
     {
         return stackSoftwareRegistry.object();
     }

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "ProcessViewerDialog.h"
+
 namespace ServerControlPanel
 {
 
@@ -61,6 +63,14 @@ namespace ServerControlPanel
 
         // set window size fixed
         setFixedSize(width(), height());
+
+        //ProcessViewerDialog *pvd = new ProcessViewerDialog(this);
+        //pvd->exec();
+
+        selfUpdater = new Updater::SelfUpdater();
+        connect(selfUpdater, SIGNAL(notifyUpdateAvailable(QJsonObject)),
+                this, SLOT(showSelfUpdateNotification(QJsonObject)));
+        selfUpdater->run();
     }
 
     MainWindow::~MainWindow()
@@ -73,6 +83,17 @@ namespace ServerControlPanel
 
         delete ui;
         delete tray;
+    }
+
+    // TODO move to Notification Class
+    void MainWindow::showSelfUpdateNotification(QJsonObject versionInfo)
+    {
+        tray->showMessage(
+            "WPN-XM Server Control Panel\nUpdate available!\n",
+            versionInfo["message"].toString(),
+            QSystemTrayIcon::Information,
+            12000
+        );
     }
 
     void MainWindow::createTrayIcon()

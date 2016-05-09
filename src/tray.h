@@ -13,14 +13,14 @@
 #include <QTimer>
 #include <QDesktopServices>
 #include <QUrl>
-#include <QNetworkInterface>
-#include <QNetworkAddressEntry>
+
 #include <QHostAddress>
 
 #include "version.h"
 #include "servers.h"
 #include "hostmanager/hostmanagerdialog.h"
 #include "settings.h"
+#include "networkutils.h"
 
 namespace ServerControlPanel
 {
@@ -47,7 +47,6 @@ namespace ServerControlPanel
 
         private:
             void createTrayMenu();
-            QList<QHostAddress> getLocalHostIPs();
 
             Settings::SettingsManager *settings;
             Servers::Servers          *servers;

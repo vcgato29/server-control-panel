@@ -5,8 +5,8 @@ namespace HostsFileManager
     HostsAddDialog::HostsAddDialog(QWidget *parent) :
         QDialog(parent)
     {
-        // remove question mark (?) from the title bar
-        setWindowFlags(Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
+        // remove question mark from the title bar
+        setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
         QPushButton* btnOk = new QPushButton("OK", this);
         QPushButton* btnCancel = new QPushButton("Cancel", this);

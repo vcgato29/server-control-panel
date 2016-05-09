@@ -55,21 +55,27 @@ HEADERS += \
     src/hostmanager/adddialog.h \
     src/hostmanager/hostmanagerdialog.h \
     src/config/configurationdialog.h \
+    src/config/nginxaddpooldialog.h \
+    src/config/nginxaddserverdialog.h \
     src/settings.h \
     src/splashscreen.h \
     src/windowsapi.h \
     src/servers.h \
     src/cli.h \
-    src/updater/updaterdialog.h \
     src/json.h \
     src/selfupdater.h \
     src/filehandling.h \
+    src/registry/registrymanager.h \
+    src/updater/updaterdialog.h \
     src/updater/actioncolumnitemdelegate.h \
     src/updater/softwarecolumnitemdelegate.h \
-    src/registry/registrymanager.h \
     src/updater/downloadmanager.h \
-    src/config/nginxaddpooldialog.h \
-    src/config/nginxaddserverdialog.h
+    src/updater/package.h \
+    src/services.h \
+    src/networkutils.h \
+    src/jobscheduler.h \
+    src/ProcessViewerDialog.h \
+    src/csv.h
 
 SOURCES += \
     src/app/main.cpp \
@@ -80,22 +86,28 @@ SOURCES += \
     src/hostmanager/adddialog.cpp \
     src/hostmanager/hostmanagerdialog.cpp \
     src/config/configurationdialog.cpp \
+    src/config/nginxaddpooldialog.cpp \
+    src/config/nginxaddserverdialog.cpp \
     src/settings.cpp \
     src/splashscreen.cpp \
     src/windowsapi.cpp \
     src/servers.cpp \
-    src/cli.cpp \
-    src/updater/updaterdialog.cpp \
+    src/cli.cpp \   
     src/json.cpp \
     src/selfupdater.cpp \
     src/filehandling.cpp \
+    src/updater/updaterdialog.cpp \
     src/updater/actioncolumnitemdelegate.cpp \
     src/updater/softwarecolumnitemdelegate.cpp \
     src/registry/registrymanager.cpp \
     src/updater/downloadmanager.cpp \
     src/updater/transferitem.cpp \
-    src/config/nginxaddpooldialog.cpp \
-    src/config/nginxaddserverdialog.cpp
+    src/updater/package.cpp \
+    src/services.cpp \
+    src/networkutils.cpp \
+    src/jobscheduler.cpp \
+    src/ProcessViewerDialog.cpp \
+    src/csv.cpp
 
 RESOURCES += \
     src/resources/resources.qrc
@@ -103,9 +115,10 @@ RESOURCES += \
 FORMS += \
     src/mainwindow.ui \
     src/config/configurationdialog.ui \
-    src/updater/updaterdialog.ui \
     src/config/nginxaddpooldialog.ui \
-    src/config/nginxaddserverdialog.ui
+    src/config/nginxaddserverdialog.ui \
+    src/updater/updaterdialog.ui \
+    src/ProcessViewerDialog.ui
 
 # WINDOWS RC-FILE (sets the executable attributes)
 exists(C:\Windows\System32\cmd.exe) {
@@ -204,4 +217,3 @@ win32:contains($(TRAVIS), false) {
 #dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qico.dll
 #dllB.files  += $$[QT_INSTALL_PLUGINS]/imageformats/qwbmp.dll
 #INSTALLS   += dlls dllA dllB
-
