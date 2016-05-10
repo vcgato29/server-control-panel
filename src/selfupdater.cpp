@@ -1,8 +1,5 @@
 #include "selfupdater.h"
 
-#include "version.h"
-#include "windowsapi.h"
-
 #include <QFileInfo>
 #include <QCoreApplication>
 #include <QApplication>
@@ -41,9 +38,7 @@ namespace Updater
         if(updateAvailable())
         {
             qDebug() << "[SelfUpdater] Update available \n VersionInfo:" << versionInfo;
-
             emit notifyUpdateAvailable(versionInfo);
-
             downloadNewVersion();
             switchToNewExecutable();
             indicateNeedForRestart();
@@ -53,13 +48,17 @@ namespace Updater
     bool SelfUpdater::updateAvailable()
     {
         versionInfo = getVersionInfo();
-
         return versionInfo["update_available"].toBool();
     }
 
     void SelfUpdater::downloadNewVersion()
     {
-
+        QString downloadURL(versionInfo["url"].toString());
+        QNetworkRequest request(downloadURL);
+        downloadManager.setQueueMode(Downloader::DownloadManager::QueueMode::Serial);
+        downloadManager.get(request);
+        // finally: invoke downloading
+        QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
     }
 
     void SelfUpdater::switchToNewExecutable()

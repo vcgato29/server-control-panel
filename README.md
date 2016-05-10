@@ -10,6 +10,8 @@ The WPN-XM Server Control Panel is written in Qt v5.2+.
 ## Build Dependencies
 
 * Qt >= 5.2
+* QuaZIP
+  * zlib
 
 ### Downloading Qt
 

@@ -43,6 +43,11 @@ LIBS += -luuid -lole32
 #CONFIG(release, debug|release):DEFINES += QT_NO_WARNING_OUTPUT QT_NO_DEBUG_OUTPUT QT_NO_TRANSLATION
 #@
 
+DEFINES += QUAZIP_STATIC
+include(third-party/quazip-0.7.2/quazip.pri)
+include(third-party/zlib-1.2.8)
+LIBS += -lz
+
 QMAKE_CXXFLAGS -= -fno-keep-inline-dllexport
 
 HEADERS += \
@@ -147,7 +152,7 @@ CONFIG(debug, debug|release): DESTDIR = debug
 static {                                      # everything below takes effect with CONFIG += static
     message("~~~ Static Build ~~~")           # this is for information, that a static build is done
 
-    CONFIG += static staticlib
+    CONFIG += staticlib
     DEFINES += STATIC
 
     TARGET = $$join(TARGET,,,-static)  # this appends -static to the exe, so you can seperate static build from non static build

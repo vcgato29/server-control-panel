@@ -1,6 +1,11 @@
 #ifndef SELFUPDATER_H
 #define SELFUPDATER_H
 
+#include "version.h"
+#include "windowsapi.h"
+
+#include "updater/downloadmanager.h"
+
 #include <QJsonObject>
 #include <QObject>
 
@@ -26,6 +31,9 @@ namespace Updater
             QString getUpdateCheckURL();
             QJsonObject getVersionInfo();
             QJsonObject versionInfo;
+
+        protected:
+            Downloader::DownloadManager  downloadManager;
 
         signals:
             QJsonObject notifyUpdateAvailable(QJsonObject versionInfo);
