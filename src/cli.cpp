@@ -23,8 +23,9 @@ namespace ServerControlPanel
         parser.addOption(versionOption);
 
         // -s, --service
-        QCommandLineOption serviceOption(QStringList() << "s" << "service", "Install/Uninstall daemon as service.", "[daemon] [command]");
-        parser.addOption(serviceOption);
+        // TODO: install / uninstall daemon as service from CLI (part1)
+        //QCommandLineOption serviceOption(QStringList() << "s" << "service", "Install/Uninstall daemon as service.", "[daemon] [command]");
+        //parser.addOption(serviceOption);
 
         // -d, --daemon
         QCommandLineOption daemonOption(QStringList() << "d" << "daemon", "Execute a command on daemon.", "[daemon] [command]");
@@ -63,10 +64,10 @@ namespace ServerControlPanel
         }
 
         // -s, --service <daemon> <command>, where <command> is on|off
-        if (parser.isSet(serviceOption)) {
-            // TODO: install / uninstall daemon as service from CLI
+        //if (parser.isSet(serviceOption)) {
+            // TODO: install / uninstall daemon as service from CLI (part2)
             // https://github.com/WPN-XM/WPN-XM/issues/39
-        }
+        //}
 
         // -d, --daemon <daemon> <command>, where <command> is start|stop|restart
         if (parser.isSet(daemonOption)) {
