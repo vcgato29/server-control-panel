@@ -29,6 +29,8 @@ namespace Configuration
         loadNginxUpstreams();
 
         connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(onClickedButtonBoxOk()));
+
+        ui->configMenuTreeWidget->expandAll();
     }
 
     ConfigurationDialog::~ConfigurationDialog()

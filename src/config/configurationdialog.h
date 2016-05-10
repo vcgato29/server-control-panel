@@ -45,6 +45,8 @@ namespace Configuration
             void setServers(Servers::Servers *servers);
             void hideAutostartCheckboxesOfNotInstalledServers();
 
+            // TODO move nginx stuff into a "nginx config class"
+
             void saveSettings_Nginx_Upstream();
             QJsonValue serialize_toJSON_Nginx_Upstream_ServerTable(QTableWidget *servers);
             QJsonValue serialize_toJSON_Nginx_Upstream_PoolsTable(QTableWidget *pools);
