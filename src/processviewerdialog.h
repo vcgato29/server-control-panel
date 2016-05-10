@@ -1,5 +1,5 @@
-#ifndef ProcessViewerDialog_H
-#define ProcessViewerDialog_H
+#ifndef PROCESSVIEWERDIALOG_H
+#define PROCESSVIEWERDIALOGg_H
 
 #include "src/csv.h"
 
@@ -29,4 +29,4 @@ class ProcessViewerDialog : public QDialog
         Ui::ProcessViewerDialog *ui;
 };
 
-#endif // ProcessViewerDialog_H
+#endif // PROCESSVIEWERDIALOG_H

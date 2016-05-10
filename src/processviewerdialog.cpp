@@ -1,5 +1,5 @@
-#include "ProcessViewerDialog.h"
-#include "ui_ProcessViewerDialog.h"
+#include "processviewerdialog.h"
+#include "ui_processviewerdialog.h"
 
 ProcessViewerDialog::ProcessViewerDialog(QWidget *parent) :
     QDialog(parent),
