@@ -210,6 +210,14 @@ namespace Updater
         // setup Network Request
         QNetworkRequest request(downloadURL);
 
+        // setup download folder
+        QString downloadFolder(QCoreApplication::applicationDirPath()+QDir::separator()+"downloads");
+        if (!QDir(downloadFolder).exists()) {
+            QDir(downloadFolder).mkpath(".");
+        }
+        downloadManager.setDownloadFolder(downloadFolder);
+        downloadManager.setDownloadMode(Downloader::DownloadItem::DownloadMode::SkipIfExists);
+
         // enqueue download request
         downloadManager.get(request);
 
@@ -218,7 +226,7 @@ namespace Updater
         ProgressBarUpdater *progressBar = new ProgressBarUpdater(this, index.row());        
         connect(transfer, SIGNAL(downloadProgress(QMap<QString, QVariant>)),
                 progressBar, SLOT(updateProgress(QMap<QString, QVariant>)));
-        connect(transfer, SIGNAL(downloadFinished(Downloader::TransferItem *t)),
+        connect(transfer, SIGNAL(transferFinished(Downloader::TransferItem *t)),
                 progressBar, SLOT(downloadFinished(Downloader::TransferItem *t)));
 
         // finally: invoke downloading

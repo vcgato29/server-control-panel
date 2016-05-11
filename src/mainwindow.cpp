@@ -67,10 +67,7 @@ namespace ServerControlPanel
         //ProcessViewerDialog *pvd = new ProcessViewerDialog(this);
         //pvd->exec();
 
-        selfUpdater = new Updater::SelfUpdater();
-        connect(selfUpdater, SIGNAL(notifyUpdateAvailable(QJsonObject)),
-                this, SLOT(showSelfUpdateNotification(QJsonObject)));
-        selfUpdater->run();
+        runSelfUpdate();
     }
 
     MainWindow::~MainWindow()
@@ -85,12 +82,22 @@ namespace ServerControlPanel
         delete tray;
     }
 
+    void MainWindow::runSelfUpdate()
+    {
+        selfUpdater = new Updater::SelfUpdater();
+        connect(selfUpdater, SIGNAL(notifyUpdateAvailable(QJsonObject)),
+                this, SLOT(showSelfUpdateNotification(QJsonObject)));
+        selfUpdater->run();
+    }
+
     // TODO move to Notification Class
     void MainWindow::showSelfUpdateNotification(QJsonObject versionInfo)
     {
+        Q_UNUSED(versionInfo); //versionInfo["message"].toString(),
+
         tray->showMessage(
             "WPN-XM Server Control Panel\nUpdate available!\n",
-            versionInfo["message"].toString(),
+            "You are running an old version of the SCP. Automatic update in progress...",
             QSystemTrayIcon::Information,
             12000
         );

@@ -17,9 +17,9 @@ namespace Downloader
             void startGetRequest();
         signals:
             void downloadProgress(QMap<QString, QVariant>);
+            void transferFinished(TransferItem *self);
         public slots:
-            void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-            void downloadFinished(TransferItem *self);
+            void updateDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);            
         private slots:
             void finished();
         public:
@@ -27,7 +27,7 @@ namespace Downloader
             QNetworkReply *reply;
             QNetworkAccessManager &nam;
             QFile *inputFile;
-            QFile *outputFile;
+            QFile *outputFile;            
             QList<QUrl> redirects;
             QElapsedTimer timer;
             QMap<QString, QVariant> progress;
@@ -42,8 +42,14 @@ namespace Downloader
         public:
             DownloadItem(const QNetworkRequest &r, QNetworkAccessManager &nam);
             ~DownloadItem();
+            void setDownloadFolder(QString folder);
+            enum DownloadMode { SkipIfExists, Overwrite, Enumerate } downloadMode = SkipIfExists;
+            void setDownloadMode(DownloadItem::DownloadMode mode);
+        private:
+            QString downloadFolder;
+            bool downloadSkipped;
         signals:
-            void downloadFinished(Downloader::TransferItem *self);
+            void transferFinished(Downloader::TransferItem *self);
         private slots:
             void readyRead();
             void finished();
@@ -55,10 +61,14 @@ namespace Downloader
         public:
             DownloadManager();
             ~DownloadManager();
+            void get(QNetworkRequest &request, QString dlFolder, DownloadItem::DownloadMode dlMode);
             void get(QNetworkRequest &request);
             enum QueueMode { Parallel, Serial };
             void setQueueMode(QueueMode mode);
             TransferItem *findTransfer(QUrl url);
+
+            void setDownloadFolder(QString downloadFolder);
+            void setDownloadMode(DownloadItem::DownloadMode mode);
 
         public slots:
             void checkForAllDone();
@@ -74,7 +84,9 @@ namespace Downloader
 
             QNetworkAccessManager nam;
             QList<TransferItem*> transfers;
-            QueueMode queueMode;           
+            QueueMode queueMode;
+            QString downloadFolder;
+            DownloadItem::DownloadMode downloadMode = DownloadItem::DownloadMode::SkipIfExists;
 
         public:
             int FilesDownloadedCounter;

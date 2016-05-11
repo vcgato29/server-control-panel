@@ -294,21 +294,22 @@ QString JlCompress::extractFile(QString fileCompressed, QString fileName, QStrin
 QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
 {
     if(!zip.open(QuaZip::mdUnzip)) {
-        return QString();
+        qDebug() << zip.getZipError();
+        return QString("Could not open zip.");
     }
 
     // Estraggo il file
     if (fileDest.isEmpty())
         fileDest = fileName;
     if (!extractFile(&zip,fileName,fileDest)) {
-        return QString();
+        return QString("Could not extract file.");
     }
 
     // Chiudo il file zip
     zip.close();
     if(zip.getZipError()!=0) {
         removeFile(QStringList(fileDest));
-        return QString();
+        return QString("ZipErrorCode" + zip.getZipError());
     }
     return QFileInfo(fileDest).absoluteFilePath();
 }

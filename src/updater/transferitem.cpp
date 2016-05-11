@@ -1,4 +1,6 @@
 #include "downloadmanager.h"
+
+#include <QDir>
 #include <QDebug>
 
 namespace Downloader
@@ -22,17 +24,9 @@ namespace Downloader
         timer.start();
     }
 
-    // SLOT
-    void TransferItem::downloadFinished(TransferItem *self)
-    {
-        Q_UNUSED(self);
-
-        // TODO TransferItem::downloadFinished
-    }
-
     void TransferItem::finished()
     {
-        emit downloadFinished(this);
+        emit transferFinished(this);
     }
 
     // SLOT
@@ -67,7 +61,8 @@ namespace Downloader
     }
 
     DownloadItem::DownloadItem(const QNetworkRequest &r, QNetworkAccessManager &manager)
-        : TransferItem(r, manager)
+        : TransferItem(r, manager),
+          downloadMode(DownloadItem::DownloadMode::SkipIfExists), downloadFolder()
     {
     }
 
@@ -87,24 +82,56 @@ namespace Downloader
             //qDebug() << reply->header(QNetworkRequest::ContentTypeHeader) << reply->header(QNetworkRequest::ContentLengthHeader);
 
             // get filename from URL
-            QString path = reply->url().path();
-            path = path.mid(path.lastIndexOf('/') + 1);
-            if (path.isEmpty()) {
-                path = QLatin1String("index.html"); // fallback filename
+            QString fileName = reply->url().path();
+            fileName = fileName.mid(fileName.lastIndexOf('/') + 1);
+            if (fileName.isEmpty()) {
+                fileName = QLatin1String("index.html"); // fallback filename
             }
-            outputFile->setFileName(path);            
+            qDebug() << "[DownloadItem::readyRead] Filename from URL:" << fileName;
 
-            // if the file already exists, append a number, e.g. "file.zip.1"
-            for (int i=1;i<1000;i++) {
-                if (!outputFile->exists() && outputFile->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-                    break;
+            // TODO move to settings function? (folder name should be fixed/ensured, when set and get to/from settings)
+            if(!downloadFolder.endsWith(QDir::separator())) {
+                downloadFolder.append(QDir::separator());
+            }
+
+            QString downloadFilePath = QDir::toNativeSeparators(downloadFolder.append(fileName));
+
+            outputFile->setFileName(downloadFilePath);
+
+            qDebug() << "[DownloadItem::readyRead] Download FullFilePath:" << downloadFilePath;
+            qDebug() << "[DownloadItem::readyRead] DownloadMode" << downloadMode;
+
+            if(downloadMode == DownloadMode::SkipIfExists) {
+                qDebug() << "[DownloadItem::readyRead] DownloadMode::SkipIfExists - File exists:" << outputFile->exists();
+                if(outputFile->exists()) {
+                    downloadSkipped = true;
+                    reply->abort();
+                    return;
                 }
-                outputFile->setFileName(QString(QLatin1String("%1.%2")).arg(path).arg(i));
+                outputFile->open(QIODevice::WriteOnly | QIODevice::Truncate);
+            }
+            else if(downloadMode == DownloadMode::Overwrite) {
+                // if the file already exists, overwrite (delete and write)
+                if(outputFile->exists()) {
+                    outputFile->remove();
+                }
+                outputFile->open(QIODevice::WriteOnly | QIODevice::Truncate);
+            }
+            else if(downloadMode == DownloadMode::Enumerate) {
+                // if the file already exists, append a number, e.g. "file.zip.1"
+                for (int i=1;i<1000;i++) {
+                    if (!outputFile->exists() && outputFile->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+                        break;
+                    }
+                    QString enumedFileName = QString(QLatin1String("%1.%2")).arg(fileName).arg(i);
+                    QString downloadFilePath = QDir::toNativeSeparators(downloadFolder.append(enumedFileName));
+                    outputFile->setFileName(downloadFilePath);
+                }
             }
 
             // if file still not open, abort
             if (!outputFile->isOpen()) {
-                qDebug() << "couldn't open output file";
+                qDebug() << "[DownloadItem::readyRead] couldn't open output file" << outputFile->fileName();
                 reply->abort();
                 return;
             }
@@ -122,6 +149,12 @@ namespace Downloader
 
         // handle Redirection
         if (reply->attribute(QNetworkRequest::RedirectionTargetAttribute).isValid()) {
+
+            if(downloadSkipped) {
+                timer.invalidate();
+                return;
+            }
+
             QUrl url = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
             url = reply->url().resolved(url);
             qDebug() << "[DownloadItem] Finished, but " << reply->url() << "redirected to " << url;
@@ -157,6 +190,16 @@ namespace Downloader
 
         timer.invalidate();
 
-        emit downloadFinished(this);
+        emit transferFinished(this);
+    }
+
+    void DownloadItem::setDownloadFolder(QString folder)
+    {
+        downloadFolder = folder;
+    }
+
+    void DownloadItem::setDownloadMode(DownloadItem::DownloadMode mode)
+    {
+        downloadMode = mode;
     }
 }

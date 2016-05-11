@@ -86,6 +86,8 @@ namespace ServerControlPanel
 
             void execEditor(QUrl logfile);
 
+            void runSelfUpdate();
+
         private:
             Ui::MainWindow *ui;
 
@@ -103,7 +105,6 @@ namespace ServerControlPanel
             void checkPorts();
             void createActions();
             void createTrayIcon();
-            void startMonitoringDaemonProcesses();
 
             void setDefaultSettings();
             void autostartDaemons();

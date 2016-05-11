@@ -23,6 +23,13 @@ namespace Downloader
     {
     }
 
+    void DownloadManager::get(QNetworkRequest &request, QString dlFolder, DownloadItem::DownloadMode dlMode)
+    {
+        setDownloadFolder(dlFolder);
+        setDownloadMode(dlMode);
+        get(request);
+    }
+
     void DownloadManager::get(QNetworkRequest &request)
     {
         qDebug() << "DownloadManager::get()" << "Download enqueued.";
@@ -35,10 +42,14 @@ namespace Downloader
 
         // enqueue the download
         DownloadItem *dl = new DownloadItem(request, nam);
+
+        dl->setDownloadFolder(downloadFolder);
+        dl->setDownloadMode(downloadMode);
+
         transfers.append(dl);
         FilesToDownloadCounter = transfers.count();
 
-        connect(dl, SIGNAL(downloadFinished(TransferItem*)), SLOT(downloadFinished(TransferItem*)));
+        connect(dl, SIGNAL(transferFinished(TransferItem*)), SLOT(downloadFinished(TransferItem*)));
     }
 
     void DownloadManager::finished(QNetworkReply *)
@@ -114,5 +125,15 @@ namespace Downloader
     void DownloadManager::setQueueMode(QueueMode mode)
     {
         queueMode = mode;
+    }
+
+    void DownloadManager::setDownloadFolder(QString folder)
+    {
+        downloadFolder = folder;
+    }
+
+    void DownloadManager::setDownloadMode(DownloadItem::DownloadMode mode)
+    {
+        downloadMode = mode;
     }
 }

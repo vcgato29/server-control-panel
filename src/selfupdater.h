@@ -24,18 +24,22 @@ namespace Updater
             bool updateAvailable();            
 
             void downloadNewVersion();
-            void renameExecutable();
-            void extract();
+            void renameExecutable();            
 
-            void indicateNeedForRestart();
+            void askForRestart();
+
+        public slots:
+            void extract();
 
         private:
             QString getUpdateCheckURL();
             QJsonObject getVersionInfo();
             QJsonObject versionInfo;
+            QString downloadFolder;
 
         protected:
             Downloader::DownloadManager  downloadManager;
+            QNetworkAccessManager        network;
 
         signals:
             QJsonObject notifyUpdateAvailable(QJsonObject versionInfo);
