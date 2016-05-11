@@ -3,8 +3,9 @@
 
 #include "version.h"
 #include "windowsapi.h"
-
 #include "updater/downloadmanager.h"
+
+#include "third-party/quazip/quazip/JlCompress.h"
 
 #include <QJsonObject>
 #include <QObject>
@@ -23,7 +24,8 @@ namespace Updater
             bool updateAvailable();            
 
             void downloadNewVersion();
-            void switchToNewExecutable();
+            void renameExecutable();
+            void extract();
 
             void indicateNeedForRestart();
 

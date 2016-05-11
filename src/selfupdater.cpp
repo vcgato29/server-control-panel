@@ -18,15 +18,18 @@ namespace Updater
      *
      * Self_Update implements a self-update strategy for this executable.
      *
-     * 1. download new version as "wpnxm-scp.new-version.exe"
-     * 2. rename running "wpnxm-scp.exe" to "wpnxm-scp.exe.old"
-     * 3. rename "wpnxm-scp.new-version.exe" to "wpnxm-scp.exe" (new version replaces old one)
-     * 4. indicate the need for a manual restart
-     * 5. on (re)start of new exe: remove "wpnxm-scp.exe.old"
+     * 1. check if new version available
+     * 2. download new version
+     * 3. remove .old file
+     * 4. rename running "wpn-xm.exe" to "wpn-xm.exe.old"
+     * 5. extract "wpn-xm.exe" (new version replaces old one)
+     * 6. indicate the need for a manual restart
+     * 7. on (re)start of new exe: remove "wpnxm-scp.exe.old"
      *
      */
     SelfUpdater::SelfUpdater()
     {
+        qDebug() << "[SelfUpdater] Started...";
     }
 
     SelfUpdater::~SelfUpdater()
@@ -40,7 +43,8 @@ namespace Updater
             qDebug() << "[SelfUpdater] Update available \n VersionInfo:" << versionInfo;
             emit notifyUpdateAvailable(versionInfo);
             downloadNewVersion();
-            switchToNewExecutable();
+            renameExecutable();
+            extract();
             indicateNeedForRestart();
         }
     }
@@ -58,18 +62,37 @@ namespace Updater
         downloadManager.setQueueMode(Downloader::DownloadManager::QueueMode::Serial);
         downloadManager.get(request);
         // finally: invoke downloading
-        QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
+        downloadManager.checkForAllDone();
+        //QMetaObject::invokeMethod(&downloadManager, "checkForAllDone", Qt::QueuedConnection);
     }
 
-    void SelfUpdater::switchToNewExecutable()
+    void SelfUpdater::extract()
     {
-        QString exeName     = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
-        QString oldExeName	= exeName + ".old";
+        QUrl url(versionInfo["url"].toString());
+        QString zipName(url.fileName());
+        QString fileToExtract("wpn-xm.exe");
+        QString targetPath(QCoreApplication::applicationDirPath());
 
-        QFile::copy(exeName, oldExeName); // wpnxm-scp.exe -> wpnxm-scp.exe.old
-        QFile::remove(exeName);
+        qDebug() << "[SelfUpdater] Extracting " << fileToExtract << "from" << zipName << "to" << targetPath;
 
-        //QApplication::exit();
+        //qDebug() << "[SelfUpdater] Filelist:" << JlCompress::getFileList(zipName);
+
+        JlCompress::extractFile(zipName, fileToExtract, targetPath);
+    }
+
+    void SelfUpdater::renameExecutable()
+    {
+        QString dirPath        = QCoreApplication::applicationDirPath();
+        QString exeFilePath    = QCoreApplication::applicationFilePath();
+        QString exeName        = QFileInfo(exeFilePath).fileName();
+        QString oldExeName	   = exeName + ".old";
+        QString oldExeFilePath = dirPath + QDir::separator() + oldExeName;
+
+        qDebug() << "[SelfUpdater] Renaming" << exeFilePath << oldExeFilePath;
+        // delete the destination file first (old .old file)
+        qDebug() << "[SelfUpdater] delete target first:" << QFile::remove(oldExeFilePath);
+        qDebug() << "[SelfUpdater] copy:" << QFile::copy(exeFilePath, oldExeFilePath);     // wpn-xm.exe -> wpn-xm.exe.old
+        qDebug() << "[SelfUpdater] remove:" << QFile::remove(exeFilePath);
     }
 
     void SelfUpdater::indicateNeedForRestart() {

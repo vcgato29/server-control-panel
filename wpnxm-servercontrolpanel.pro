@@ -44,8 +44,8 @@ LIBS += -luuid -lole32
 #@
 
 DEFINES += QUAZIP_STATIC
-include(third-party/quazip-0.7.2/quazip.pri)
-include(third-party/zlib-1.2.8)
+include(third-party/quazip/quazip.pri)
+include(third-party/zlib)
 LIBS += -lz
 
 QMAKE_CXXFLAGS -= -fno-keep-inline-dllexport
