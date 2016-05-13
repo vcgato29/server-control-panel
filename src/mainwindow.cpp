@@ -1126,7 +1126,11 @@ namespace ServerControlPanel
             settings->set("mariadb/port",           3306);
             settings->set("mariadb/password",       "");
 
-            settings->set("memcached/port",         11211);
+            settings->set("memcached/tcpport",        "11211");
+            settings->set("memcached/udpport",        "0");
+            settings->set("memcached/threads",        "2");
+            settings->set("memcached/maxconnections", "2048");
+            settings->set("memcached/maxmemory",      "2048");
 
             settings->set("mongodb/config",         "./bin/mongodb/mongodb.conf");
             settings->set("mongodb/port",           27015);

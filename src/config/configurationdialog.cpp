@@ -48,7 +48,7 @@ namespace Configuration
     {
         ui->configMenuTreeWidget->expandAll();
 
-        // Iterate over all child items : filter items with contain query
+        // Iterate over all child items : filter items with "contains" query
         QTreeWidgetItemIterator iterator(ui->configMenuTreeWidget, QTreeWidgetItemIterator::All);
         while(*iterator)
         {
@@ -115,6 +115,13 @@ namespace Configuration
        ui->checkbox_onStartAllOpenWebinterface->setChecked(settings->get("global/onstartallopenwebinterface", false).toBool());
 
        ui->lineEdit_SelectedEditor->setText(settings->get("global/editor", QVariant(QString("notepad.exe")) ).toString());
+
+       // Configuration > Components > Memcached
+       ui->lineEdit_memcached_tcpport->setText(settings->get("memcached/tcpport", QVariant(QString("11211"))).toString() );
+       ui->lineEdit_memcached_udpport->setText(settings->get("memcached/udpport", QVariant(QString("0"))).toString() );
+       ui->lineEdit_memcached_threads->setText(settings->get("memcached/threads", QVariant(QString("2"))).toString() );
+       ui->lineEdit_memcached_maxconnections->setText(settings->get("memcached/maxconnections", QVariant(QString("2048"))).toString() );
+       ui->lineEdit_memcached_maxmemory->setText(settings->get("memcached/maxmemory", QVariant(QString("2048"))).toString() );
     }
 
     void ConfigurationDialog::writeSettings()
@@ -144,6 +151,13 @@ namespace Configuration
         settings->set("global/onstartallopenwebinterface",  int(ui->checkbox_onStartAllOpenWebinterface->isChecked()));
 
         settings->set("global/editor",            QString(ui->lineEdit_SelectedEditor->text()));
+
+        // Configuration > Components > Memcached
+        settings->set("memcached/tcpport",        QString(ui->lineEdit_memcached_tcpport->text()));
+        settings->set("memcached/udpport",        QString(ui->lineEdit_memcached_udpport->text()));
+        settings->set("memcached/threads",        QString(ui->lineEdit_memcached_threads->text()));
+        settings->set("memcached/maxconnections", QString(ui->lineEdit_memcached_maxconnections->text()));
+        settings->set("memcached/maxmemory",      QString(ui->lineEdit_memcached_maxmemory->text()));
 
         /**
          * Page "Nginx" - Tab "Upstream"

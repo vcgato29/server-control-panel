@@ -637,7 +637,12 @@ namespace Servers
      */
     void Servers::startMemcached()
     {
-        QString const memcachedStartCommand = getServer("Memcached")->exe;
+        QString const memcachedStartCommand = getServer("Memcached")->exe
+                + "-p " + settings->get("memcached/tcpport").toString()
+                + "-U " + settings->get("memcached/udpport").toString()
+                + "-t " + settings->get("memcached/threads").toString()
+                + "-c " + settings->get("memcached/maxconnections").toString()
+                + "-m " + settings->get("memcached/maxmemory").toString();
 
         // if not installed, skip
         if(!QFile().exists(memcachedStartCommand)) {
