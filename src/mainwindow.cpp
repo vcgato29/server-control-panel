@@ -1115,8 +1115,6 @@ namespace ServerControlPanel
             settings->set("autostart/redis",        0);
 
             settings->set("php/config",             "./bin/php/php.ini");
-            settings->set("php/fastcgi-host",       "localhost");
-            settings->set("php/fastcgi-port",       9100);
 
             settings->set("nginx/config",           "./bin/nginx/conf/nginx.conf");
             settings->set("nginx/sites",            "./www");

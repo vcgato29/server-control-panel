@@ -383,12 +383,6 @@ namespace Servers
         env.insert("PHP_FCGI_MAX_REQUESTS", "0");
         qDebug() << "[PHP] Set PHP_FCGI_MAX_REQUESTS \"0\" (disabled).";
 
-        // start daemon
-        /*QString const startPHP = getServer("PHP")->exe
-                + " -b " + settings->get("php/fastcgi-host").toString()
-                + ":" + settings->get("php/fastcgi-port").toString();
-        qDebug() << "[PHP] Starting...\n" << startPHP;*/
-
         QString const startCmdWithPlaceholders("./bin/tools/spawn.exe ./bin/php/php-cgi.exe %1 %2");
 
         QMapIterator<QString, QString> serversToStart( getServersFromUpstreamConfig() );
