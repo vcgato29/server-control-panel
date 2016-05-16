@@ -152,6 +152,7 @@ namespace Downloader
 
             if(downloadSkipped) {
                 timer.invalidate();
+                emit transferFinished(this);
                 return;
             }
 
