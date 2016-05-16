@@ -67,7 +67,9 @@ namespace ServerControlPanel
         //ProcessViewerDialog *pvd = new ProcessViewerDialog(this);
         //pvd->exec();
 
-        runSelfUpdate();
+        if(settings->get("selfupdater/runonstartup").toBool()) {
+            runSelfUpdate();
+        }
     }
 
     MainWindow::~MainWindow()
@@ -84,23 +86,46 @@ namespace ServerControlPanel
 
     void MainWindow::runSelfUpdate()
     {
-        selfUpdater = new Updater::SelfUpdater();
+        selfUpdater = new Updater::SelfUpdater();        
         connect(selfUpdater, SIGNAL(notifyUpdateAvailable(QJsonObject)),
-                this, SLOT(showSelfUpdateNotification(QJsonObject)));
+                this, SLOT(show_SelfUpdater_UpdateNotification(QJsonObject)));
+        connect(selfUpdater, SIGNAL(notifyRestartNeeded(QJsonObject)),
+                this, SLOT(show_SelfUpdater_RestartNeededNotification(QJsonObject)));
         selfUpdater->run();
     }
 
     // TODO move to Notification Class
-    void MainWindow::showSelfUpdateNotification(QJsonObject versionInfo)
+    void MainWindow::show_SelfUpdater_UpdateNotification(QJsonObject versionInfo)
     {
-        Q_UNUSED(versionInfo); //versionInfo["message"].toString(),
+        // when autoupdate is
+        // - false, ask the user, if he wants to update (dialogbox)
+        // - true, show tray notification (that update is in progress)
 
-        tray->showMessage(
-            "WPN-XM Server Control Panel\nUpdate available!\n",
-            "You are running an old version of the SCP. Automatic update in progress...",
-            QSystemTrayIcon::Information,
-            12000
+        if(!settings->get("selfupdater/autoupdate").toBool())
+        {
+            // the timer is used to wait, until the SplashScreen is gone
+            QTimer::singleShot(2000, selfUpdater, SLOT(askForUpdate()));
+            return;
+        }
+
+        QString softwareNameAndLatestVersion = QString("%1 v%2").arg(
+            versionInfo["software_name"].toString(),
+            versionInfo["latest_version"].toString()
         );
+        QString title("WPN-XM Server Control Panel\nUpdate available:\n");
+        QString msg(softwareNameAndLatestVersion);
+
+        tray->showMessage(title, msg, QSystemTrayIcon::Information, 12000);
+    }
+
+    // TODO move to Notification Class
+    // if "selfupdater/autorestart" is on, just show a tray info
+    void MainWindow::show_SelfUpdater_RestartNeededNotification(QJsonObject versionInfo)
+    {
+        QString title("WPN-XM Server Control Panel\nUpdate successful! Restarting...\n");
+        QString msg("Version v" + versionInfo["latest_version"].toString());
+
+        tray->showMessage(title, msg, QSystemTrayIcon::Information, 12000);
     }
 
     void MainWindow::createTrayIcon()
@@ -1138,6 +1163,8 @@ namespace ServerControlPanel
 
             settings->set("redis/config",           "./bin/redis/redis.windows.conf");
             settings->set("redis/port",             6379);
+
+            settings->set("selfupdater/runonstartup", 1);
 
             //settings->set("updater/mode",         "manual");
             //settings->set("updater/interval",     "1w");

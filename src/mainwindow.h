@@ -129,7 +129,8 @@ namespace ServerControlPanel
             void on_pushButton_Updater_clicked();
             void MainWindow_ShowEvent();
 
-            void showSelfUpdateNotification(QJsonObject versionInfo);
+            void show_SelfUpdater_UpdateNotification(QJsonObject versionInfo);
+            void show_SelfUpdater_RestartNeededNotification(QJsonObject versionInfo);
 
         protected:
             void closeEvent(QCloseEvent *event);

@@ -1,18 +1,5 @@
 #include "selfupdater.h"
 
-#include <QFileInfo>
-#include <QCoreApplication>
-#include <QApplication>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QMessageBox>
-#include <QIcon>
-
-#include "updater/downloadmanager.h"
-
 namespace Updater
 {
 
@@ -35,6 +22,8 @@ namespace Updater
     SelfUpdater::SelfUpdater()
     {
         qDebug() << "[SelfUpdater] Started...";
+
+        userRequestedUpdate = false;
     }
 
     SelfUpdater::~SelfUpdater()
@@ -57,12 +46,21 @@ namespace Updater
         if(updateAvailable())
         {
             qDebug() << "[SelfUpdater] Update available \n VersionInfo:" << versionInfo;
+
             emit notifyUpdateAvailable(versionInfo);
-            downloadNewVersion();
-            renameExecutable();
-            //extract();
-            //indicateNeedForRestart();
+
+            if(settings->get("selfupdater/autoupdate").toBool()) {
+                doUpdate();
+            }
         }
+    }
+
+    void SelfUpdater::doUpdate()
+    {
+        downloadNewVersion();
+        renameExecutable();
+        //extract();             is called when download transfer finished
+        //askForRestart();       is called when extraction finished
     }
 
     bool SelfUpdater::updateAvailable()
@@ -116,7 +114,12 @@ namespace Updater
         QStringList extractedFiles = JlCompress::extractDir(zipFile, targetPath);
         if(QFileInfo(extractedFiles.at(0)).fileName() == "wpn-xm.exe") {
             qDebug() << "[SelfUpdater] ---- Success! ----";
-            askForRestart();
+
+            if(settings->get("selfupdater/autorestart").toBool()) {
+                emit notifyRestartNeeded(versionInfo);
+            } else {
+                askForRestart();
+            }
         }
     }
 
@@ -140,22 +143,53 @@ namespace Updater
         qDebug() << "[SelfUpdater] Move:" << QFile::rename(exeFilePath, oldExeFilePath);   // wpn-xm.exe -> wpn-xm.exe.old
     }
 
-    void SelfUpdater::askForRestart()
+    void SelfUpdater::askForUpdate()
     {
-        QString text = "The Server Control Panel was updated from ";
-        text.append(QString("v%1 to v%2.").arg(APP_VERSION_SHORT, "1.2.3"));
+        QString t("A new version of the Server Control Panel is available:"
+                  "<p><b><FONT COLOR='#a9a9a9' FONT SIZE = 4>"
+                  "%1 v%2."
+                  "</b></p></br>");
+        QString text = t.arg(
+            versionInfo["software_name"].toString(),
+            versionInfo["latest_version"].toString()
+        );
 
-        QString infoText = "Do you want to restart the SCP now?";
+        QString infoText = "Do you want to update now?";
 
         QPixmap iconPixmap = QIcon(":/update").pixmap(80,80);
 
         QMessageBox msgBox;
         msgBox.setIconPixmap(iconPixmap);
-        msgBox.setWindowTitle("WPN-XM Server Control Panel - SelfUpdater");
+        msgBox.setWindowTitle("WPN-XM Server Control Panel - Self Updater");
         msgBox.setText(text);
         msgBox.setInformativeText(infoText);
-        msgBox.setStandardButtons(QMessageBox::Yes);
-        msgBox.addButton(QMessageBox::No);
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setButtonText(QMessageBox::Yes, tr("Update"));
+        msgBox.setButtonText(QMessageBox::No, tr("Continue"));
+        msgBox.setDefaultButton(QMessageBox::Yes);
+
+        if(msgBox.exec() == QMessageBox::Yes) {
+            doUpdate();
+        }
+    }
+
+    void SelfUpdater::askForRestart()
+    {
+        QString text = "The Server Control Panel was updated from ";
+        text.append(QString("v%1 to v%2.").arg(APP_VERSION_SHORT, versionInfo["latest_version"].toString()));
+
+        QString infoText = "Do you want to restart now?";
+
+        QPixmap iconPixmap = QIcon(":/update").pixmap(80,80);
+
+        QMessageBox msgBox;
+        msgBox.setIconPixmap(iconPixmap);
+        msgBox.setWindowTitle("WPN-XM Server Control Panel - Self Updater");
+        msgBox.setText(text);
+        msgBox.setInformativeText(infoText);
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setButtonText(QMessageBox::Yes, tr("Restart"));
+        msgBox.setButtonText(QMessageBox::No, tr("Continue"));
         msgBox.setDefaultButton(QMessageBox::Yes);
 
         if(msgBox.exec() == QMessageBox::Yes)

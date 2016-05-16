@@ -116,6 +116,11 @@ namespace Configuration
 
        ui->lineEdit_SelectedEditor->setText(settings->get("global/editor", QVariant(QString("notepad.exe")) ).toString());
 
+       // Configuration > Updater > Self Updater
+       ui->checkBox_SelfUpdater_RunOnStartUp->setChecked(settings->get("selfupdater/runonstartup", false).toBool());
+       ui->checkBox_SelfUpdater_AutoUpdate->setChecked(settings->get("selfupdater/autoupdate", false).toBool());
+       ui->checkBox_SelfUpdater_AutoRestart->setChecked(settings->get("selfupdater/autorestart", false).toBool());
+
        // Configuration > Components > Memcached
        ui->lineEdit_memcached_tcpport->setText(settings->get("memcached/tcpport", QVariant(QString("11211"))).toString() );
        ui->lineEdit_memcached_udpport->setText(settings->get("memcached/udpport", QVariant(QString("0"))).toString() );
@@ -136,6 +141,20 @@ namespace Configuration
         settings->set("global/startminimized",    int(ui->checkbox_startMinimized->isChecked()));
         settings->set("global/autostartdaemons",  int(ui->checkbox_autostartDaemons->isChecked()));
 
+        settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
+        settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
+
+        settings->set("global/onstartallminimize",         int(ui->checkbox_onStartAllMinimize->isChecked()));
+        settings->set("global/onstartallopenwebinterface", int(ui->checkbox_onStartAllOpenWebinterface->isChecked()));
+
+        settings->set("global/editor",            QString(ui->lineEdit_SelectedEditor->text()));
+
+        // Configuration > Updater > Self Updater
+        settings->set("selfupdater/runonstartup", int(ui->checkBox_SelfUpdater_RunOnStartUp->isChecked()));
+        settings->set("selfupdater/autoupdate",   int(ui->checkBox_SelfUpdater_AutoUpdate->isChecked()));
+        settings->set("selfupdater/autorestart",  int(ui->checkBox_SelfUpdater_AutoRestart->isChecked()));
+
+        // Autostart Servers with the Server Control Panel
         settings->set("autostart/nginx",          int(ui->checkbox_autostart_Nginx->isChecked()));
         settings->set("autostart/php",            int(ui->checkbox_autostart_PHP->isChecked()));
         settings->set("autostart/mariadb",        int(ui->checkbox_autostart_MariaDb->isChecked()));
@@ -144,13 +163,15 @@ namespace Configuration
         settings->set("autostart/postgresql",     int(ui->checkbox_autostart_Postgresql->isChecked()));
         settings->set("autostart/redis",          int(ui->checkbox_autostart_Redis->isChecked()));
 
-        settings->set("global/clearlogsonstart",  int(ui->checkbox_clearLogsOnStart->isChecked()));
-        settings->set("global/stopdaemonsonquit", int(ui->checkbox_stopDaemonsOnQuit->isChecked()));
+        // Configuration > Components > PHP
 
-        settings->set("global/onstartallminimize",          int(ui->checkbox_onStartAllMinimize->isChecked()));
-        settings->set("global/onstartallopenwebinterface",  int(ui->checkbox_onStartAllOpenWebinterface->isChecked()));
+        // Configuration > Components > Nginx
 
-        settings->set("global/editor",            QString(ui->lineEdit_SelectedEditor->text()));
+        // Configuration > Components > XDebug
+
+        // Configuration > Components > MariaDB
+
+        // Configuration > Components > MongoDB
 
         // Configuration > Components > Memcached
         settings->set("memcached/tcpport",        QString(ui->lineEdit_memcached_tcpport->text()));
@@ -409,7 +430,7 @@ namespace Configuration
         // Windows %APPDATA% = Roaming ... Programs\Startup
         QString startupDir = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + "\\Startup";
 
-        if(ui->checkbox_runOnStartUp->isChecked() == true) {
+        if(runOnStartUp()) {
             // Add WPN-XM SCP shortcut to the Windows Autostart folder.
             // In Windows terminology "shortcuts" are "shell links".
             WindowsAPI::CreateShellLink(

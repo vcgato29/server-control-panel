@@ -173,7 +173,7 @@
     <enum>QFrame::Sunken</enum>
    </property>
    <property name="currentIndex">
-    <number>8</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="servercontrolpanel">
     <widget class="QTabWidget" name="tabWidget">
@@ -612,21 +612,21 @@
         </property>
         <layout class="QFormLayout" name="formLayout_2">
          <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBox_SelfUpdater_RunOnStart">
+          <widget class="QCheckBox" name="checkBox_SelfUpdater_RunOnStartUp">
            <property name="text">
             <string>Check for a new version, when starting?</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QCheckBox" name="checkBox_SelfUpdater_UpdateAutomatically">
+          <widget class="QCheckBox" name="checkBox_SelfUpdater_AutoUpdate">
            <property name="text">
             <string>Update automatically, when a new version was found?</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QCheckBox" name="checkBox_SelfUpdater_RestartAutomatically">
+          <widget class="QCheckBox" name="checkBox_SelfUpdater_AutoRestart">
            <property name="text">
             <string>Restart automatically, when the Update succeeded?</string>
            </property>
@@ -701,6 +701,11 @@
            <item>
             <property name="text">
              <string>weekly</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>biweekly</string>
             </property>
            </item>
            <item>
